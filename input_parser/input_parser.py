@@ -1,29 +1,32 @@
 """
 PARSING
 *******
-takes the parameters file and block with quotes
-then, reads and parses the file in a manner that:
+takes file as a parameter with quotes
+then, reads file and parses it in a manner that:
 - all the characters are lowered by lower()
 - all the lines are splitted into a list by splitlines()
-- all the items of the list are also splitted into lists 
-        by split(' = ') if they have ' = ' sign in them 
-        
+- all the items of the list are also splitted into lists by
+        split(' = ') if they have ' = ' sign in them 
+--------------------------------------------------
 DICTIONARY
 *******
-checks if the function is called for substrate or slider
-due to result, creates a dictionary so that
-all the parameters are ordered starting 
-from block name till '/' sign by parms.index
+defines two dictionaries, sub_params and slider_params,
+by indexing from related block names till end sign '/'
 --------------------------------------------------
-(!) only returns the parameters of the specified block
+(!) block order is of importance (see Ln 31, Col 80)
 --------------------------------------------------
+CALLING
+*******
+when creating a class, parser should be called with a placeholder
+so that only related parameters are assigned. examples as follows:
+subs_params, _ = parse('input.txt')
+_ , slider_params = parse('input.txt')
 """
 
-def parse(file, block):
+def parse(file):
     with open(file, 'r') as f:
-        parms = [parm.split(' = ') for parm in f.read().lower().splitlines()]
-        if block == '&substrate':
-            parms = dict(parms[parms.index(['&substrate'])+1:parms.index(['/'])])
-        elif block == '&slider':
-            parms = dict(parms[parms.index(['&slider'])+1:parms.index(['/'], 9)])
-    return parms
+        params = [param.split(' = ') for param in f.read().lower().splitlines()]
+        
+    sub_param = dict(params[params.index(['&substrate'])+1:params.index(['/'])])
+    slider_param = dict(params[params.index(['&slider'])+1:params.index(['/'], 9)])
+    return sub_param, slider_param
