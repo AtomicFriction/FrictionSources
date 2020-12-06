@@ -1,28 +1,24 @@
 import numpy as np
-import random
-
-slider_param = parse('input.txt', '&slider')
+from input_parser import parse
 
 """"
-Class description goes here.
-
+Uses the input data given by the user to initialize a sliding agent.
 """"
 
 ## Agent is the parent class.
 class Agent:
-
+    ## Use the parser for the input values.
+    _ , agent_params = parse('input.txt')
     ## Spring constant between slider and agent.
-    k = slider_param['k']
+    k = agent_params['k']
     ## Mass of the agent.
-    m = slider_param['mass']
+    m = agent_params['mass']
     ## Shape of the agent.
-    shape = slider_param['shape']
+    shape = agent_params['shape']
     ## The constant sigma for The Lennard Jones interaction.
-    sigma = slider_param['sigma']
+    sigma = agent_params['sigma']
     ## The constant epsilon for The Lennard Jones interaction.
-    epsilon = slider_param['epsilon']
-    ## Initial position of the agent. Input is taken as a list for now.
-    init_pos = [int(slider_param["agent_initial_x"]), int(slider_param["agent_initial_x"]), int(slider_param["agent_initial_x"])]
+    epsilon = agent_params['epsilon']
 
 
     def __init__(self):
@@ -62,7 +58,8 @@ class Agent:
 
 
     def Single_Shape():
-        single_disp = [init_pos[0], init_pos[1], init_pos[2]]
+        ## Position of the single atom from the user.
+        pos_single = [float(agent_params["agent_pos"].split(" ")[0]), float(agent_params["agent_pos"].split(" ")[1]), float(agent_params["agent_pos"].split(" ")[2])]
 
         return single_disp
 
@@ -75,18 +72,15 @@ class Agent:
     def Shape_Select(shape):
         if (shape == "single"):
             Single_Shape()
-
         ## Hemisphere shape will not be used for now.
         elif (shape == "hemisphere"):
             ##Hemisphere_Shape()
             print("Hemisphere shape is not available right now. Default shape 'single' will be used.")
             Single_Shape()
-
         else:
+            ## Raise an error and use a predefined default shape for the agent.
             print("An invalid shape was specified in the input. Default shape 'single' will be used.")
             Single_Shape()
-
-
         return agent_disp
 
 
