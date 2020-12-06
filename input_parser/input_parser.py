@@ -10,7 +10,7 @@ then, reads file and parses it in a manner that:
 --------------------------------------------------
 DICTIONARY
 *******
-defines two dictionaries, sub_params and slider_params,
+defines two dictionaries, sub_params and agent_params,
 by indexing from related block names till end sign '/'
 --------------------------------------------------
 (!) block order is of importance (see Ln 31, Col 80)
@@ -20,7 +20,7 @@ CALLING
 when creating a class, parser should be called with a placeholder
 so that only related parameters are assigned. examples as follows:
 subs_params, _ = parse('input.txt')
-_ , slider_params = parse('input.txt')
+_ , agent_params = parse('input.txt')
 """
 
 def parse(file):
@@ -28,5 +28,5 @@ def parse(file):
         params = [param.split(' = ') for param in f.read().lower().splitlines()]
         
     sub_param = dict(params[params.index(['&substrate'])+1:params.index(['/'])])
-    slider_param = dict(params[params.index(['&slider'])+1:params.index(['/'], 9)])
-    return sub_param, slider_param
+    agent_param = dict(params[params.index(['&slider'])+1:params.index(['/'], 9)])
+    return sub_param, agent_param
