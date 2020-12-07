@@ -2,47 +2,57 @@ from input_parser import parse
 import numpy as np
 
 """
-makes use of the function parse to
-get parameters for specified block
-then, creates classes for the blocks
-with their own parameters
+Makes use of the parser to get
+parameter for substrate class
+then, creates the substrate class
 """
 # where to put try catch? here or into parser?
 
-subs_parm = parse('input.txt', '&substrate')
+subs_param, _ = parse('input.txt')
 class Substrate():
     def __init__(self):
         # parameters
-        self.num_row = int(subs_parm['num_row'])
-        self.latt_const = float(subs_parm['latt_const'])
-        self.displace_type = subs_parm['displace_type']
-        self.k = float(subs_parm['k'])
-        self.mass = float(subs_parm['mass'])
-
+        self.num = int(subs_param['num'])
+        self.k = float(subs_param['subs_k'])
+        self.mass = float(subs_param['subs_m'])
+        self.z_layers = int(subs_param['z_layers'])
+        self.displace_type = subs_param['displace_type']
+        self.latt_const = float(subs_param['latt_const'])
+        
         # atomic system
-        Ry, Rx = np.mgrid[0:self.num_row, 0:self.num_row]
+        Ry, Rx = np.mgrid[0:self.num, 0:self.num]
         Rx_points = np.vstack(Rx.ravel())
         Ry_points = np.vstack(Ry.ravel())
         self.R = np.hstack((Rx_points, Ry_points))
-        self.R = np.column_stack((self.R, np.zeros(np.shape(self.R)[0]))) 
-        # could be good to implement reshape(R, (num_row, num_row, 3))
-        self.neighbortable = np.zeros(np.shape(self.R))
+        self.R = np.column_stack((self.R, np.zeros(np.shape(self.R)[0]))) # add z-layer
+        self.neighbortable = np.zeros((self.num**2, 4), dtype=int)
 
     def find_neighbor(self):
-        """
-        there may be a way to vectorize this function, such as:
-            (i) row or column-wise operations on R with identity matrix
-            (ii) usage of advanced matrix methods (to be searched)
-        """
-        for atom in enumerate(self.R):
-            for neighbor in enumerate(self.R):
-                # structure of atom and neighbor variables:
-                # atom = (306, array([6., 6., 0.]))
-                # atom[0] = 306
-                # atom[1] = array([6, 6, 0])
-                norm = np.linalg.norm(neighbor[1] - atom[1])
-                if norm <= self.latt_const: # <== probably won't work except for initial condition
-                    if atom[0] == neighbor[0]:
-                        pass
-                    else:
-                        self.neighbortable[atom[0]] = self.R[neighbor[0]]
+        for atom, _ in enumerate(self.R):
+            self.neighbortable[atom] = [atom-self.num, atom-1, atom+1, atom+self.num]
+    
+    def displace(self):
+        if self.displace_type == 'random':
+            self.R = self.R + (np.random.rand(*np.shape(self.R)) - 0.5) * 0.1
+
+        elif self.displace_type == 'sinusoidal':
+            print('This property is not implemented yet.\n')
+            default = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
+            if default == "":
+                self.R = self.R + (np.random.rand(*np.shape(self.R)) - 0.5) * 0.1
+            elif default == "quit":
+                return
+            else:
+                print('You either made an invalid request or the property you requested must be written differently.\n')
+                default = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
+
+        else:
+            print('You either made an invalid request or the property you requested must be written differently.\n')
+            default = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
+            if default == "":
+                self.R = self.R + (np.random.rand(*np.shape(self.R)) - 0.5) * 0.1
+            elif default == "quit":
+                return
+            else:
+                print('You either made an invalid request or the property you requested must be written differently.\n')
+                default = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
