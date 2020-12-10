@@ -1,13 +1,13 @@
 # DD / MM / YY Meeting Notes 
 
 
-### Points Discussed @brtymn
+### Points Discussed - Bartu
 <!--- Important points that were discussed in the meeting. -->
 -
 -
 -
 
-### To Do @brtymn
+### To Do - Bartu
 <!--- Things to do until next meeting. -->
 -
 -
@@ -15,13 +15,13 @@
 
 
 
-### Points Discussed @pitorodoptusdaktus
+### Points Discussed - Çağdaş
 <!--- Important points that were discussed in the meeting. -->
 -
 -
 -
 
-### To Do @pitorodoptusdaktus
+### To Do - Çağdaş
 <!--- Things to do until next meeting. -->
 -
 -
