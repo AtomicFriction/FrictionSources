@@ -6,9 +6,6 @@ Uses the input data given by the user to initialize a sliding agent.
 """"
 
 
-## _ , agent_params = parse('input.txt') ## Does not belong here. Kept for testing purposes.
-
-
 ## Agent is the parent class.
 class Agent:
 
@@ -55,9 +52,19 @@ class Agent:
 
     def SingleAtom():
         ## Position of the single atom from the user.
-        pos_single = [float(agent_params["agent_pos"].split(" ")[0]), float(agent_params["agent_pos"].split(" ")[1]), float(agent_params["agent_pos"].split(" ")[2])]
+        if(dim == 1):
+            pos_single = pos_single = [float(agent_params["agent_pos"].split(" ")[0])]
+        elif(dim == 2):
+            pos_single = [float(agent_params["agent_pos"].split(" ")[0]), float(agent_params["agent_pos"].split(" ")[1])]
+        elif(dim == 3):
+            pos_single = [float(agent_params["agent_pos"].split(" ")[0]), float(agent_params["agent_pos"].split(" ")[1]), float(agent_params["agent_pos"].split(" ")[2])]
 
-        return single_disp
+        else:
+            pass
+
+        print("Given dimension value is %s. Therefore, the agent has %s positional arguements." % (dim, str(len(pos_single))))
+
+        return pos_single
 
 
     def Hemisphere():
