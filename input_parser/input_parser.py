@@ -15,7 +15,7 @@ by indexing from related block names till end sign '/'
 --------------------------------------------------
 (!) block order is 'not' of importance in the input file
 (!) however, it is vital to call parser in the order:
-            substrate - slider - numba 
+            substrate - agent - numba 
 (see paragraph below for detailed explanation)
 --------------------------------------------------
 CALLING
@@ -23,7 +23,7 @@ CALLING
 when creating a class, parser should be called with a placeholder
 so that only related parameters are assigned. examples as follows:
         subs_param, _ , _ = parse('input.txt')
-        _ , slid_param, _ = parse('input.txt')
+        _ , agent_param, _ = parse('input.txt')
 """
 
 def parse(file):
