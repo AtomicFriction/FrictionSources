@@ -32,6 +32,6 @@ def parse(file):
         # add error catcher
     subs_ind, slid_ind, numba_ind = params.index(['&substrate']), params.index(['&slider']), params.index(['&numba'])
     subs_param = dict(params[subs_ind+1:params.index(['/'], subs_ind)])
-    slid_param = dict(params[slid_ind+1:params.index(['/'], slid_ind)])
+    agent_param = dict(params[slid_ind+1:params.index(['/'], agent_ind)])
     use_numba = dict(params[numba_ind+1:params.index(['/'], numba_ind)])
     return subs_param, slid_param, use_numba
