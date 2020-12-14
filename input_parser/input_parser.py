@@ -34,4 +34,4 @@ def parse(file):
     subs_param = dict(params[subs_ind+1:params.index(['/'], subs_ind)])
     agent_param = dict(params[slid_ind+1:params.index(['/'], agent_ind)])
     use_numba = dict(params[numba_ind+1:params.index(['/'], numba_ind)])
-    return subs_param, slid_param, use_numba
+    return subs_param, agent_param, use_numba
