@@ -4,3 +4,4 @@ class Run:
         self.protocol = "placeholder_string"
         ## "vv" stands for velocity-verlet.
         self.int_scheme = "vv"
+        n_steps = 100 ## Placeholder step size.
