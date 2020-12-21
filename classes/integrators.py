@@ -30,16 +30,25 @@ def VelocityVerlet(pos, vel, acc, delt):
 
 
 @jit(nopython = True)
-def RK4(t, dt, y, f):
+def RK4(pos, vel, delt):
     """
     -> 4th Order Runge Kutta will need the function to be defined differently.
     -> Work in progress for now.
     -> Detailed tests will be carried out and documented.
     """
-    k1 = dt * f(t, y)
-    k2 = dt * f(t + 0.5 * dt, y + 0.5 * k1)
-    k3 = dt * f(t + 0.5 * dt, y + 0.5 * k2)
-    k4 = dt * f(t + dt, y + k3)
+    k1y = delt * vel
+    k1v = delt * GetForces(pos)
 
-    y_new = y + (1/6.) * (k1+ 2 * k2 + 2 * k3 + k4)
-    return y_new
+    k2y = delt * (vel + 0.5 * k1v)
+    k2v = delt * GetForces(pos + 0.5 * k1y)
+
+    k3y = delt * (vel + 0.5 * k2v)
+    k3v = delt * GetForces(pos + 0.5 * k2y)
+
+    k4y = delt * (vel + k3v)
+    k4v = delt * GetForces(pos + k3y)
+
+    # Update next value of y
+    pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
+    vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
+    return pos, vel
