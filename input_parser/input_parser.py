@@ -30,8 +30,8 @@ def parse(file):
     with open(file, 'r') as f:
         params = [param.split(' = ') for param in f.read().lower().splitlines()]
         # add error catcher
-    subs_ind, slid_ind, numba_ind = params.index(['&substrate']), params.index(['&slider']), params.index(['&numba'])
+    subs_ind, agent_ind, numba_ind = params.index(['&substrate']), params.index(['&slider']), params.index(['&numba'])
     subs_param = dict(params[subs_ind+1:params.index(['/'], subs_ind)])
-    agent_param = dict(params[slid_ind+1:params.index(['/'], agent_ind)])
+    agent_param = dict(params[agent_ind+1:params.index(['/'], agent_ind)])
     use_numba = dict(params[numba_ind+1:params.index(['/'], numba_ind)])
     return subs_param, agent_param, use_numba
