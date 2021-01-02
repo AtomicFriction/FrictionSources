@@ -1,5 +1,12 @@
 import numpy as np
 
+"""
+Since the constants below will be used in the functions,
+they must be defined in one of the files. For now, they
+are defined here, so whenever one of the functions below
+is called, the constants must be also called. 
+"""
+
 T = 300
 boltz = 8.617333262 * 10**(-5)
 
