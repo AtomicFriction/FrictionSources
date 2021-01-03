@@ -10,7 +10,7 @@ def EulerCromer(pos, vel, acc, delt):
     """
     vel = vel + (acc * delt)
     pos = pos + (vel * delt)
-    acc = acc = GetForces() / mass
+    acc = acc + GetForces() / mass
 
     return pos, vel
 
