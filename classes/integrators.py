@@ -1,6 +1,7 @@
 import numpy as np
 from numba import jit
 from agent_class import Agent
+from interactions import GetForces
 
 cutoff = 2
 sigma = 1
