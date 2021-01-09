@@ -22,16 +22,23 @@ class Agent:
         ## Shape of the agent.
         self.shape = agent_param['shape']
 
-        self.slider_pos = np.zeros((1, 3))
-        self.slider_vel = np.array([[1, 0, 0]])
+
+        ## Do we need inputs from the user for the slider?
+        self.slider_pos = [[float(agent_param["slider_pos"].split(" ")[0]), float(agent_param["slider_pos"].split(" ")[1]), float(agent_param["slider_pos"].split(" ")[2])]]
+
+        self.slider_vel = [[float(agent_param["slider_vel"].split(" ")[0]), float(agent_param["slider_vel"].split(" ")[1]), float(agent_param["slider_vel"].split(" ")[2])]]
+
         ## Initialize agent position, velocity and acceleration as (1 x 3) arrays depending on the user selected shape.
         if (self.shape == "single"):
+            ## There is an error here. Probably related to the parser.
+            ## Do we need velocity and acceleration inputs from the user?
             self.pos = [[float(agent_param["agent_pos"].split(" ")[0]), float(agent_param["agent_pos"].split(" ")[1]), float(agent_param["agent_pos"].split(" ")[2])]]
-            self.vel = np.zeros((1, 3))
-            self.acc = np.zeros((1, 3))
+
+            self.vel = [[float(agent_param["agent_vel"].split(" ")[0]), float(agent_param["agent_vel"].split(" ")[1]), float(agent_param["agent_vel"].split(" ")[2])]]
+
+            self.acc = [[float(agent_param["agent_acc"].split(" ")[0]), float(agent_param["agent_acc"].split(" ")[1]), float(agent_param["agent_acc"].split(" ")[2])]]
 
 
         elif (self.shape == "hemisphere"):
             ## Not in use right now.
             pass
-
