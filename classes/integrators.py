@@ -1,54 +1,60 @@
 import numpy as np
 from numba import jit
+from agent_class import Agent
+
+cutoff = 2
+sigma = 1
+epsilon = 1
 
 
-@jit(nopython = True)
-def EulerCromer(pos, vel, acc, delt):
+def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
     """
-    -> Takes force values from another function "GetForces()", uses that to obtain acceleration values.
-    -> Detailed tests will be carried out and documented.
+    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
+    -> Uses a standard Euler-Cromer integration algorithm.
+    -> Working as expected so far, no detailed tests have been carried out.
     """
-    vel = vel + (acc * delt)
-    pos = pos + (vel * delt)
-    acc = acc = GetForces() / mass
 
-    return pos, vel
+    vel = vel + (acc * dt)
+    pos = pos + (vel * dt)
+    acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
+
+    return (pos, vel, acc)
 
 
-@jit(nopython = True)
-def VelocityVerlet(pos, vel, acc, delt):
+def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
     """
-    -> Takes force values from another function "GetForces()", uses that to obtain acceleration values.
-    -> Detailed tests will be carried out and documented.
+    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
+    -> Uses a standard Velocity-Verlet integration algorithm.
+    -> Working as expected so far, no detailed tests have been carried out.
     """
-    pos = pos + (delt * vel) + (0.5 * (time_step ** 2.0) * acc)
-    vel = vel + (0.5 * acc * delt)
-    acc = GetForces() / mass
-    vel = vel + (0.5 * acc * deltat)
+    pos = (pos + ((vel * dt) + (0.5 * acc * (dt ** 2.0))))
+    vel = (vel + (0.5 * acc * dt))
+    acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
+    vel = (vel + (0.5 * acc * dt))
 
-    return pos, vel
+    return (pos, vel, acc)
 
 
-@jit(nopython = True)
-def RK4(pos, vel, delt):
+def RK4(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
     """
-    -> 4th Order Runge Kutta will need the function to be defined differently.
-    -> Work in progress for now.
-    -> Detailed tests will be carried out and documented.
+    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
+    -> Uses a standard 4th Order Runge Kutta integration algorithm.
+    -> Not sure if it is working as expected so far, no detailed tests have been carried out.
     """
-    k1y = delt * vel
-    k1v = delt * GetForces(pos)
+    k1y = dt * vel
+    k1v = dt * GetForces(force_select, pos, subs_pos, slider_pos, k)
 
-    k2y = delt * (vel + 0.5 * k1v)
-    k2v = delt * GetForces(pos + 0.5 * k1y)
+    k2y = dt * (vel + 0.5 * k1v)
+    k2v = dt * GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, k)
 
-    k3y = delt * (vel + 0.5 * k2v)
-    k3v = delt * GetForces(pos + 0.5 * k2y)
+    k3y = dt * (vel + 0.5 * k2v)
+    k3v = dt * GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, k)
 
-    k4y = delt * (vel + k3v)
-    k4v = delt * GetForces(pos + k3y)
+    k4y = dt * (vel + k3v)
+    k4v = dt * GetForces(force_select, pos + k3y, subs_pos, slider_pos, k)
 
     # Update next value of y
     pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
     vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
-    return pos, vel
+
+    return (pos, vel, acc)
