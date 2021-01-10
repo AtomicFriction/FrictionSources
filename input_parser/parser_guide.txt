@@ -1,0 +1,34 @@
+PARSING
+*******
+
+takes file as a parameter with quotes
+then, reads file and parses it in a manner that:
+- all the characters are lowered by lower()
+- all the lines are splitted into a list by splitlines()
+- all the items of the list are also splitted into lists by
+        split(' = ') if they have ' = ' sign in them 
+
+___________________________________________________________
+
+DICTIONARY
+**********
+defines two dictionaries, sub_params and slider_params,
+by indexing from related block names till end sign '/'
+
+
+--------------------------------------------------
+(!) block order is 'not' of importance in the input file;
+(!) however, since the parser returns the parameters in a 
+    specific order, it is vital to call parser in the order:
+         general - run - substrate - slider - numba 
+
+(see paragraph below for detailed explanation)
+--------------------------------------------------
+___________________________________________________________
+
+CALLING
+*******
+when creating a class, parser should be called with placeholders
+so that only related parameters are assigned. examples as follows:
+        _, _, subs_param, _ = parse('input.txt')
+        _, _, _, , slid_param = parse('input.txt')
