@@ -7,9 +7,8 @@ Makes use of the parser to get
 parameter for substrate class
 then, creates the substrate class
 """
-# put try catch into parser
 
-subs_param, _ , _ = parse('input.txt')
+_ , _ , subs_param, _ = parse('input.txt')
 class Substrate():
     def __init__(self):
         # parameters
@@ -24,25 +23,26 @@ class Substrate():
         self.cuto_const = float(subs_param['cuto_const'])
         
         if self.dim == 1:
-            Rx = np.vstack(np.arange(self.num))
-            Ry = np.vstack(np.zeros(self.num))
-            self.R = np.hstack((Rx, Ry))
+            Rx = np.vstack(np.arange(self.num)) * self.latt_const
+            Ry = Rz = np.vstack(np.zeros(self.num))
+            self.R = np.hstack((Rx, Ry, Rz))
 
         elif self.dim == 2:
-            Ry, Rx = np.mgrid[0:self.num, 0:self.num] * self.latt_const
-            Rx_points = np.vstack(Rx.ravel())
-            Ry_points = np.vstack(Ry.ravel())
-            self.R = np.hstack((Rx_points, Ry_points))
-            self.R = np.column_stack((self.R, np.zeros(np.shape(self.R)[0]))) # add z-layer
+            ygrid, xgrid = np.mgrid[0:self.num, 0:self.num] * self.latt_const
+            Rx = np.vstack(xgrid.ravel())
+            Ry = np.vstack(ygrid.ravel())
+            self.R = np.hstack((Rx, Ry))
+            Rz = np.zeros(np.shape(self.R)[0])
+            self.R = np.column_stack((self.R, Rz))
 
         elif self.dim == 3:
-            Ry, Rx = np.mgrid[0:self.num, 0:self.num]
-            Rx_points = np.vstack(Rx.ravel())
-            Ry_points = np.vstack(Ry.ravel())
-            self.R = np.hstack((Rx_points, Ry_points))
+            ygrid, xgrid = np.mgrid[0:self.num, 0:self.num] * self.latt_const
+            Rx = np.vstack(xgrid.ravel())
+            Ry = np.vstack(ygrid.ravel())
+            self.R = np.hstack((Rx, Ry))
             self.R = np.expand_dims(self.R, axis=0)
             self.R = np.repeat(self.R, self.layers, axis=0)
-            Rz = [[z] for z in list(range(self.layers))] # you can vectorize!
+            Rz = [[z] for z in list(range(self.layers))] # consider vectorization
             self.R = np.insert(self.R, 2, Rz, axis=2)
 
     def find_neighbor(self): 
@@ -50,20 +50,20 @@ class Substrate():
             if self.bound_cond == 'fixed':
                 dist = distance.cdist(self.R, self.R, 'euclidean')
                 self.cutoff = (dist != 0) & (dist < self.cuto_const) * 1
-                # self.table = np.where(cutoff == 1) <== there is a problem with this argument
+                # self.table = np.where(cutoff == 1) <== not ready yet
                 # nonetheless, the array 'cutoff' is enough to make calculations for motion
 
             elif self.bound_cond == 'periodic': # to be updated for distance-wise computation
                 R_min = np.tile(self.R, 2)[len(self.R)-1:2*len(self.R)-1]
                 R_plus = np.tile(self.R, 2)[1:len(self.R)+1]
-                self.table = np.hstack((np.vstack(R_min), np.vstack(R_plus))) # naming convention for neighbortable (??)
+                self.table = np.hstack((np.vstack(R_min), np.vstack(R_plus))) 
 
         elif self.dim == 2:
             if self.bound_cond == 'fixed':
                 self.boundary = (self.R[:][0:2] != 0) & \
                     (self.R[:][0:2] != (self.num - 1) * self.latt_const)
                 dist = distance.cdist(self.R, self.R, 'euclidean')
-                cutoff = (dist < self.cuto_const)
+                self.cutoff = (dist < self.cuto_const)
                 """ print("\n---------\nProgram is not applicable for fixed boundary conditions yet.\n")
                 print("Please change the condition to 'periodic' and restart the program with periodic condition.\n---------") """
                 return
