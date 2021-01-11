@@ -1,14 +1,13 @@
 import numpy as np
 from numba import jit
-from agent_class import Agent
+import agent
 from interactions import GetForces
 
-cutoff = 2
-sigma = 1
-epsilon = 1
+dt = 0.01
+integ = "EC"
 
 
-def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
+def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     """
     -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
     -> Uses a standard Euler-Cromer integration algorithm.
@@ -22,13 +21,13 @@ def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
     return (pos, vel, acc)
 
 
-def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
+def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     """
     -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
     -> Uses a standard Velocity-Verlet integration algorithm.
     -> Working as expected so far, no detailed tests have been carried out.
     """
-    pos = (pos + ((vel * dt) + (0.5 * acc * (dt ** 2.0))))
+    pos = (pos + ((vel * dt) + (0.5 * acc * (dt ** 2))))
     vel = (vel + (0.5 * acc * dt))
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
     vel = (vel + (0.5 * acc * dt))
@@ -36,7 +35,7 @@ def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, 
     return (pos, vel, acc)
 
 
-def RK4(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
+def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     """
     -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
     -> Uses a standard 4th Order Runge Kutta integration algorithm.
@@ -59,3 +58,12 @@ def RK4(force_select, subs_pos, pos, vel, acc, mass, dt, slider_pos, k):
     vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
 
     return (pos, vel, acc)
+
+
+def Integrate(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
+    if (integ == "EC"):
+        return EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
+    elif (integ == "VV"):
+        return VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
+    elif (integ == "RK4"):
+        return RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
