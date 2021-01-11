@@ -1,3 +1,8 @@
+import numpy as np
+from agent import agent
+
+cutoff = 4
+
 def AgentForce(pos, subs_pos, slider_pos, k):
     """
     -> The name "pos" is used for the position of the agent. This name is chosen to enable the usage of the RK4 integrator.
@@ -8,6 +13,8 @@ def AgentForce(pos, subs_pos, slider_pos, k):
     """
     lj_force = np.zeros((1, 3))
     spr_force = np.zeros((1, 3))
+
+    ##print(pos)
 
     disp = np.subtract(pos, slider_pos)
     r = np.subtract(pos, subs_pos)
@@ -26,9 +33,9 @@ def AgentForce(pos, subs_pos, slider_pos, k):
 
 
 
-    lj_force[0][0] = np.sum(48 * epsilon * np.power(sigma, 12) / np.power(rr[0], 13) - 24 * epsilon * np.power(sigma, 6) / np.power(rr[0], 7))
-    lj_force[0][1] = np.sum(48 * epsilon * np.power(sigma, 12) / np.power(rr[1], 13) - 24 * epsilon * np.power(sigma, 6) / np.power(rr[1], 7))
-    lj_force[0][2] = np.sum(48 * epsilon * np.power(sigma, 12) / np.power(rr[2], 13) - 24 * epsilon * np.power(sigma, 6) / np.power(rr[2], 7))
+    lj_force[0][0] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[0], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[0], 7))
+    lj_force[0][1] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[1], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[1], 7))
+    lj_force[0][2] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[2], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[2], 7))
 
     ##print(spr_force)
 
