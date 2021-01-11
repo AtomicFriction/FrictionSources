@@ -1,37 +1,25 @@
-"""
-PARSING
-*******
-takes file as a parameter with quotes
-then, reads file and parses it in a manner that:
-- all the characters are lowered by lower()
-- all the lines are splitted into a list by splitlines()
-- all the items of the list are also splitted into lists by
-        split(' = ') if they have ' = ' sign in them 
---------------------------------------------------
-DICTIONARY
-*******
-defines two dictionaries, sub_params and slider_params,
-by indexing from related block names till end sign '/'
---------------------------------------------------
-(!) block order is 'not' of importance in the input file
-(!) however, it is vital to call parser in the order:
-            substrate - agent - numba 
-(see paragraph below for detailed explanation)
---------------------------------------------------
-CALLING
-*******
-when creating a class, parser should be called with a placeholder
-so that only related parameters are assigned. examples as follows:
-        subs_param, _ , _ = parse('input.txt')
-        _ , agent_param, _ = parse('input.txt')
-"""
-
 def parse(file):
     with open(file, 'r') as f:
         params = [param.split(' = ') for param in f.read().lower().splitlines()]
-        # add error catcher
-    subs_ind, agent_ind, numba_ind = params.index(['&substrate']), params.index(['&slider']), params.index(['&numba'])
-    subs_param = dict(params[subs_ind+1:params.index(['/'], subs_ind)])
-    agent_param = dict(params[agent_ind+1:params.index(['/'], agent_ind)])
-    use_numba = dict(params[numba_ind+1:params.index(['/'], numba_ind)])
-    return subs_param, agent_param, use_numba
+
+    gen_ind, slid_ind = params.index(['&general']), params.index(['&slider'])
+    run_ind, subs_ind = params.index(['&run']),  params.index(['&substrate'])
+
+    gen = dict(params[gen_ind+1:params.index(['/'], gen_ind)])
+    run = dict(params[run_ind+1:params.index(['/'], run_ind)])
+    subs = dict(params[subs_ind+1:params.index(['/'], subs_ind)])
+    slid = dict(params[slid_ind+1:params.index(['/'], slid_ind)])
+
+    # raise error in conditions below
+    try:
+        dim = int(subs['dim'])
+        layers = int(subs['layers'])
+    except:
+        print("\n***\nEither number of dimensions or layers is not an integer.", \
+        "\nPlease enter integer numbers for dimension and layer numbers.\n***\n")
+    else:
+        if (dim == 1 or dim == 2) and (layers != 1):
+            print("\n***\nDimension and layer numbers are not matched.\nRecall that number", \
+            "of layers must be equal to one where the system is one or two-dimensional.\n***\n")
+
+    return gen, run, subs, slid
