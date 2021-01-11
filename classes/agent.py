@@ -2,7 +2,7 @@ import numpy as np
 from input_parser import parse
 
 """
-Uses the input data given by the user to initialize a sliding agent.
+Uses the input data given by the user to initialize an agent and a slider.
 """
 
 _ , agent_param, _ = parse('input.txt') ## Use the parser either here of inside the Run class.
@@ -30,15 +30,17 @@ class Agent:
 
         ## Initialize agent position, velocity and acceleration as (1 x 3) arrays depending on the user selected shape.
         if (self.shape == "single"):
-            ## There is an error here. Probably related to the parser.
+            ## There is a minor error here, not related to the parser.
             ## Do we need velocity and acceleration inputs from the user?
-            self.pos = [[float(agent_param["agent_pos"].split(" ")[0]), float(agent_param["agent_pos"].split(" ")[1]), float(agent_param["agent_pos"].split(" ")[2])]]
+            self.pos = [[float(agent_param["agent_pos"].split()[0]), float(agent_param["agent_pos"].split()[1]), float(agent_param["agent_pos"].split()[2])]]
 
-            self.vel = [[float(agent_param["agent_vel"].split(" ")[0]), float(agent_param["agent_vel"].split(" ")[1]), float(agent_param["agent_vel"].split(" ")[2])]]
+            self.vel = np.zeros((1, 3))
 
-            self.acc = [[float(agent_param["agent_acc"].split(" ")[0]), float(agent_param["agent_acc"].split(" ")[1]), float(agent_param["agent_acc"].split(" ")[2])]]
+            self.acc = np.zeros((1, 3))
 
 
         elif (self.shape == "hemisphere"):
             ## Not in use right now.
             pass
+
+agent = Agent()
