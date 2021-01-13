@@ -3,9 +3,7 @@ from numba import jit
 import agent
 from interactions import GetForces
 from tools import constrain
-
-dt = 0.01
-integ = "EC"
+import globals
 
 
 def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
@@ -15,11 +13,12 @@ def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     -> Working as expected so far, no detailed tests have been carried out.
     """
 
-    vel = vel + (acc * dt)
-    pos = pos + (vel * dt)
+    vel = vel + (acc * globals.dt)
+    pos = pos + (vel * globals.dt)
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
     ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
     (vel, acc) = constrain("none", vel, acc)
+    print(type(vel))
 
     return (pos, vel, acc)
 
@@ -30,13 +29,12 @@ def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     -> Uses a standard Velocity-Verlet integration algorithm.
     -> Working as expected so far, no detailed tests have been carried out.
     """
-    pos = (pos + ((vel * dt) + (0.5 * acc * (dt ** 2))))
-    vel = (vel + (0.5 * acc * dt))
+    pos = (pos + ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2))))
+    vel = (vel + (0.5 * acc * globals.dt))
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
-    vel = (vel + (0.5 * acc * dt))
+    vel = (vel + (0.5 * acc * globals.dt))
     ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
     (vel, acc) = constrain("none", vel, acc)
-
 
     return (pos, vel, acc)
 
@@ -47,17 +45,17 @@ def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     -> Uses a standard 4th Order Runge Kutta integration algorithm.
     -> Not sure if it is working as expected so far, no detailed tests have been carried out.
     """
-    k1y = dt * vel
-    k1v = dt * GetForces(force_select, pos, subs_pos, slider_pos, k)
+    k1y = vel * globals.dt
+    k1v = GetForces(force_select, pos, subs_pos, slider_pos, k) * globals.dt
 
-    k2y = dt * (vel + 0.5 * k1v)
-    k2v = dt * GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, k)
+    k2y = (vel + 0.5 * k1v) * globals.dt
+    k2v = GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, k) * globals.dt
 
-    k3y = dt * (vel + 0.5 * k2v)
-    k3v = dt * GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, k)
+    k3y = (vel + 0.5 * k2v) * globals.dt
+    k3v = GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, k) * globals.dt
 
-    k4y = dt * (vel + k3v)
-    k4v = dt * GetForces(force_select, pos + k3y, subs_pos, slider_pos, k)
+    k4y = (vel + k3v) * globals.dt
+    k4v = GetForces(force_select, pos + k3y, subs_pos, slider_pos, k) * globals.dt
 
     # Update next value of y
     pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
@@ -70,9 +68,9 @@ def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
 
 
 def Integrate(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
-    if (integ == "EC"):
+    if (globals.integrator == "ec"):
         return EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
-    elif (integ == "VV"):
+    elif (globals.integrator == "vv"):
         return VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
-    elif (integ == "RK4"):
+    elif (globals.integrator == "rk4"):
         return RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k)
