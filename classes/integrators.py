@@ -2,6 +2,7 @@ import numpy as np
 from numba import jit
 import agent
 from interactions import GetForces
+from tools import constrain
 
 dt = 0.01
 integ = "EC"
@@ -17,6 +18,8 @@ def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     vel = vel + (acc * dt)
     pos = pos + (vel * dt)
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
+    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    (vel, acc) = constrain("none", vel, acc)
 
     return (pos, vel, acc)
 
@@ -31,6 +34,9 @@ def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     vel = (vel + (0.5 * acc * dt))
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, k) / mass)
     vel = (vel + (0.5 * acc * dt))
+    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    (vel, acc) = constrain("none", vel, acc)
+
 
     return (pos, vel, acc)
 
@@ -56,6 +62,9 @@ def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, k):
     # Update next value of y
     pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
     vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
+
+    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    (vel, acc) = constrain("none", vel, acc)
 
     return (pos, vel, acc)
 
