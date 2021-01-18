@@ -43,4 +43,4 @@ class Agent:
             ## Not in use right now.
             pass
 
-agent = Agent()
+Agent = Agent()

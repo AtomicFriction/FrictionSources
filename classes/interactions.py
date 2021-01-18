@@ -1,7 +1,6 @@
 import numpy as np
 from agent import agent
-
-cutoff = 4
+import globals
 
 def AgentForce(pos, subs_pos, slider_pos, k):
     """
@@ -14,34 +13,28 @@ def AgentForce(pos, subs_pos, slider_pos, k):
     lj_force = np.zeros((1, 3))
     spr_force = np.zeros((1, 3))
 
-    ##print(pos)
-
     disp = np.subtract(pos, slider_pos)
+    print(disp)
     r = np.subtract(pos, subs_pos)
     r = r.tolist()
-
-    ##print(r)
 
     rr = [[], [], []]
 
     for i in range(3):
         for j in range(50):
-            if (r[j][i] <= cutoff and r[j][i] >= -cutoff and r[j][i] != 0):
+            if (r[j][i] <= globals.cutoff and r[j][i] >= -globals.cutoff and r[j][i] != 0):
                 rr[i].append(r[j][i])
-
-    ##print(rr)
-
-
 
     lj_force[0][0] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[0], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[0], 7))
     lj_force[0][1] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[1], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[1], 7))
     lj_force[0][2] = np.sum(48 * agent.epsilon * np.power(agent.sigma, 12) / np.power(rr[2], 13) - 24 * agent.epsilon * np.power(agent.sigma, 6) / np.power(rr[2], 7))
 
-    ##print(spr_force)
-
     spr_force[0][0] = - k * disp[0][0]
     spr_force[0][1] = - k * disp[0][1]
     spr_force[0][2] = - k * disp[0][2]
+
+    print("LJ:    " + str(lj_force))
+    print("SPR:    " + str(spr_force))
 
     return lj_force + spr_force
 
@@ -50,3 +43,5 @@ def AgentForce(pos, subs_pos, slider_pos, k):
 def GetForces(force_select, pos, subs_pos, slider_pos, k):
     if (force_select == "AGENT"):
         return AgentForce(pos, subs_pos, slider_pos, k)
+    elif (force_select == "SUBS"):
+        pass
