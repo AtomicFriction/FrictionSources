@@ -14,7 +14,7 @@ time = []
 ag_x = []
 
 for t in range(1000):
-    (agent.pos, agent.vel, agent.acc) = Integrate("AGENT", subs.R, agent.pos, agent.vel, agent.acc, agent.m, agent.slider_pos, agent.k)
+    (Agent.pos, Agent.vel, Agent.acc) = Integrate("AGENT", subs.R, Agent.pos, Agent.vel, Agent.acc, Agent.m, Agent.slider_pos, Agent.k)
 
     ##print(agent_pos)
     time.append(t)
