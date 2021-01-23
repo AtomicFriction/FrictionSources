@@ -15,6 +15,8 @@ ag_x = []
 
 for t in range(1000):
     (Agent.pos, Agent.vel, Agent.acc) = Integrate("AGENT", subs.R, Agent.pos, Agent.vel, Agent.acc, Agent.m, Agent.slider_pos, Agent.k)
+    (Substrate.R, Substrate.V, Substrate.A) = Integrate("SUBSTRATE", Substrate.R, Substrate.R, Substrate.V, Substrate.A, Agent.m, Agent.slider_pos, Agent.k, Substrate.k, Substrate.table, Substrate.latt_const)
+
 
     ##print(agent_pos)
     time.append(t)
