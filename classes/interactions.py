@@ -43,16 +43,17 @@ def SubstrateForce(pos, subs_pos, slider_pos, ag_k, neigh, subs_k, latt_const):
     subs_force = np.zeros(np.shape(pos))
     # index R, such that R[1:-1], to ignore boundaries
     # (at least for now, but it may be generalized to non-boundary conditions)
-    norm1 = np.linalg.norm(pos[neigh[1:-1]][:, 1] - pos[1:-1]) + np.nextafter(0,1)
-    norm2 = np.linalg.norm(pos[neigh[1:-1]][:, 0] - pos[1:-1]) + np.nextafter(0,1)
+    norm1 = np.linalg.norm(pos[neigh[1:-1]][:, 1] - pos[1:-1])
+    norm2 = np.linalg.norm(pos[neigh[1:-1]][:, 0] - pos[1:-1])
+
+    ##print(norm1)
 
     subs_force[1:-1] = subs_k * (norm1 - latt_const) * (pos[neigh[1:-1]][:, 1] - pos[1:-1]) / norm1 \
         +  subs_k * (norm2 - latt_const) * (pos[neigh[1:-1]][:, 0] - pos[1:-1]) / norm2
 
     lj_force = AgentForce(pos, subs_pos, slider_pos, ag_k)[1]
-    ##print(np.shape(lj_force))
-    ##print(np.shape(subs_force))
-    return subs_force - lj_force
+    
+    return np.subtract(subs_force, lj_force)
 
 
 ## A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
