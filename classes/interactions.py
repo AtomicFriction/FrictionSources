@@ -46,13 +46,11 @@ def SubstrateForce(pos, subs_pos, slider_pos, ag_k, neigh, subs_k, latt_const):
     norm1 = np.linalg.norm(pos[neigh[1:-1]][:, 1] - pos[1:-1])
     norm2 = np.linalg.norm(pos[neigh[1:-1]][:, 0] - pos[1:-1])
 
-    ##print(norm1)
-
     subs_force[1:-1] = subs_k * (norm1 - latt_const) * (pos[neigh[1:-1]][:, 1] - pos[1:-1]) / norm1 \
         +  subs_k * (norm2 - latt_const) * (pos[neigh[1:-1]][:, 0] - pos[1:-1]) / norm2
 
     lj_force = AgentForce(pos, subs_pos, slider_pos, ag_k)[1]
-    
+
     return np.subtract(subs_force, lj_force)
 
 
