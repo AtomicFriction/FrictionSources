@@ -16,7 +16,7 @@ def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_
     acc = (GetForces(force_select, pos, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) / mass)
     slider_pos = slider_pos + (slider_vel * globals.dt)
     ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
-    (vel, acc) = constrain("none", vel, acc)
+    (vel, acc) = constrain(globals.constrain, vel, acc)
     ##print(type(vel))
 
     return (pos, vel, acc), slider_pos
@@ -34,7 +34,7 @@ def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slid
     vel = (vel + (0.5 * acc * globals.dt))
     slider_pos = slider_pos + (slider_vel * globals.dt)
     ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
-    (vel, acc) = constrain("none", vel, acc)
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return (pos, vel, acc), slider_pos
 
@@ -64,7 +64,7 @@ def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_
     slider_pos = slider_pos + (slider_vel * globals.dt)
 
     ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
-    (vel, acc) = constrain("none", vel, acc)
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return (pos, vel, acc), slider_pos
 
