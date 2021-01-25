@@ -11,5 +11,5 @@ def constrain(direction, vel, acc):
         acc = acc * np.array([0, 1, 0])
         return (vel, acc)
 
-    elif (direction == "none"):
+    else:
         return (vel, acc)
