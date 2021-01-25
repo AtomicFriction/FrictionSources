@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import globals
 from agent import Agent
 from substrate import Substrate
 from integrators import Integrate
@@ -19,7 +20,7 @@ for t in range(1000):
         plt.xlabel("X")
         plt.ylabel("Y")
         plt.plot(R[:, 0], R[:, 1], "o", markerfacecolor = "b", markersize = 8)
-        plt.axis([0, Substrate.num, -5, 5])
+        plt.axis([0, globals.num, -5, 5])
         plt.plot(Agent.pos[0][0], Agent.pos[0][1], "s", markerfacecolor = "red", markersize = 8)
         plt.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], "|", markerfacecolor = "k", markersize = 16)
         plt.pause(0.01)
