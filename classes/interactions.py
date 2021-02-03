@@ -1,62 +1,78 @@
 import numpy as np
-from agent import Agent
+from numba import jit
+from interactions import GetForces
+from tools import constrain
 import globals
 
-def AgentForce(pos, subs_pos, slider_pos, ag_k):
-    """
-    -> The name "pos" is used for the position of the Agent. This name is chosen to enable the usage of the RK4 integrator.
-    -> Calculates the total force present on the Agent. Includes the lennard-jones force and the spring force.
-    -> Working as expected so far, no detailed tests have been carried out.
-    -> Needs the loop to be vectorized, work in progress.
-    -> Needs a careful dimensional analysis to make sure this is the correct implementation.
-    """
-    lj_force = np.zeros((1, 3))
-    spr_force = np.zeros((1, 3))
+"""
+Euler-Cromer integration scheme implementation. Uses the unified GetForces() function for the force/acceleration calculations.
+"""
+def EulerCromer(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc):
+    ## Updates of the target.
+    vel = vel + (acc * globals.dt)
+    pos = pos + (vel * globals.dt)
+    acc = (GetForces(force_select, ag_pos, subs_pos, slider_pos, neigh) / mass)
+    ## Updates of the slider, happens regardless of the target choice.
+    slider_pos = slider_pos + (slider_vel * globals.dt)
+    ## Operation to constrain the target, depends on the user input.
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
-    disp = np.subtract(pos, slider_pos)
-    r = np.subtract(pos, subs_pos)
-    r = r.tolist()
-
-    rr = [[], [], []]
-
-    for i in range(3):
-        for j in range(50):
-            if (r[j][i] <= globals.cutoff and r[j][i] >= -globals.cutoff and r[j][i] != 0):
-                rr[i].append(r[j][i])
-
-    lj_force[0][0] = np.sum(48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr[0], 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr[0], 7))
-    lj_force[0][1] = np.sum(48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr[1], 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr[1], 7))
-    lj_force[0][2] = np.sum(48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr[2], 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr[2], 7))
-
-    spr_force[0][0] = - ag_k * disp[0][0]
-    spr_force[0][1] = - ag_k * disp[0][1]
-    spr_force[0][2] = - ag_k * disp[0][2]
-
-    ##print("LJ:    " + str(lj_force))
-    ##print("SPR:    " + str(spr_force))
-    ##print(np.shape(lj_force))
-
-    return (lj_force + spr_force, lj_force)
+    return (pos, vel, acc), slider_pos
 
 
-def SubstrateForce(pos, subs_pos, slider_pos, ag_k, neigh, subs_k, latt_const):
-    subs_force = np.zeros(np.shape(pos))
-    # index R, such that R[1:-1], to ignore boundaries
-    # (at least for now, but it may be generalized to non-boundary conditions)
-    norm1 = np.linalg.norm(pos[neigh[1:-1]][:, 1] - pos[1:-1])
-    norm2 = np.linalg.norm(pos[neigh[1:-1]][:, 0] - pos[1:-1])
+"""
+Velocity-Verlet integration scheme implementation. Uses the unified GetForces() function for the force/acceleration calculations.
+"""
+def VelocityVerlet(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc):
+    ## Updates of the target.
+    pos = (pos + ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2))))
+    vel = (vel + (0.5 * acc * globals.dt))
+    acc = (GetForces(force_select, ag_pos, subs_pos, slider_pos, neigh) / mass)
+    vel = (vel + (0.5 * acc * globals.dt))
+    ## Updates of the slider, happens regardless of the target choice.
+    slider_pos = slider_pos + (slider_vel * globals.dt)
+    ## Operation to constrain the target, depends on the user input.
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
-    subs_force[1:-1] = subs_k * (norm1 - latt_const) * (pos[neigh[1:-1]][:, 1] - pos[1:-1]) / norm1 \
-        +  subs_k * (norm2 - latt_const) * (pos[neigh[1:-1]][:, 0] - pos[1:-1]) / norm2
-
-    lj_force = AgentForce(pos, subs_pos, slider_pos, ag_k)[1]
-
-    return np.subtract(subs_force, lj_force)
+    return (pos, vel, acc), slider_pos
 
 
-## A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
-def GetForces(force_select, pos, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const):
-    if (force_select == "AGENT"):
-        return AgentForce(pos, subs_pos, slider_pos, ag_k)[0]
-    elif (force_select == "SUBSTRATE"):
-        return SubstrateForce(pos, subs_pos, slider_pos, ag_k, neigh, subs_k, latt_const)
+"""
+4th Order Runge-Kutta integration scheme implementation. Uses the unified GetForces() function for the force/acceleration calculations.
+-> Problematic right now. Needs substrate-agent control.
+-> I don't want to fix it for a while, before eveything settles down.
+"""
+def RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc):
+    ## Preliminary calculations for the updates of the target.
+    k1y = vel * globals.dt
+    k1v = GetForces(force_select, ag_pos, subs_pos, slider_pos, neigh) * globals.dt
+
+    k2y = (vel + 0.5 * k1v) * globals.dt
+    k2v = GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, neigh) * globals.dt
+
+    k3y = (vel + 0.5 * k2v) * globals.dt
+    k3v = GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, neigh) * globals.dt
+
+    k4y = (vel + k3v) * globals.dt
+    k4v = GetForces(force_select, pos + k3y, subs_pos, slider_pos, neigh) * globals.dt
+
+    ## Updates of the target.
+    pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
+    vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
+
+    ## Updates of the slider, happens regardless of the target choice.
+    slider_pos = slider_pos + (slider_vel * globals.dt)
+
+    ## Operation to constrain the target, depends on the user input.
+    (vel, acc) = constrain(globals.constrain, vel, acc)
+
+    return (pos, vel, acc), slider_pos
+
+## A method to unify all of the integration functions in one. This is needed for later use in the main function.
+def Integrate(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc):
+    if (globals.integrator == "ec"):
+        return EulerCromer(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc)
+    elif (globals.integrator == "vv"):
+        return VelocityVerlet(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc)
+    elif (globals.integrator == "rk4"):
+        return RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc)
