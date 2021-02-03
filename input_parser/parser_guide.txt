@@ -15,20 +15,21 @@ DICTIONARY
 defines two dictionaries, sub_params and slider_params,
 by indexing from related block names till end sign '/'
 
-
 --------------------------------------------------
 (!) block order is 'not' of importance in the input file;
 (!) however, since the parser returns the parameters in a 
     specific order, it is vital to call parser in the order:
-         general - run - substrate - slider - numba 
+
+general - protocol - analysis - substrate - slider - thermostat 
 
 (see paragraph below for detailed explanation)
 --------------------------------------------------
+
 ___________________________________________________________
 
 CALLING
 *******
 when creating a class, parser should be called with placeholders
 so that only related parameters are assigned. examples as follows:
-        _, _, subs_param, _ = parse('input.txt')
-        _, _, _, , slid_param = parse('input.txt')
+        _, _, _, subs_param, _, _ = parse('input.txt')
+        _, _, _, _, slid_param, _ = parse('input.txt')
