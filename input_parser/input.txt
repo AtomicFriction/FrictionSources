@@ -1,12 +1,12 @@
 &general
-cutoff = 4
+cutoff = 8.5
 interact = LJ
 /
 &protocol
 numba = True
 nsteps = 1000
 dt = 0.1
-run = [1 1 300 1 300 10000 300 300 1000000]
+run = 3 1 1 300 1 300 100 300 300 100
 integ = EC
 /
 &analysis
@@ -21,23 +21,22 @@ dim = 1
 layers = 1
 num = 50
 bound_cond = fixed
-latt_const = 2
-cuto_const = 3
+latt_const = 5.26
+cuto_const = 8.5
 displace_type = random
-k = 7
-mass = 1
+k = 0.0514
+mass = 40
 /
 &slider
-mass = 1
-spacing = 1
-k = 0.1
+mass = 40
+k = 0.0514
 shape = single
-sigma = 0.000000000000000000000000000000000000000000000001
-epsilon = 0.000000000000000000000000000000000000000000000001
-agent_pos = 25 0.5 0
-agent_vel = 0 0 0
-slider_pos = 23 0.5 0
-slider_vel = 0.1 0 0
+sigma = 3.4
+epsilon = 0.0103
+agent_pos = 25 1 0
+slider_pos = 24 1 0
+slider_vel = 0.001 0 0
+eq_len = 0.5
 constrain = none
 /
 &thermostat
