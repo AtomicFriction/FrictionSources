@@ -1,32 +1,37 @@
 ## Global definitions here.
 from input_parser import parse
 
-
-gen_param, _, _, _ = parse('input.txt')
+# General
+gen_param, _, _, _, _, _ = parse('input.txt')
 
 cutoff = float(gen_param['cutoff'])
-##################################################
-##################################################
-_, run_param, _, _ = parse('input.txt')
 
-dt = float(run_param['dt'])
-integrator = (run_param['integ'])
-run = (run_param['run'])
-##################################################
-##################################################
-_, _, subs_param, _ = parse('input.txt')
+# Protocol
+_, prot_param, _, _, _, _ = parse('input.txt')
+
+dt = float(prot_param['dt'])
+integrator = (prot_param['integ'])
+run = (prot_param['run'])
+
+# Substrate
+_, _, _, subs_param, _, _= parse('input.txt')
 
 num = int(subs_param['num'])
 subs_k = float(subs_param['k'])
 latt_const = float(subs_param['latt_const'])
-##################################################
-##################################################
-_, _, _, agent_param = parse('input.txt')
 
-constrain = str(agent_param['constrain'])
-eq_len = float(agent_param['eq_len'])
-agent_k = float(agent_param['k'])
-##################################################
-##################################################
+# Slider
+_, _, _, _, slid_param, _ = parse('input.txt')
 
+constrain = str(slid_param['constrain'])
+eq_len = float(slid_param['eq_len'])
+slid_k = float(slid_param['k'])
+
+# Thermostats
+
+_, _, _, _, _, thermo_param = parse('input.txt')
+
+tau = float(thermo_param['tau'])
+s, Q = float(thermo_param['s']), float(thermo_param['q'])
+gamma = float(thermo_param['gamma'])
 boltz = 8.617333262 * 10**(-5)
