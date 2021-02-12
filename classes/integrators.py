@@ -3,76 +3,79 @@ from numba import jit
 from interactions import GetForces
 from tools import constrain
 import globals
+from agent import Agent
 
-
-def EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const):
-    """
-    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
-    -> Uses a standard Euler-Cromer integration algorithm.
-    -> Working as expected.
-    """
+"""
+Euler-Cromer integration scheme implementation.
+Uses the unified GetForces() function for the force/acceleration calculations.
+"""
+def EulerCromer(force_select, pos, vel, acc, mass):
+    ## Updates of the target.
     vel = vel + (acc * globals.dt)
     pos = pos + (vel * globals.dt)
-    acc = (GetForces(force_select, pos, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) / mass)
-    slider_pos = slider_pos + (slider_vel * globals.dt)
-    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    acc = (GetForces(force_select) / mass)
+    ## Updates of the slider, happens regardless of the target choice.
+    slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
+    ## Operation to constrain the target, depends on the user input.
     (vel, acc) = constrain(globals.constrain, vel, acc)
-    ##print(type(vel))
 
     return (pos, vel, acc), slider_pos
 
 
-def VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const):
-    """
-    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
-    -> Uses a standard Velocity-Verlet integration algorithm.
-    -> Working as expected so far.
-    """
+"""
+Velocity-Verlet integration scheme implementation.
+Uses the unified GetForces() function for the force/acceleration calculations.
+"""
+def VelocityVerlet(force_select, pos, vel, acc, mass):
+    ## Updates of the target.
     pos = (pos + ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2))))
     vel = (vel + (0.5 * acc * globals.dt))
-    acc = (GetForces(force_select, pos, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) / mass)
+    acc = (GetForces(force_select) / mass)
     vel = (vel + (0.5 * acc * globals.dt))
-    slider_pos = slider_pos + (slider_vel * globals.dt)
-    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    ## Updates of the slider, happens regardless of the target choice.
+    slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
+    ## Operation to constrain the target, depends on the user input.
     (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return (pos, vel, acc), slider_pos
 
 
-def RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const):
-    """
-    -> Takes force values from the unified "GetForces()" function, uses that to obtain acceleration values.
-    -> Uses a standard 4th Order Runge Kutta integration algorithm.
-    -> Not sure if it is working as expected.
-    """
+"""
+4th Order Runge-Kutta integration scheme implementation. Uses the unified GetForces() function for the force/acceleration calculations.
+-> Problematic right now. Needs substrate-agent control.
+-> I don't want to fix it for a while, before eveything settles down.
+"""
+def RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc):
+    ## Preliminary calculations for the updates of the target.
     k1y = vel * globals.dt
-    k1v = GetForces(force_select, pos, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) * globals.dt
+    k1v = GetForces(force_select, ag_pos, subs_pos, slider_pos, neigh) * globals.dt
 
     k2y = (vel + 0.5 * k1v) * globals.dt
-    k2v = GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) * globals.dt
+    k2v = GetForces(force_select, pos + 0.5 * k1y, subs_pos, slider_pos, neigh) * globals.dt
 
     k3y = (vel + 0.5 * k2v) * globals.dt
-    k3v = GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) * globals.dt
+    k3v = GetForces(force_select, pos + 0.5 * k2y, subs_pos, slider_pos, neigh) * globals.dt
 
     k4y = (vel + k3v) * globals.dt
-    k4v = GetForces(force_select, pos + k3y, subs_pos, slider_pos, ag_k, subs_k, neigh, latt_const) * globals.dt
+    k4v = GetForces(force_select, pos + k3y, subs_pos, slider_pos, neigh) * globals.dt
 
-    # Update next value of y
+    ## Updates of the target.
     pos = pos + (k1y + 2 * k2y + 2 * k3y + k4y) / 6.0
     vel = vel + (k1v + 2 * k2v + 2 * k3v + k4v) / 6.0
 
+    ## Updates of the slider, happens regardless of the target choice.
     slider_pos = slider_pos + (slider_vel * globals.dt)
 
-    ## Perform a quick array multiplication to constrain the movement. Takes inputs "x", "y" and "none".
+    ## Operation to constrain the target, depends on the user input.
     (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return (pos, vel, acc), slider_pos
 
-
-def Integrate(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const):
+## A method to unify all of the integration functions in one. This is needed for later use in the main function.
+def Integrate(force_select, pos, vel, acc, mass):
     if (globals.integrator == "ec"):
-        return EulerCromer(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const)
+        return EulerCromer(force_select, pos, vel, acc, mass)
     elif (globals.integrator == "vv"):
-        return VelocityVerlet(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const)
+        return VelocityVerlet(force_select, pos, vel, acc, mass)
     elif (globals.integrator == "rk4"):
-        return RK4(force_select, subs_pos, pos, vel, acc, mass, slider_pos, slider_vel, ag_k, subs_k, neigh, latt_const)
+        return RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc)
