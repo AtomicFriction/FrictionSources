@@ -1,7 +1,6 @@
 import numpy as np
 import globals
 
-
 """
 Constrains the motion to the desired axis by simple matrix multiplications.
 
@@ -40,7 +39,7 @@ For input n x y z k l m :
 def RunConf():
     conf_arr = []
     for i in range(int(globals.run[0])):
-        conf_arr.append([int(globals.run.split(" ")[(3 * i) + 1]), int(globals.run.split(" ")[(3 * i) + 2]), int(globals.run.split(" ")[(3 * i) + 3])])
+        conf_arr.append([float(globals.run.split(" ")[(3 * i) + 1]), float(globals.run.split(" ")[(3 * i) + 2]), float(globals.run.split(" ")[(3 * i) + 3])])
 
     conf_arr = np.array(conf_arr)
 
@@ -53,19 +52,31 @@ Int and float inputs are fine, like the ordinary "/" operator.
 
 """
 def SafeDivision(x, y):
-    res = ( x / y ) if y != 0 else 0
+    res = ( x / y ) if y.any() != 0 else 0
     return res
 
 
 """
 Switcher for the output dump. Will be coded with care afterwards, just a structure for now.
+For input: ndump, ff, etot, ke, pe
+ndump: 1000
+data: ndump ff etot ke pe
 """
-def AnalysisSwitch(options):
+def AnalysisSwitch(options_list):
     switcher = {
-            Ndump : 0,
-            Ff : 0,
-            Etot : 0,
-            KE : 0,
-            PE : 0
+            "ff" in options_list : CalcFF(),
+            "etot" in options_list : CalcEtot(),
+            "ke" in options_list : CalcKE(),
+            "pe" in options_list : CalcPE(),
+            "e" in options_list : MethodE()
         }
-    return switcher.get(options, "Invalid option.")
+    for i in range(0, len(options_list)):
+        return switcher.get(options_list[i], "Invalid option.")
+
+
+def AnalysisList():
+    options_list = []
+    for i in range(int(globals.data[0])):
+        options_list.append(globals.data.split(" ")[i + 1])
+
+    return options_list
