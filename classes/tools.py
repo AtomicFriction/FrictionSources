@@ -62,21 +62,32 @@ For input: ndump, ff, etot, ke, pe
 ndump: 1000
 data: ndump ff etot ke pe
 """
-def AnalysisSwitch(options_list):
+def AnalysisSwitcher(sel):
     switcher = {
-            "ff" in options_list : CalcFF(),
-            "etot" in options_list : CalcEtot(),
-            "ke" in options_list : CalcKE(),
-            "pe" in options_list : CalcPE(),
-            "e" in options_list : MethodE()
-        }
-    for i in range(0, len(options_list)):
-        return switcher.get(options_list[i], "Invalid option.")
+            "ff": FrictionForce(),
+            "etot": Etotal(),
+            "ke": KE(),
+            "pe": PE()
+                }
+    out = switcher.get(sel)
+    return out
 
 
+"""
+Reads the data row in the input file. Outputs it as a list.
+For input: 4 ff etot ke pe ("4" is for the number of selections. This is to make my job easier, may remove it in the future.)
+Output: ['ff', 'etot', 'ke', 'pe']
+"""
 def AnalysisList():
     options_list = []
     for i in range(int(globals.data[0])):
         options_list.append(globals.data.split(" ")[i + 1])
-
     return options_list
+
+
+"""
+The main analyzer will be configured after the individual functions in the switcher. Needs the already written "for loop" for now, I wrote it now so that I won't forget how it works later :DD
+"""
+def Analyze(data_list):
+    for i in range(0, len(data_list)):
+        AnalysisSwitcher(data_list[i])
