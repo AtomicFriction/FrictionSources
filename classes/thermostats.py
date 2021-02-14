@@ -43,10 +43,8 @@ def nosehoover(mass, R):
             restart the program with another thermostat.\n\n")
     return quit()
 
-def langevin(T_aim, M, V, F, f):
-    deriv_wiener = None
-    F_thermo = F - globals.gamma * M * V + (2 * globals.boltz * T_aim * globals.gamma * M)**(1/2) * dW
-    print("\n\nThis thermostat is not implementable yet.\n \
-            If you want to proceed with another thermostat, \
-            restart the program with another thermostat.\n\n")
-    return quit()
+def langevin(T, mass, V_inst):
+    comp1 = np.exp(-globals.gamma*globals.dt) * V_inst
+    comp2 = np.random.normal() * np.sqrt(boltz*T/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
+    V = comp1 + comp2
+    return V
