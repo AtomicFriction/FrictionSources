@@ -1,7 +1,6 @@
 import numpy as np
 import globals
 
-
 """
 Constrains the motion to the desired axis by simple matrix multiplications.
 
@@ -40,7 +39,7 @@ For input n x y z k l m :
 def RunConf():
     conf_arr = []
     for i in range(int(globals.run[0])):
-        conf_arr.append([int(globals.run.split(" ")[(3 * i) + 1]), int(globals.run.split(" ")[(3 * i) + 2]), int(globals.run.split(" ")[(3 * i) + 3])])
+        conf_arr.append([float(globals.run.split(" ")[(3 * i) + 1]), float(globals.run.split(" ")[(3 * i) + 2]), float(globals.run.split(" ")[(3 * i) + 3])])
 
     conf_arr = np.array(conf_arr)
 
@@ -53,19 +52,39 @@ Int and float inputs are fine, like the ordinary "/" operator.
 
 """
 def SafeDivision(x, y):
-    res = ( x / y ) if y != 0 else 0
+    res = ( x / y ) if y.any() != 0 else 0
     return res
 
 
 """
 Switcher for the output dump. Will be coded with care afterwards, just a structure for now.
+For input: ndump, ff, etot, ke, pe
+ndump: 1000
+data: ndump ff etot ke pe
 """
-def AnalysisSwitch(options):
+def AnalysisSwitcher(sel):
     switcher = {
-            Ndump : 0,
-            Ff : 0,
-            Etot : 0,
-            KE : 0,
-            PE : 0
-        }
-    return switcher.get(options, "Invalid option.")
+            "ff": FrictionForce(),
+            "etot": Etotal(),
+            "ke": KE(),
+            "pe": PE()
+                }
+    out = switcher.get(sel)
+    return out
+
+
+"""
+Reads the data row in the input file. Outputs it as a list.
+For input: 4 ff etot ke pe ("4" is for the number of selections. This is to make my job easier, may remove it in the future.)
+Output: ['ff', 'etot', 'ke', 'pe']
+"""
+def AnalysisList():
+    return (globals.data.split(" "))
+
+
+"""
+The main analyzer will be configured after the individual functions in the switcher. Needs the already written "for loop" for now, I wrote it now so that I won't forget how it works later :DD
+"""
+def Analyze(data_list):
+    for i in range(0, len(data_list)):
+        AnalysisSwitcher(data_list[i])
