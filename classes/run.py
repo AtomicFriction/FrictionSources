@@ -8,6 +8,10 @@ from integrators import Integrate
 from tools import RunConf, AnalysisList
 from thermostats import ApplyThermostat
 
+print(AnalysisList())
+temperature_conf = RunConf()
+print(temperature_conf)
+
 """
 -> sigma is in Angstroms.
 -> epsilon is in eV.
@@ -24,22 +28,21 @@ time = []
 ag_x = []
 ag_y = []
 
-temperature_conf = RunConf()
-
 if (dev_select == "anim"):
     plt.figure()
     for i in range(len(temperature_conf)):
         for j in range(int(temperature_conf[i][2])):
-            with plt.style.context(('dark_background')):
-                R = Substrate.R
-                plt.xlabel("X Position")
-                plt.ylabel("Y Position")
-                plt.plot(R[:, 0], R[:, 1], "o", markerfacecolor = "b", markersize = 8)
-                plt.axis([0, globals.latt_const * (globals.num), -10, 10])
-                plt.plot(Agent.pos[0][0], Agent.pos[0][1], "s", markerfacecolor = "red", markersize = 8)
-                plt.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], "|", markerfacecolor = "k", markersize = 16)
-                plt.pause(0.01)
-                plt.clf()
+            if (j % 100 == 0):
+                with plt.style.context(('dark_background')):
+                    R = Substrate.R
+                    plt.xlabel("X Position")
+                    plt.ylabel("Y Position")
+                    plt.plot(R[:, 0], R[:, 1], "o", markerfacecolor = "b", markersize = 8)
+                    plt.axis([0, globals.latt_const * (globals.num), -10, 10])
+                    plt.plot(Agent.pos[0][0], Agent.pos[0][1], "s", markerfacecolor = "red", markersize = 8)
+                    plt.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], "|", markerfacecolor = "k", markersize = 16)
+                    plt.pause(0.01)
+                    plt.clf()
 
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
