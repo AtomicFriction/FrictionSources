@@ -45,6 +45,8 @@ def nosehoover(mass, R):
 
 def langevin(T_inst, mass, V_inst):
     comp1 = np.exp(-globals.gamma*globals.dt) * V_inst
-    comp2 = np.random.normal(V_inst.shape) * np.sqrt(boltz*T_inst/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
+    comp2 = np.random.normal(size=V_inst.shape) * np.sqrt(boltz*T_inst/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
+    print(comp1.shape, comp2.shape)
     V = comp1 + comp2
     return V
+
