@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.spatial import distance
+
 from agent import Agent
 from substrate import Substrate
 import globals
@@ -12,28 +14,22 @@ dev_analyze = input("Want to see forces? y/n:    ")
 -> Includes the lennard-jones force and the spring force.
 """
 def AgentForce():
-    lj_force = np.zeros((1, 3))
+    lj = []
 
-    r = np.subtract(Agent.pos, Substrate.R)
-    r = r.tolist()
+    dist = distance.cdist(Agent.pos, Substrate.R, 'euclidean')
 
-    ##print(np.shape(r))
+    cutoff = (dist != 0) & (dist < globals.cutoff) * 1
+    extract = np.where(cutoff == 1)
+    idx = np.unique(extract[0], return_index=True)
+    table = np.array_split(extract[1], idx[1])[1:]
 
-    rr = [[0, 0, 0]]
+    for i in range(0, len(table[0])):
+        rr = dist[0][table[0][i]]
+        dir = np.subtract(Agent.pos, Substrate.R[table[0][i]]) / rr
+        lj_force_comp = (48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr, 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr, 7)) * dir
+        lj.append(lj_force_comp)
 
-    for j in range(globals.num):
-        dist_r = np.sqrt((r[j][0] ** 2) + (r[j][1] ** 2) + (r[j][2] ** 2))
-        if ((dist_r) <= globals.cutoff):
-            rr = np.concatenate((rr, [r[j]]))
-
-    rr = np.delete(rr, 0, 0)
-
-    ##print(rr)
-
-    ## Lennard-Jones Force implementation in 3D.
-    lj_force[0][0] = np.sum(48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr[:, 0], 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr[:, 0], 7))
-    lj_force[0][1] = np.sum(48 * Agent.epsilon * np.power(Agent.sigma, 12) / np.power(rr[:, 1], 13) - 24 * Agent.epsilon * np.power(Agent.sigma, 6) / np.power(rr[:, 1], 7))
-    lj_force[0][2] = np.sum(48 * Agent.epsilon * SafeDivision(np.power(Agent.sigma, 12), np.power(rr[:, 2], 13)) - 24 * Agent.epsilon * SafeDivision(np.power(Agent.sigma, 6), np.power(rr[:, 2], 7)))
+    lj_force = np.sum(lj, axis = 0)
 
     ## Hooke's Law implementation. The equiliblium length taken as an input on the x-axis.
     spr_force = np.zeros((1, 3))
@@ -71,7 +67,6 @@ def SubstrateForce():
     subs_force[1:-1] = SafeDivision(a, norm1) + SafeDivision(b, norm2)
 
     lj_force = AgentForce()[1]
-    ##lj_force = 0
     subs_force = np.subtract(subs_force, lj_force)
 
     return subs_force
