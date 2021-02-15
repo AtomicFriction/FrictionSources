@@ -43,8 +43,8 @@ def nosehoover(mass, R):
             restart the program with another thermostat.\n\n")
     return quit()
 
-def langevin(T, mass, V_inst):
+def langevin(T_inst, mass, V_inst):
     comp1 = np.exp(-globals.gamma*globals.dt) * V_inst
-    comp2 = np.random.normal() * np.sqrt(boltz*T/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
+    comp2 = np.random.normal(V_inst.shape) * np.sqrt(boltz*T_inst/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
     V = comp1 + comp2
     return V
