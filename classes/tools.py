@@ -79,10 +79,7 @@ For input: 4 ff etot ke pe ("4" is for the number of selections. This is to make
 Output: ['ff', 'etot', 'ke', 'pe']
 """
 def AnalysisList():
-    options_list = []
-    for i in range(int(globals.data[0])):
-        options_list.append(globals.data.split(" ")[i + 1])
-    return options_list
+    return (globals.data.split(" "))
 
 
 """
