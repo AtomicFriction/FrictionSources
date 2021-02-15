@@ -3,22 +3,19 @@ from scipy.spatial import distance
 import numpy as np
 
 """
-Makes use of the parser to get
-parameter for substrate class
-then, creates the substrate class
-
 ---------------------------------
 
-For the sake of the simulation to run well,
+For the sake of simulation to run well,
 Call find_neighbor first, then init_disp.
 
 ---------------------------------
 """
+## it's to be modified for periodic conditions.
 
-_ , _ , subs_param, _ = parse('input.txt')
+_, _, _, subs_param, _, _ = parse('input.txt')
 class Substrate():
     def __init__(self):
-        # parameters
+        # define parameters
         self.k = float(subs_param['k'])
         self.dim = int(subs_param['dim'])
         self.num = int(subs_param['num'])
@@ -28,77 +25,81 @@ class Substrate():
         self.displace_type = subs_param['displace_type']
         self.latt_const = float(subs_param['latt_const'])
         self.cuto_const = float(subs_param['cuto_const'])
-
+        
+        # initialize position and trap
         if self.dim == 1:
-            Rx = np.vstack(np.arange(self.num)) * self.latt_const
-            Ry = Rz = np.vstack(np.zeros(self.num))
+            zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:1, 0:self.num] * self.latt_const
+            Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
-            self.V = np.zeros(np.shape(self.R))
-            self.A = np.zeros(np.shape(self.R))
+
+            if self.bound_cond == 'fixed':
+                self.trap = np.where(\
+                    (self.R[:, 0] != 0) & (self.R[:, 0] != (self.num-1)*self.latt_const))
+                    
+            elif self.bound_cond == 'periodic':
+                print("Periodic boundary condition is not implented yet.\n")
+                quit()
 
         elif self.dim == 2:
-            ygrid, xgrid = np.mgrid[0:self.num, 0:self.num] * self.latt_const
-            Rx = np.vstack(xgrid.ravel())
-            Ry = np.vstack(ygrid.ravel())
-            self.R = np.hstack((Rx, Ry))
-            Rz = np.zeros(np.shape(self.R)[0])
-            self.R = np.column_stack((self.R, Rz))
+            zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:self.num, 0:self.num] * self.latt_const
+            Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
+            self.R = np.hstack((Rx, Ry, Rz))
+
+            if self.bound_cond == 'fixed':
+                self.trap = np.where(\
+                    (self.R[:, 0] != 0) & (self.R[:, 0] != (self.num-1) * self.latt_const) & \
+                    (self.R[:, 1] != 0) & (self.R[:, 1] != (self.num-1) * self.latt_const))
+                    
+            elif self.bound_cond == 'periodic':
+                print("Periodic boundary condition is not implented yet.\n")
+                quit()
 
         elif self.dim == 3:
-            ygrid, xgrid = np.mgrid[0:self.num, 0:self.num] * self.latt_const
-            Rx = np.vstack(xgrid.ravel())
-            Ry = np.vstack(ygrid.ravel())
-            self.R = np.hstack((Rx, Ry))
-            self.R = np.expand_dims(self.R, axis=0)
-            self.R = np.repeat(self.R, self.layers, axis=0)
-            Rz = [[z] for z in list(range(self.layers))] # consider vectorization
-            self.R = np.insert(self.R, 2, Rz, axis=2)
+            zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:self.num, 0:self.num] * self.latt_const
+            Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
+            self.R = np.hstack((Rx, Ry, Rz))
 
-    def find_neighbor(self):
-        if self.dim == 1:
             if self.bound_cond == 'fixed':
-                dist = distance.cdist(self.R, self.R, 'euclidean')
-                cutoff = (dist != 0) & (dist < self.cuto_const) * 1
-                extract = np.where(cutoff == 1)
-                idx = np.unique(extract[0], return_index=True)
-                self.table = np.array_split(extract[1], idx[1])[1:]
-
-            elif self.bound_cond == 'periodic': # to be updated for distance-wise computation
-                R_min = np.tile(self.R, 2)[len(self.R)-1:2*len(self.R)-1]
-                R_plus = np.tile(self.R, 2)[1:len(self.R)+1]
-                self.table = np.hstack((np.vstack(R_min), np.vstack(R_plus)))
-
-        elif self.dim == 2:
-            if self.bound_cond == 'fixed':
-                self.boundary = (self.R[:][0:2] != 0) & \
-                    (self.R[:][0:2] != (self.num - 1) * self.latt_const)
-                dist = distance.cdist(self.R, self.R, 'euclidean')
-                self.cutoff = (dist < self.cuto_const)
-                """ print("\n---------\nProgram is not applicable for fixed boundary conditions yet.\n")
-                print("Please change the condition to 'periodic' and restart the program with periodic condition.\n---------") """
-                return
-
+                self.trap = np.where(\
+                    (self.R[:, 0] != 0) & (self.R[:, 0] != (self.num-1) * self.latt_const) & \
+                    (self.R[:, 1] != 0) & (self.R[:, 1] != (self.num-1) * self.latt_const) & \
+                    (self.R[:, 2] != 0) & (self.R[:, 2] != (self.layers-1) * self.latt_const))
             elif self.bound_cond == 'periodic':
-                Nx = np.vstack(np.pad(np.arange(len(self.R)), (1, 1), 'constant', constant_values=(self.num-1, len(self.R)-self.num)))
-                Ny = np.vstack(np.pad(np.arange(len(self.R)), (self.num, self.num), 'wrap')) # unpacked array of neighbor indices
-                self.table = np.hstack((Ny[:-2*(self.num)], Nx[:-2], Nx[2:], Ny[2*(self.num):]))
+                print("Periodic boundary condition is not implented yet.\n")
+                quit()
 
-        elif self.dim == 3: # add boundary check
-            print("\n---------\nProgram is not applicable for 3-dimensional atomic systems yet.\n")
-            print("Please change the dimension and restart the program to either 1D or 2D.\n---------")
-            return
+        # initialize velocity and acceleration
+        self.V = np.zeros(np.shape(self.R))
+        self.A = np.zeros(np.shape(self.R))
+        
+    def find_neighbor(self):
+        if self.bound_cond == 'fixed':
+            dist = distance.cdist(self.R, self.R, 'euclidean')
+            cutoff = (dist != 0) & (dist < self.cuto_const) * 1
+            extract = np.where(cutoff == 1)
+            idx = np.unique(extract[0], return_index=True)
+            self.N = np.array(np.split(extract[1], idx[1])[1:])
+                
+        elif self.bound_cond == 'periodic': 
+            print('Neighbor table is not implemented for periodic boundary condition yet.\n')
+            quit()
 
     def init_disp(self):
-        # since R is a Nx3 array regardless of the dimension,
-        # all the displacement functions are to be modified.
-        # Furthermore, it's to be modified for periodic conditions.
         if self.displace_type == 'random':
             if self.dim == 1:
-                # seek more convenient way for below
-                self.R[1:-1, 0:2] = self.R[1:-1, 0:2] + (np.random.rand(*np.shape(self.R[1:-1, 0:2])) - 0.5) * 0.1
-            elif self.dim == 3:
-                self.R = self.R + (np.random.rand(*np.shape(self.R)) - 0.5) * 0.1
+                if self.bound_cond == 'fixed':
+                    self.R[self.trap, 0:2] += (np.random.rand(*np.shape(self.R[self.trap, 0:2])) - 0.5) * 0.1
 
+                elif self.bound_cond == 'periodic':
+                    self.R[:, 0:2] += (np.random.rand(*np.shape(self.R[:, 0:2])) - 0.5) * 0.1
+
+            elif self.dim != 1:
+                if self.bound_cond == 'fixed':
+                    self.R[self.trap] += (np.random.rand(*np.shape(self.R[self.trap])) - 0.5) * 0.1
+
+                elif self.bound_cond == 'periodic':
+                    self.R += (np.random.rand(*np.shape(self.R)) - 0.5) * 0.1
+            
         elif self.displace_type == 'sinusoidal':
             print('Sinusoidal displacement is not implemented yet.\n')
             choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
@@ -125,8 +126,4 @@ class Substrate():
                 return
             else:
                 print('You either made an invalid request or the property you requested must be written differently.\n')
-                choice = input("If you want to continue with the feault displacement 'random', press enter.\nIf not, write 'quit'.")
-
-Substrate = Substrate()
-Substrate.find_neighbor()
-Substrate.init_disp()
+                choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
