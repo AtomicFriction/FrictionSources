@@ -72,6 +72,9 @@ def AnalysisSwitcher(sel):
     out = switcher.get(sel)
     return out
 
+def KE(V, m):
+    kinergy = 1/2*m*np.sum(V**2)
+    return kinergy
 
 """
 Reads the data row in the input file. Outputs it as a list.
