@@ -2,7 +2,7 @@ import numpy as np
 import globals
 
 """
-Constrains the motion to the desired axis by simple matrix multiplications.
+-> Constrains the motion to the desired axis by simple matrix multiplications.
 
 Input x: Constrains the motion on the x-axis. Nullifies the components of other axes.
 Input y: Constrains the motion on the y-axis. Nullifies the components of other axes.
@@ -25,7 +25,7 @@ def constrain(direction, vel, acc):
 
 
 """
-Configures the "run" parameter as a (n x 3) array. The rows contain group of instructions.
+-> Configures the "run" parameter as a (n x 3) array. The rows contain group of instructions.
 
 For input n x y z k l m :
     n = the number of groups of three
@@ -47,8 +47,8 @@ def RunConf():
 
 
 """
-Returns zero if there is a "RuntimeWarning: divide by zero encountered in true_divide" issue, which returns NaN.
-Int and float inputs are fine, like the ordinary "/" operator.
+-> Returns zero if there is a "RuntimeWarning: divide by zero encountered in true_divide" issue, which returns NaN.
+-> Int and float inputs are fine, like the ordinary "/" operator.
 
 """
 def SafeDivision(x, y):
@@ -57,37 +57,25 @@ def SafeDivision(x, y):
 
 
 """
-Switcher for the output dump. Will be coded with care afterwards, just a structure for now.
-For input: ndump, ff, etot, ke, pe
-ndump: 1000
-data: ndump ff etot ke pe
-"""
-def AnalysisSwitcher(sel):
-    switcher = {
-            "ff": FrictionForce(),
-            "etot": Etotal(),
-            "ke": KE(),
-            "pe": PE()
-                }
-    out = switcher.get(sel)
-    return out
+-> Numerical differentiation carried out by the central difference method.
+For inputs: f = the function to be differentiated.
+            a = the point we want to find the differentiation for.
+            h = step size (must be virtually zero because of the definition of this method).
 
-def KE(V, m):
-    kinergy = 1/2*m*np.sum(V**2)
-    return kinergy
+Output: The value of f'(a).
+"""
+def NumericalDiff(f, a, h):
+    return (f(a + h) - f(a - h)) / (2 * h)
+
 
 """
 Reads the data row in the input file. Outputs it as a list.
-For input: 4 ff etot ke pe ("4" is for the number of selections. This is to make my job easier, may remove it in the future.)
+For input: ff etot ke pe
 Output: ['ff', 'etot', 'ke', 'pe']
 """
 def AnalysisList():
-    return (globals.data.split(" "))
-
-
-"""
-The main analyzer will be configured after the individual functions in the switcher. Needs the already written "for loop" for now, I wrote it now so that I won't forget how it works later :DD
-"""
-def Analyze(data_list):
-    for i in range(0, len(data_list)):
-        AnalysisSwitcher(data_list[i])
+    selection_list = (globals.data.split(" "))
+    if ("ke" in selection_list):
+        globals.kinetic_switch = 1
+    elif ("pe" in selection_list):
+        globals.potential_switch = 1
