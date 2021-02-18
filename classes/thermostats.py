@@ -50,3 +50,9 @@ def langevin(T_inst, mass, V_inst):
     V = comp1 + comp2
     return V
 
+
+def ApplyThermostat(T, mass, V):
+    if (globals.thermo == "velrescale"):
+        return VelRescale(T, mass, V)
+    elif (globals.thermo == "berendsen"):
+        return Berendsen(T, mass, V)
