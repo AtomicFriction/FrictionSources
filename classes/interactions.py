@@ -55,16 +55,13 @@ def AgentForce():
 
 
 def SubstrateForce():
-    subs_force = np.zeros(np.shape(Substrate.R))
-    # index R, such that R[1:-1], to ignore boundaries
-    # (at least for now, but it may be generalized to non-boundary conditions)
-    norm1 = np.linalg.norm(Substrate.R[Substrate.table[1:-1]][:, 1] - Substrate.R[1:-1])
-    norm2 = np.linalg.norm(Substrate.R[Substrate.table[1:-1]][:, 0] - Substrate.R[1:-1])
+    subs_force = np.zeros(Subs.R.shape)
+    
+    neighbor = Subs.R[list(Subs.N[Subs.trap])]
+    atom = Subs.R[Subs.trap].reshape((neighbor.shape[0], 1, 3))
+    norm = LA.norm(neighbor - atom, axis=2)[:, np.newaxis]
 
-    a = (globals.subs_k * (norm1 - globals.latt_const) * (Substrate.R[Substrate.table[1:-1]][:, 1] - Substrate.R[1:-1]))
-    b = (globals.subs_k * (norm2 - globals.latt_const) * (Substrate.R[Substrate.table[1:-1]][:, 0] - Substrate.R[1:-1]))
-
-    subs_force[1:-1] = SafeDivision(a, norm1) + SafeDivision(b, norm2)
+    subs_force[Subs.trap] = np.squeeze(Subs.k * (norm - Subs.latt_const) / norm @ (neighbor - atom), axis=1)
 
     lj_force = AgentForce()[1]
     subs_force = np.subtract(subs_force, lj_force)
