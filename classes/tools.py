@@ -79,3 +79,13 @@ def AnalysisList():
         globals.kinetic_switch = 1
     elif ("pe" in selection_list):
         globals.potential_switch = 1
+        
+def KE(m, V):
+    """
+    UNITS
+    -----
+    m: mass (Dalton)-> 1.660538921 x 10e−27 kg
+    V: velocity (Angström/picoseconds)-> 10e2 m/s
+    """
+    kinergy = 1/2*m*np.sum(V**2)*(1.660538921*10**(−27))*(10**4)
+    return kinergy
