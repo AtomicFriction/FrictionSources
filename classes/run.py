@@ -8,9 +8,9 @@ from integrators import Integrate
 from tools import RunConf, AnalysisList
 from thermostats import ApplyThermostat
 
-print(AnalysisList())
 temperature_conf = RunConf()
 print(temperature_conf)
+AnalysisList()
 
 """
 -> sigma is in Angstroms.
@@ -21,7 +21,7 @@ print(temperature_conf)
 -> Coutoff constant taken as 2.5 * sigma.
 """
 
-dev_select = input("Select visualization style. anim/x/y/3d:    ")
+dev_select = input("Select visualization style. anim/x/y/3d/ff:    ")
 
 ## Empty arrays for the plots.
 time = []
@@ -47,8 +47,13 @@ if (dev_select == "anim"):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
-            L = ApplyThermostat(temperature_conf[i][1], 40, Substrate.V)
-            Substrate.V = L * Substrate.V
+            ## Target temperature / Step.
+            temp_inc = ((float(temperature_conf[i][1]) - float(temperature_conf[i][0])) / int(temperature_conf[i][2]))
+            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+
+            ##print((globals.agent_pot))
+            globals.agent_pot.clear()
+
 
 elif (dev_select == "x"):
     for i in range(len(temperature_conf)):
@@ -56,8 +61,8 @@ elif (dev_select == "x"):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
-            L = ApplyThermostat(temperature_conf[i][1], 40, Substrate.V)
-            Substrate.V = L * Substrate.V
+            temp_inc = ((float(temperature_conf[i][1]) - float(temperature_conf[i][0])) / int(temperature_conf[i][2]))
+            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
 
             time.append(j)
             ag_x.append(Agent.pos[0][0])
@@ -69,14 +74,15 @@ elif (dev_select == "x"):
         time.clear()
         ag_x.clear()
 
+
 elif(dev_select == "y"):
     for i in range(len(temperature_conf)):
         for j in range(int(temperature_conf[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
-            L = ApplyThermostat(temperature_conf[i][1], 40, Substrate.V)
-            Substrate.V = L * Substrate.V
+            temp_inc = ((float(temperature_conf[i][1]) - float(temperature_conf[i][0])) / int(temperature_conf[i][2]))
+            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
 
             time.append(j)
             ag_y.append(Agent.pos[0][1])
@@ -88,6 +94,7 @@ elif(dev_select == "y"):
         time.clear()
         ag_x.clear()
 
+
 elif (dev_select == "3d"):
     ax = plt.axes(projection='3d')
     for i in range(len(temperature_conf)):
@@ -95,8 +102,8 @@ elif (dev_select == "3d"):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
-            L = ApplyThermostat(temperature_conf[i][1], 40, Substrate.V)
-            Substrate.V = L * Substrate.V
+            temp_inc = ((float(temperature_conf[i][1]) - float(temperature_conf[i][0])) / int(temperature_conf[i][2]))
+            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
 
             time.append(j)
             ag_x.append(Agent.pos[0][0])
@@ -109,6 +116,25 @@ elif (dev_select == "3d"):
         plt.show()
         time.clear()
         ag_x.clear()
+
+
+elif (dev_select == "ff"):
+    for i in range(len(temperature_conf)):
+        for j in range(int(temperature_conf[i][2])):
+            (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
+            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+
+            temp_inc = ((float(temperature_conf[i][1]) - float(temperature_conf[i][0])) / int(temperature_conf[i][2]))
+            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+
+            time.append(j)
+
+        plt.xlabel("Time")
+        plt.ylabel("Lateral Force")
+        plt.plot(time, globals.fric);
+        plt.show()
+        time.clear()
+        globals.fric.clear()
 
 else:
     print("Invalid visualization selection.")
