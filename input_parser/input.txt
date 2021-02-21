@@ -10,29 +10,29 @@ integ = ec
 /
 &analysis
 n_dump = 1000
-data = ff etot ke pe
+data = ff etot ke pe temp
 /
 &substrate
 dim = 1
 layers = 1
 num = 50
 bound_cond = fixed
-latt_const = 5.26
-cuto_const = 8.5
+latt_const = 2
+cuto_const = 2.5
 displace_type = random
 k = 0.0514
 mass = 40
 /
 &slider
-mass = 40
-k = 10
+mass = 1
+k = 0.1
 shape = single
 sigma = 3.4
 epsilon = 0.0103
-agent_pos = 50 2 0
-slider_pos = 45 2 0
-slider_vel = 0.1 0 0
-eq_len = 10
+agent_pos = 10 5 3
+slider_pos = 5 5 3
+slider_vel = 0.05 0 0
+eq_len = 5
 constrain = none
 /
 &thermostat
