@@ -45,11 +45,9 @@ def nosehoover(mass, R):
 
 def langevin(T_inst, mass, V_inst):
     comp1 = np.exp(-globals.gamma*globals.dt) * V_inst
-    comp2 = np.random.normal(size=V_inst.shape) * np.sqrt(boltz*T_inst/mass*(1-np.exp(-2*globals.gamma*globals.dt)))
-    print(comp1.shape, comp2.shape)
+    comp2 = np.random.normal(size=V_inst.shape) * np.sqrt(boltz*T_inst/mass*(1-np.exp(-2*globals.gamma*globals.dt))) # mean = 0, deviation = look for it
     V = comp1 + comp2
     return V
-
 
 def ApplyThermostat(T, mass, V):
     if (globals.thermo == "velrescale"):
