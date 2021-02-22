@@ -21,6 +21,16 @@ def parse(file):
         print("\n***\nEither number of dimensions or layers is not an integer.", \
         "\nPlease enter integer numbers for dimension and layer numbers.\n***\n")
     else:
+        try:
+            prot['run'] = list(map(int, prot['run'].split()))
+            anal['data'] = list(map(str, anal['data'].split()))
+            slid['agent_pos'] = list(map(float, slid['agent_pos'].split()))
+            slid['slider_pos'] = list(map(float, slid['slider_pos'].split()))
+            slid['slider_vel'] = list(map(float, slid['slider_vel'].split()))
+        except:
+            print("\n***\nPlease check if data consists of strings,", \
+            "and if run, agent_pos, slider_pos, and slider_vel consist of integers and floats.\n***\n")
+
         if not (dim >= 1 and dim <= 3):
             print("\n***\nUnexpected dimension.", \
             "\nPlease confirm that the dimension is an integer from one to three.\n***\n")
