@@ -1,5 +1,6 @@
 ## Global definitions here.
 from input_parser import parse
+import numpy as np
 
 ##################################################
 ##################################################
@@ -12,7 +13,7 @@ _, prot_param, _, _, _, _ = parse('input.txt')
 
 dt = float(prot_param['dt'])
 integrator = (prot_param['integ'])
-run = (prot_param['run'])
+run = np.array(prot_param['run']).reshape(int(len(prot_param['run'])/3), 3)
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('input.txt')
@@ -34,25 +35,16 @@ agent_k = float(agent_param['k'])
 ##################################################
 ##################################################
 _, _, _, _, _, thermo_param = parse('input.txt')
+
 tau = float(thermo_param['tau'])
-thermo = str(thermo_param['thermo'])
-
+s, Q = float(thermo_param['s']), float(thermo_param['q'])
+gamma = float(thermo_param['gamma'])
+boltz = 8.617333262e-5
 ##################################################
 ##################################################
-boltz = 8.617333262 * 10**(-5)
-
-
-
 potential_switch = 0
 kinetic_switch = 0
 ff_switch = 0
 temp_switch = 0
 
-
-agent_pot = []
-susb_pot = []
-fric = []
-
-
-
-lj_force = []
+agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
