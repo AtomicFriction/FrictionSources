@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import globals
 from agent import Agent
-from substrate import Substrate
+from substrate import Subs
 from integrators import Integrate
 from tools import AnalysisList, PE, Friction
 from thermostats import ApplyThermostat
@@ -38,7 +38,7 @@ if (dev_select == "an2d"):
         for j in range(int(globals.run[i][2])):
             if (j % 1 == 0):
                 with plt.style.context(('dark_background')):
-                    R = Substrate.R
+                    R = Subs.R
                     plt.xlabel("X Position")
                     plt.ylabel("Y Position")
                     plt.plot(R[:, 0], R[:, 1], "o", markerfacecolor = "b", markersize = 8)
@@ -49,7 +49,7 @@ if (dev_select == "an2d"):
                     plt.clf()
 
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
             pe = PE()
             ff = Friction()
             ##ke = KE()
@@ -59,7 +59,7 @@ if (dev_select == "an2d"):
 
             ## Target temperature / Step.
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             ##print((globals.agent_pot))
             globals.agent_pot.clear()
@@ -70,7 +70,7 @@ elif (dev_select == "x"):
         LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
             pe = PE()
             ff = Friction()
             ##ke = KE()
@@ -81,7 +81,7 @@ elif (dev_select == "x"):
             #Agent.pos = np.mod(L, Agent.pos)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             WriteLog(i, j, pe, ff)
 
@@ -103,10 +103,10 @@ elif(dev_select == "y"):
         LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             pe = PE()
             ff = Friction()
@@ -134,10 +134,10 @@ elif (dev_select == "3d"):
         LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             pe = PE()
             ff = Friction()
@@ -167,10 +167,10 @@ elif (dev_select == "ff"):
         LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) + float(globals.run[i][0]) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             pe = PE()
             ff = Friction()
@@ -198,7 +198,7 @@ elif (dev_select == "an3d"):
             if (j % 300 == 0):
                 plt.ion()
                 ax = fig.add_subplot(111, projection='3d')
-                R = Substrate.R
+                R = Subs.R
 
                 ax.plot(R[:, 0], R[:, 1], R[:, 2], "o", markerfacecolor = "b", markersize = 3)
                 ax.plot(Agent.pos[0][0], Agent.pos[0][1], Agent.pos[0][2], "s", markerfacecolor = "red", markersize = 8)
@@ -210,7 +210,7 @@ elif (dev_select == "an3d"):
                 ax.cla()
 
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
-            (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+            (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
 
             pe = PE()
@@ -223,7 +223,7 @@ elif (dev_select == "an3d"):
             #Agent.pos = np.mod(L, Agent.pos)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
 
             time.append(j)
 
