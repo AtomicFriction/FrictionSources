@@ -71,7 +71,7 @@ def AgentForce():
 
 
 def SubstrateForce():
-    subs_force = np.zeros(Substrate.R.shape
+    subs_force = np.zeros(Substrate.R.shape)
 
     neighbor = Substrate.R[list(Substrate.N[Substrate.trap])]
     atom = Substrate.R[Substrate.trap].reshape((neighbor.shape[0], 1, 3))
