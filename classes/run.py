@@ -100,12 +100,22 @@ elif (dev_select == "x"):
 
 elif(dev_select == "y"):
     for i in range(len(globals.run)):
+        LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
             Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+
+            pe = PE()
+            ff = Friction()
+            ##ke = KE()
+            """
+            Agent.pos[Agent.pos > L] = 0
+            Agent.pos[Agent.pos < 0] = L
+            """
+            #Agent.pos = np.mod(L, Agent.pos)
 
             time.append(j)
             ag_y.append(Agent.pos[0][1])
@@ -121,12 +131,22 @@ elif(dev_select == "y"):
 elif (dev_select == "3d"):
     ax = plt.axes(projection='3d')
     for i in range(len(globals.run)):
+        LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
             Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+
+            pe = PE()
+            ff = Friction()
+            ##ke = KE()
+            """
+            Agent.pos[Agent.pos > L] = 0
+            Agent.pos[Agent.pos < 0] = L
+            """
+            #Agent.pos = np.mod(L, Agent.pos)
 
             time.append(j)
             ag_x.append(Agent.pos[0][0])
@@ -144,12 +164,22 @@ elif (dev_select == "3d"):
 
 elif (dev_select == "ff"):
     for i in range(len(globals.run)):
+        LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) + float(globals.run[i][0]) / int(globals.run[i][2]))
             Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
+
+            pe = PE()
+            ff = Friction()
+            ##ke = KE()
+            """
+            Agent.pos[Agent.pos > L] = 0
+            Agent.pos[Agent.pos < 0] = L
+            """
+            #Agent.pos = np.mod(L, Agent.pos)
 
             time.append(j)
 
@@ -181,6 +211,16 @@ elif (dev_select == "an3d"):
 
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Substrate.R, Substrate.V, Substrate.A), _ = Integrate("SUBSTRATE", Substrate.R, Substrate.V, Substrate.A, Substrate.mass)
+
+
+            pe = PE()
+            ff = Friction()
+            ##ke = KE()
+            """
+            Agent.pos[Agent.pos > L] = 0
+            Agent.pos[Agent.pos < 0] = L
+            """
+            #Agent.pos = np.mod(L, Agent.pos)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
             Substrate.V = ApplyThermostat(temp_inc, 40, Substrate.V)
