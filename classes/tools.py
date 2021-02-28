@@ -1,5 +1,6 @@
 import numpy as np
 import globals
+from agent import Agent
 
 """
 -> Constrains the motion to the desired axis by simple matrix multiplications.
@@ -48,7 +49,6 @@ For input: ff etot ke pe
 Output: ['ff', 'etot', 'ke', 'pe']
 """
 def AnalysisList():
-    print(globals.data)
     if ("ke" in globals.data):
         globals.kinetic_switch = 1
         print("kin :" + str(globals.kinetic_switch))
@@ -63,13 +63,6 @@ def AnalysisList():
         print("temp: " + str(globals.temp_switch))
 
 
-def LogFile():
-    log = open('log.txt', 'w+')
-    log.write()
-    log.write()
-    log.write()
-    log.write()
-        
 def KE(m, V):
     """
     UNITS
@@ -77,5 +70,33 @@ def KE(m, V):
     m: mass (Dalton)-> 1.660538921 x 10e−27 kg
     V: velocity (Angström/picoseconds)-> 10e2 m/s
     """
-    kinergy = 1/2*m*np.sum(V**2)*(1.660538921e-23)
+    kinergy = 1/2*m*np.sum(V**2)
     return kinergy
+
+
+"""
+-> Returns "None" if (globals.potential_switch == 0).
+"""
+def PE():
+    if (globals.potential_switch == 1):
+        rr_12 = (globals.rr ** 12)
+        rr_6 = (globals.rr ** 6)
+        sig_12 = (Agent.sigma ** 12)
+        sig_6 = (Agent.sigma ** 6)
+        lj_pot = np.sum((4 * Agent.epsilon) * ((sig_12 / rr_12) - (sig_6 / rr_6)))
+        spr_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
+        return lj_pot + spr_pot
+
+    else:
+        return ""
+
+
+"""
+-> Projection of the spring force vector on the slider velocity vector calculated for the friction force.
+-> Returns "None" if (globals.ff_switch == 0).
+"""
+def Friction():
+    if (globals.ff_switch == 1):
+        slid_vel_norm = np.sqrt(sum(Agent.slider_vel[0] ** 2))
+        ff = (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
+        return ff
