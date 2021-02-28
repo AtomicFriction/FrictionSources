@@ -1,6 +1,7 @@
 ## Global definitions here.
 from input_parser import parse
 import numpy as np
+from substrate import Subs
 
 ##################################################
 ##################################################
@@ -36,6 +37,7 @@ agent_k = float(agent_param['k'])
 ##################################################
 _, _, _, _, _, thermo_param = parse('input.txt')
 
+thermo = thermo_param['thermo']
 tau = float(thermo_param['tau'])
 s, Q = float(thermo_param['s']), float(thermo_param['q'])
 gamma = float(thermo_param['gamma'])
@@ -46,5 +48,16 @@ potential_switch = 0
 kinetic_switch = 0
 ff_switch = 0
 temp_switch = 0
+spr_force = np.zeros((1, 3))
+L = Subs.num * Subs.latt_const
 
+
+rr = 0
+disp = 0
+
+"""
 agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
+"""
+
+agent_pot = []
+subs_pot = []
