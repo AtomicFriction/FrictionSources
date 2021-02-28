@@ -3,7 +3,7 @@ from scipy.spatial import distance
 import timeit
 
 from agent import Agent
-from substrate import Substrate
+from substrate import Subs
 import globals
 from tools import SafeDivision, NumericalDiff
 
@@ -22,7 +22,7 @@ def AgentForce():
     lj = []
     lj_pot = []
     # Evaluates all the distance values between the agent and the substrate atoms.
-    dist = distance.cdist(Agent.pos, Substrate.R, 'euclidean')
+    dist = distance.cdist(Agent.pos, Subs.R, 'euclidean')
 
     cutoff = (dist != 0) & (dist < globals.cutoff) * 1
     extract = np.where(cutoff == 1)
@@ -39,7 +39,7 @@ def AgentForce():
             sig_12 = (Agent.sigma ** 12)
             sig_6 = (Agent.sigma ** 6)
             # Evaluate the direction of the force.
-            dir = (Agent.pos - Substrate.R[table[0][i]]) / rr
+            dir = (Agent.pos - Subs.R[table[0][i]]) / rr
             lj_force_whole = (((48 * Agent.epsilon) * ((sig_12) / (rr_12 * rr))) - ((24 * Agent.epsilon) * ((sig_6) / (rr_6 * rr)))) * dir
             lj.append(lj_force_whole)
 
@@ -71,19 +71,19 @@ def AgentForce():
 
 
 def SubstrateForce():
-    subs_force = np.zeros(Substrate.R.shape)
+    subs_force = np.zeros(Subs.R.shape)
 
-    neighbor = Substrate.R[list(Substrate.N[Substrate.trap])]
-    atom = Substrate.R[Substrate.trap].reshape((neighbor.shape[0], 1, 3))
+    neighbor = Subs.R[list(Subs.N[Subs.trap])]
+    atom = Subs.R[Subs.trap].reshape((neighbor.shape[0], 1, 3))
     dist = (neighbor - atom)
-    dist[dist > L/2] -= L
-    dist[dist < -L/2] += L
-    norm = LA.norm(dist, axis=2)[:, np.newaxis]
+    dist[dist > globals.L/2] -= globals.L
+    dist[dist < -globals.L/2] += globals.L
+    norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
 
-    dR = (norm - Substrate.a) / norm @ dist
-    subs_force[Substrate.trap] = np.squeeze(k * dR, axis=1)
+    dR = (norm - Subs.a) / norm @ dist
+    subs_force[Subs.trap] = np.squeeze(k * dR, axis=1)
 
-    subs_force[Substrate.trap] = np.squeeze(Substrate.k * dR, axis=1)
+    subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
     lj_force = globals.lj_force
     subs_force_fin = subs_force - lj_force
