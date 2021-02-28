@@ -80,8 +80,8 @@ def SubstrateForce():
     dist[dist < -globals.L/2] += globals.L
     norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
 
-    dR = (norm - Subs.a) / norm @ dist
-    subs_force[Subs.trap] = np.squeeze(k * dR, axis=1)
+    dR = (norm - Subs.latt_const) / norm @ dist
+    subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
     subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
