@@ -8,8 +8,8 @@ import globals
 from tools import SafeDivision, NumericalDiff
 
 
-dev_analyze = input("Want to see forces? y/n:    ")
-
+#dev_analyze = input("Want to see forces? y/n:    ")
+dev_analyze = "n"
 
 """
 -> Calculates the total force present on the Agent.
