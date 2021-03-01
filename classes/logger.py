@@ -24,7 +24,19 @@ def LogProtocol(counter_i):
 """
 -> Logs the each step.
 """
-def WriteLog(counter_i, counter_j, pe, ff):
+def WriteLog(counter_i, counter_j, ff, pe, ke, etot, temp):
     log = open('log.txt', 'a')
-    if ((counter_i + 1) * counter_j <= globals.run[counter_i][2]):
-        log.write("Step " + str((counter_i + 1) * counter_j) + ":    " + str(pe) + "      " + str(ff) + "\n")
+    if (counter_j <= globals.run[counter_i][2]):
+        log.write("Step " + str(counter_j) + ":    ")
+        if (globals.ff_switch == 1):
+            log.write("ff:  " + str(ff) + "   ")
+        if (globals.potential_switch == 1):
+            log.write("pe:  " + str(pe) + "   ")
+        if (globals.kinetic_switch == 1):
+            log.write("ke:  " + str(ke) + "   ")
+        if (globals.etot_switch == 1):
+            log.write("etot:    " + str(etot) + "   ")
+        if (globals.temp_switch == 1):
+            log.write("temp:    " + str(temp) + "   ")
+
+        log.write("\n")
