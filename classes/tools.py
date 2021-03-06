@@ -51,16 +51,12 @@ Output: ['ff', 'etot', 'ke', 'pe']
 def AnalysisList():
     if ("ke" in globals.data):
         globals.kinetic_switch = 1
-        print("kin :" + str(globals.kinetic_switch))
     if ("pe" in globals.data):
         globals.potential_switch = 1
-        print("pe: " + str(globals.potential_switch))
     if ("ff" in globals.data):
         globals.ff_switch = 1
-        print("ff: " + str(globals.ff_switch))
     if ("temp" in globals.data):
         globals.temp_switch = 1
-        print("temp: " + str(globals.temp_switch))
 
 
 def KE(m, V):
@@ -86,9 +82,6 @@ def PE():
         lj_pot = np.sum((4 * Agent.epsilon) * ((sig_12 / rr_12) - (sig_6 / rr_6)))
         spr_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
         return lj_pot + spr_pot
-
-    else:
-        return ""
 
 
 """
