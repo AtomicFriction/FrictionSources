@@ -73,16 +73,15 @@ def AgentForce():
 def SubstrateForce():
     subs_force = np.zeros(Subs.R.shape)
 
-    neighbor = Subs.R[list(Subs.N[Subs.trap])]
-    atom = Subs.R[Subs.trap].reshape((neighbor.shape[0], 1, 3))
-    dist = (neighbor - atom)
-    dist[dist > globals.L/2] -= globals.L
-    dist[dist < -globals.L/2] += globals.L
-    norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
+    R_N = Subs.R[Subs.N]
+    R_A = Subs.R[Subs.trap].reshape((R_N.shape[0], 1, 3))
+    dist = R_N - R_A
+    dist[dist > Subs.L/2] -= Subs.L
+    dist[dist < -Subs.L/2] += Subs.L
+    norm = LA.norm(dist, axis=2)[:, np.newaxis]
+    norm[norm[:, :, -1] == 0, -1] = Subs.a
 
-    dR = (norm - Subs.latt_const) / norm @ dist
-    subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
-
+    dR = (norm - Subs.a) / norm @ dist
     subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
     lj_force = globals.lj_force
