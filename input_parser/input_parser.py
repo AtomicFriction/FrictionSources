@@ -17,6 +17,7 @@ def parse(file):
     try:
         dim = int(subs['dim'])
         layers = int(subs['layers'])
+        fix_layers = int(subs['fix_layers'])
     except:
         print("\n***\nEither number of dimensions or layers is not an integer.", \
         "\nPlease enter integer numbers for dimension and layer numbers.\n***\n")
@@ -34,8 +35,10 @@ def parse(file):
         if not (dim >= 1 and dim <= 3):
             print("\n***\nUnexpected dimension.", \
             "\nPlease confirm that the dimension is an integer from one to three.\n***\n")
-        elif (dim == 1 or dim == 2) and (layers != 1):
-            print("\n***\nDimension and layer numbers are not matched.\nRecall that number", \
-            "of layers must be equal to one where the system is one or two-dimensional.\n***\n")
+        elif (dim == 1 or dim == 2) and ((layers != 1) or (fix_layers != 0)):
+            subs['layers'] = 1
+            subs['fix_layers'] = 0
+        elif dim == 3:
+            subs['bound_cond'] = 'periodic'
 
     return gen, prot, anal, subs, slid, thermo
