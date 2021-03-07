@@ -13,15 +13,16 @@ n_dump = 1000
 data = ff etot ke pe temp
 /
 &substrate
-dim = 1
-layers = 1
-num = 50
-bound_cond = fixed
+dim = 2
+layers = 4
+fix_layers = 2
+num = 30
+bound_cond = periodic
 latt_const = 2
 cuto_const = 2.5
 displace_type = random
-k = 0.0514
-mass = 40
+k = 1
+mass = 1
 /
 &slider
 mass = 1
