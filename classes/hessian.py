@@ -29,13 +29,15 @@ def Hessian():
 
             # Calculate the "plus" force element for differentiation later on.
             subs_pos_flat[j] = pos_plus
-            plus_force_calc = SubstrateForce() # The force function needs to take the altered position element as an input here.
+            plus_pos_mat = np.reshape(subs_pos_flat, (globals.num, 3))
+            plus_force_calc = SubstrateForce(plus_pos_mat) # The force function needs to take the altered position element as an input here.
             plus_force_flat = plus_force_calc.flatten()
             plus_force = plus_force_flat[i]
 
             # Calculate the "minus" force element for differentiation later on.
             subs_pos_flat[j] = pos_minus
-            minus_force_calc = SubstrateForce() # The force function needs to take the altered position element as an input here.
+            min_pos_mat = np.reshape(subs_pos_flat, (globals.num, 3))
+            minus_force_calc = SubstrateForce(min_pos_mat) # The force function needs to take the altered position element as an input here.
             minus_force_flat = minus_force_calc.flatten()
             minus_force = minus_force_flat[i]
 
