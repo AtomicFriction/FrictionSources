@@ -20,14 +20,19 @@ def LogProtocol(counter_i):
     with open("log.txt", "a") as file_1:
         file_1.write("Protocol Step " + str(globals.run[counter_i]) + "\n")
         if ("ff" in globals.data):
+            globals.ff_switch = 1
             file_1.write("              " + "ff")
         if ("pe" in globals.data):
+            globals.potential_switch = 1
             file_1.write("              " + "pe")
         if ("ke" in globals.data):
+            globals.kinetic_switch = 1
             file_1.write("              " + "ke")
         if ("etot" in globals.data):
+            globals.etot_switch = 1
             file_1.write("              " + "etot")
         if ("temp" in globals.data):
+            globals.temp_switch = 1
             file_1.write("              " + "temp")
         file_1.write("\n")
 
