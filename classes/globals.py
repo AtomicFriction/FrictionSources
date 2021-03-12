@@ -48,12 +48,16 @@ potential_switch = 0
 kinetic_switch = 0
 ff_switch = 0
 temp_switch = 0
+etot_switch = 0
 spr_force = np.zeros((1, 3))
+lj_force = np.zeros((num * num, 3))
+lj_agent = []
 L = Subs.num * Subs.latt_const
-
+subs_force_fin = 0
 
 rr = 0
 disp = 0
+T_inst = 0
 
 """
 agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
