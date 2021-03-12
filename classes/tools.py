@@ -1,6 +1,7 @@
 import numpy as np
 import globals
 from agent import Agent
+from substrate import Subs
 
 """
 -> Constrains the motion to the desired axis by simple matrix multiplications.
@@ -28,7 +29,7 @@ def constrain(direction, vel, acc):
 -> Int and float inputs are fine, like the ordinary "/" operator.
 """
 def SafeDivision(x, y):
-    res = ( x / y ) if y.any() != 0 else 0
+    res = ( x / y ) if y != 0 else 1
     return res
 
 
@@ -44,31 +45,13 @@ def NumericalDiff(f, a, h):
 
 
 """
-Reads the data row in the input file. Outputs it as a list.
-For input: ff etot ke pe
-Output: ['ff', 'etot', 'ke', 'pe']
+-> Returns "None" if (globals.kinetic_switch == 0).
 """
-def AnalysisList():
-    if ("ke" in globals.data):
-        globals.kinetic_switch = 1
-    if ("pe" in globals.data):
-        globals.potential_switch = 1
-    if ("ff" in globals.data):
-        globals.ff_switch = 1
-    if ("temp" in globals.data):
-        globals.temp_switch = 1
-
-
-def KE(m, V):
-    """
-    UNITS
-    -----
-    m: mass (Dalton)-> 1.660538921 x 10e−27 kg
-    V: velocity (Angström/picoseconds)-> 10e2 m/s
-    """
-    kinergy = 1/2*m*np.sum(V**2)
-    return kinergy
-
+def KE():
+    if (globals.kinetic_switch == 1):
+        subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
+        agent_kin = (Agent.mass * np.sum(Agent.vel ** 2)) / 2
+        return subs_kin + agent_kin
 
 """
 -> Returns "None" if (globals.potential_switch == 0).
