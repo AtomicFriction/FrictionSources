@@ -6,11 +6,12 @@ import globals
 from agent import Agent
 from substrate import Subs
 from integrators import Integrate
-from tools import AnalysisList, PE, Friction
-from thermostats import ApplyThermostat
+from tools import PE, KE, Friction
+from thermostats import ApplyThermostat, CalcTemp
 from logger import InitializeLog, LogProtocol, WriteLog
+import hessian
+from hessian import Hessian
 
-AnalysisList()
 InitializeLog()
 
 
@@ -35,8 +36,9 @@ ag_z = []
 if (dev_select == "an2d"):
     plt.figure()
     for i in range(len(globals.run)):
+        LogProtocol(i)
         for j in range(int(globals.run[i][2])):
-            if (j % 1 == 0):
+            if (j % 1000 == 0):
                 with plt.style.context(('dark_background')):
                     R = Subs.R
                     plt.xlabel("X Position")
@@ -50,16 +52,33 @@ if (dev_select == "an2d"):
 
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
+
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            #Agent.pos[Agent.pos > L] = 0
-            #Agent.pos[Agent.pos < 0] = L
-            Agent.pos = np.mod(Agent.pos, L)
+            ke = KE()
+            temp = CalcTemp()
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
 
             ## Target temperature / Step.
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
             Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+
+            WriteLog(i, j, ff, pe, ke, 0, temp)
 
             ##print((globals.agent_pot))
             globals.agent_pot.clear()
@@ -71,31 +90,48 @@ elif (dev_select == "x"):
         for j in range(int(globals.run[i][2])):
             (Agent.pos, Agent.vel, Agent.acc), Agent.slider_pos = Integrate("AGENT", Agent.pos, Agent.vel, Agent.acc, Agent.mass)
             (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
+
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            """
-            Agent.pos[Agent.pos > L] = 0
-            Agent.pos[Agent.pos < 0] = L
-            """
-            #Agent.pos = np.mod(L, Agent.pos)
+            ke = KE()
+            temp = CalcTemp()
 
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
+
+
+            # Possible porblem fix temp_inc --> temp + temp_inc, discuss.
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
-            WriteLog(i, j, pe, ff)
+            WriteLog(i, j, ff, pe, ke, 0, temp)
+
+            #print(Hessian())
 
             time.append(j)
             ag_x.append(Agent.pos[0][0])
 
-        """
+
         plt.xlabel("Time")
         plt.ylabel("X Position")
         plt.plot(time, ag_x);
         plt.show()
         time.clear()
         ag_x.clear()
-        """
 
 
 elif(dev_select == "y"):
@@ -110,12 +146,26 @@ elif(dev_select == "y"):
 
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            """
-            Agent.pos[Agent.pos > L] = 0
-            Agent.pos[Agent.pos < 0] = L
-            """
-            #Agent.pos = np.mod(L, Agent.pos)
+            ke = KE()
+            temp = CalcTemp()
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
+
+            WriteLog(i, j, ff, pe, ke, 0, temp)
 
             time.append(j)
             ag_y.append(Agent.pos[0][1])
@@ -141,12 +191,26 @@ elif (dev_select == "3d"):
 
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            """
-            Agent.pos[Agent.pos > L] = 0
-            Agent.pos[Agent.pos < 0] = L
-            """
-            #Agent.pos = np.mod(L, Agent.pos)
+            ke = KE()
+            temp = CalcTemp()
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
+
+            WriteLog(i, j, ff, pe, ke, 0, temp)
 
             time.append(j)
             ag_x.append(Agent.pos[0][0])
@@ -174,12 +238,26 @@ elif (dev_select == "ff"):
 
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            """
-            Agent.pos[Agent.pos > L] = 0
-            Agent.pos[Agent.pos < 0] = L
-            """
-            #Agent.pos = np.mod(L, Agent.pos)
+            ke = KE()
+            temp = CalcTemp()
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
+
+            WriteLog(i, j, ff, pe, ke, 0, temp)
 
             time.append(j)
 
@@ -194,6 +272,7 @@ elif (dev_select == "ff"):
 elif (dev_select == "an3d"):
     fig = plt.figure()
     for i in range(len(globals.run)):
+        LogProtocol(i)
         for j in range(int(globals.run[i][2])):
             if (j % 300 == 0):
                 plt.ion()
@@ -215,15 +294,29 @@ elif (dev_select == "an3d"):
 
             pe = PE()
             ff = Friction()
-            ##ke = KE()
-            """
-            Agent.pos[Agent.pos > L] = 0
-            Agent.pos[Agent.pos < 0] = L
-            """
-            #Agent.pos = np.mod(L, Agent.pos)
+            ke = KE()
+            temp = CalcTemp()
+
+            if (Agent.pos[0][0] > globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] - globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] - globals.L
+
+            if (Agent.pos[0][0] < globals.L):
+                Agent.pos[0][0] = Agent.pos[0][0] + globals.L
+                Agent.slider_pos[0][0] = Agent.slider_pos[0][0] + globals.L
+
+            if (Agent.pos[0][1] > globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] - globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] - globals.L
+
+            if (Agent.pos[0][1] < globals.L):
+                Agent.pos[0][1] = Agent.pos[0][1] + globals.L
+                Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
             Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+
+            WriteLog(i, j, ff, pe, ke, 0, temp)
 
             time.append(j)
 
