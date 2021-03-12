@@ -121,18 +121,18 @@ elif (dev_select == "x"):
             WriteLog(i, j, ff, pe, ke, 0, temp)
 
             #print(Hessian())
-
+        """
             time.append(j)
             ag_x.append(Agent.pos[0][0])
 
 
         plt.xlabel("Time")
         plt.ylabel("X Position")
-        plt.plot(time, ag_x);
+        plt.plot(time, ag_x)
         plt.show()
         time.clear()
         ag_x.clear()
-
+        """
 
 elif(dev_select == "y"):
     for i in range(len(globals.run)):
@@ -172,7 +172,7 @@ elif(dev_select == "y"):
 
         plt.xlabel("Time")
         plt.ylabel("Y Position")
-        plt.plot(time, ag_y);
+        plt.plot(time, ag_y)
         plt.show()
         time.clear()
         ag_x.clear()
@@ -220,7 +220,7 @@ elif (dev_select == "3d"):
         ax.set_xlabel("X Position")
         ax.set_ylabel("Y Position")
         ax.set_zlabel("z Position")
-        ax.scatter3D(ag_x, ag_y, ag_z);
+        ax.scatter3D(ag_x, ag_y, ag_z)
         plt.show()
         time.clear()
         ag_x.clear()
@@ -263,7 +263,7 @@ elif (dev_select == "ff"):
 
         plt.xlabel("Time")
         plt.ylabel("Lateral Force")
-        plt.plot(time, globals.fric);
+        plt.plot(time, globals.fric)
         plt.show()
         time.clear()
         globals.fric.clear()
