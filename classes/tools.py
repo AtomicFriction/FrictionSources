@@ -63,8 +63,9 @@ def PE():
         sig_12 = (Agent.sigma ** 12)
         sig_6 = (Agent.sigma ** 6)
         lj_pot = np.sum((4 * Agent.epsilon) * ((sig_12 / rr_12) - (sig_6 / rr_6)))
-        spr_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
-        return lj_pot + spr_pot
+        ag_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
+        subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
+        return lj_pot + ag_pot + subs_pot
 
 
 """
