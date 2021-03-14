@@ -15,16 +15,16 @@ _, _, _, subs_param, _, _ = parse('input.txt')
 class Substrate():
     def __init__(self):
         # define parameters
-        self.k = float(subs_param['k'])
-        self.dim = int(subs_param['dim'])
-        self.num = int(subs_param['num'])
-        self.mass = float(subs_param['mass'])
-        layers = int(subs_param['layers'])
+        self.k = subs_param['k']
+        self.dim = subs_param['dim']
+        self.num = subs_param['num']
+        self.mass = subs_param['mass']
+        layers = subs_param['layers']
         self.bound_cond = subs_param['bound_cond']
         self.displace_type = subs_param['displace_type']
-        self.latt_const = float(subs_param['latt_const'])
-        self.cuto_const = float(subs_param['cuto_const'])
-        fix_layers = int(subs_param['fix_layers'])
+        self.latt_const = subs_param['latt_const']
+        self.cuto_const = subs_param['cuto_const']
+        fix_layers = subs_param['fix_layers']
         self.L = self.num * self.latt_const
         
         # initialize position and trap
