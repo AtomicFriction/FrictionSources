@@ -47,8 +47,8 @@ def parse(file):
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
 
     dim = subs['dim']
-    if not (dim >= 1 and dim <= 3): raise ValueError('Unexpected dimension'); exit()
-    elif (dim == 1 or dim == 2):
+    if not dim >= 1 and dim <= 3: exit('Unexpected dimension')
+    elif dim == 1 or dim == 2:
         subs['layers'] = 1
         subs['fix_layers'] = 0
     elif dim == 3 and subs['bound_cond'] == 'fixed':
