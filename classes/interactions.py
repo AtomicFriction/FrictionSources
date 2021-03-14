@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import linalg as LA
 from scipy.spatial import distance
 import timeit
 
@@ -79,9 +80,9 @@ def SubstrateForce():
     dist[dist > Subs.L/2] -= Subs.L
     dist[dist < -Subs.L/2] += Subs.L
     norm = LA.norm(dist, axis=2)[:, np.newaxis]
-    norm[norm[:, :, -1] == 0, -1] = Subs.a
+    norm[norm[:, :, -1] == 0, -1] = Subs.latt_const
 
-    dR = (norm - Subs.a) / norm @ dist
+    dR = (norm - Subs.latt_const) / norm @ dist
     subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
     lj_force = globals.lj_force
