@@ -76,7 +76,7 @@ if (dev_select == "an2d"):
 
             ## Target temperature / Step.
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
             WriteLog(i, j, ff, pe, ke, 0, temp)
 
@@ -142,7 +142,7 @@ elif(dev_select == "y"):
             (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
             pe = PE()
             ff = Friction()
@@ -187,7 +187,7 @@ elif (dev_select == "3d"):
             (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
             pe = PE()
             ff = Friction()
@@ -234,7 +234,7 @@ elif (dev_select == "ff"):
             (Subs.R, Subs.V, Subs.A), _ = Integrate("SUBSTRATE", Subs.R, Subs.V, Subs.A, Subs.mass)
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) + float(globals.run[i][0]) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
             pe = PE()
             ff = Friction()
@@ -314,7 +314,7 @@ elif (dev_select == "an3d"):
                 Agent.slider_pos[0][1] = Agent.slider_pos[0][1] + globals.L
 
             temp_inc = ((float(globals.run[i][1]) - float(globals.run[i][0])) / int(globals.run[i][2]))
-            Subs.V = ApplyThermostat(temp_inc, 40, Subs.V)
+            Subs.V = ApplyThermostat(temp + temp_inc)
 
             WriteLog(i, j, ff, pe, ke, 0, temp)
 
