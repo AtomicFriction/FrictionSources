@@ -9,7 +9,8 @@ run = 3 1 1 10000 1 300 10000 300 300 10000
 integ = ec
 /
 &analysis
-n_dump = 1000
+N_dump = 1000
+N_phonon = 50
 data = ff etot ke pe temp
 /
 &substrate
