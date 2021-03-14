@@ -7,40 +7,40 @@ from substrate import Subs
 ##################################################
 gen_param, _, _, _, _, _ = parse('input.txt')
 
-cutoff = float(gen_param['cutoff'])
+cutoff = gen_param['cutoff']
 ##################################################
 ##################################################
 _, prot_param, _, _, _, _ = parse('input.txt')
 
-dt = float(prot_param['dt'])
-integrator = (prot_param['integ'])
-run = np.array(prot_param['run']).reshape(int(len(prot_param['run'])/3), 3)
+dt = prot_param['dt']
+integrator = prot_param['integ']
+run = np.array(prot_param['run']).reshape(len(prot_param['run'])/3, 3)
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('input.txt')
-data = (analysis_param['data'])
+data = analysis_param['data']
 ##################################################
 ##################################################
 _, _, _, subs_param, _, _ = parse('input.txt')
 
-num = int(subs_param['num'])
-subs_k = float(subs_param['k'])
-latt_const = float(subs_param['latt_const'])
+num = subs_param['num']
+subs_k = subs_param['k']
+latt_const = subs_param['latt_const']
 ##################################################
 ##################################################
 _, _, _, _, agent_param, _ = parse('input.txt')
 
-constrain = str(agent_param['constrain'])
-eq_len = float(agent_param['eq_len'])
-agent_k = float(agent_param['k'])
+constrain = agent_param['constrain']
+eq_len = agent_param['eq_len']
+agent_k = agent_param['k']
 ##################################################
 ##################################################
 _, _, _, _, _, thermo_param = parse('input.txt')
 
 thermo = thermo_param['thermo']
-tau = float(thermo_param['tau'])
-s, Q = float(thermo_param['s']), float(thermo_param['q'])
-gamma = float(thermo_param['gamma'])
+tau = thermo_param['tau']
+s, Q = thermo_param['s'], thermo_param['q']
+gamma = thermo_param['gamma']
 boltz = 8.617333262e-5
 ##################################################
 ##################################################
@@ -57,6 +57,7 @@ subs_force_fin = 0
 
 rr = 0
 disp = 0
+subs_dR = 0
 T_inst = 0
 
 """
