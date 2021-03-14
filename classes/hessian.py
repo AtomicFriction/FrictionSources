@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.linalg as la
+import numpy.linalg as LA
 import globals
 from substrate import Subs
 from interactions import SubstrateForce
@@ -47,4 +47,7 @@ def Hessian():
             # Insert the calculated value to its place inside the Hessian matrix.
             hessian[i][j] = ij_val
 
-    return hessian
+    _, eigvec = LA.eig(hessian)
+    vec_proj = np.dot(eigvec, Subs.R) / (LA.norm(eigvec) * LA.norm(Subs.R))
+
+    return hessian, vec_proj 
