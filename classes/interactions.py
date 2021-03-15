@@ -1,7 +1,8 @@
 import numpy as np
-from numpy import linalg as LA
 from scipy.spatial import distance
 import timeit
+import sys
+
 
 from agent import Agent
 from substrate import Subs
@@ -9,6 +10,8 @@ import globals
 from tools import SafeDivision, NumericalDiff
 
 
+# Lets the developer see big arrays.
+np.set_printoptions(threshold=sys.maxsize)
 #dev_analyze = input("Want to see forces? y/n:    ")
 dev_analyze = "n"
 
@@ -43,20 +46,24 @@ def AgentForce():
             dir = (Agent.pos - Subs.R[table[0][i]]) / rr
             lj_force_whole = (((48 * Agent.epsilon) * ((sig_12) / (rr_12 * rr))) - ((24 * Agent.epsilon) * ((sig_6) / (rr_6 * rr)))) * dir
             lj.append(lj_force_whole)
+            globals.lj_force[table[0][i]] = lj[i][0]
 
-        globals.lj_force = np.sum(lj, axis = 0)
+        globals.lj_agent = np.sum(lj, axis = 0)
     else:
-        globals.lj_force = [[0, 0, 0]]
+        globals.lj_agent = [[0, 0, 0]]
 
+    lj.clear()
 
     ## Hooke's Law implementation. The equiliblium length taken as an input on the x-axis.
     spr_pot = []
 
+
     diff = Agent.pos - Agent.slider_pos
-    disp = np.linalg.norm(diff) - globals.eq_len
+    globals.disp = np.linalg.norm(diff) - globals.eq_len
     normalized = diff / np.linalg.norm(diff)
 
-    globals.spr_force = -1 * globals.agent_k * disp * normalized
+
+    globals.spr_force = -1 * globals.agent_k * globals.disp * normalized
 
     if (dev_analyze == "y"):
         ## For debugging purposes.
@@ -66,35 +73,37 @@ def AgentForce():
     elif (dev_analyze == "n"):
         pass
 
-    agent_force = globals.lj_force + globals.spr_force
+    agent_force = globals.lj_agent + globals.spr_force
+
+    #print(globals.lj_force)
 
     return agent_force
 
 
-def SubstrateForce(R):
-    subs_force = np.zeros(R.shape)
+def SubstrateForce():
+    subs_force = np.zeros(Subs.R.shape)
 
-    R_N = R[Subs.N]
-    R_A = R[Subs.trap].reshape((R_N.shape[0], 1, 3))
+    R_N = Subs.R[Subs.N]
+    R_A = Subs.R[Subs.trap].reshape((R_N.shape[0], 1, 3))
     dist = R_N - R_A
     dist[dist > Subs.L/2] -= Subs.L
     dist[dist < -Subs.L/2] += Subs.L
-    norm = LA.norm(dist, axis=2)[:, np.newaxis]
+    norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
     norm[norm[:, :, -1] == 0, -1] = Subs.latt_const
 
     dR = (norm - Subs.latt_const) / norm @ dist
     subs_force[Subs.trap] = np.squeeze(Subs.k * dR, axis=1)
 
     lj_force = globals.lj_force
-    subs_force_fin = subs_force - lj_force
+    globals.subs_force_fin = subs_force - lj_force
 
-    return subs_force_fin
+    return globals.subs_force_fin
 
 
 ## A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
-def GetForces(force_select, R):
+def GetForces(force_select):
     ##print("GetForces called.")
     if (force_select == "AGENT"):
         return AgentForce()
     elif (force_select == "SUBSTRATE"):
-        return SubstrateForce(R)
+        return SubstrateForce()
