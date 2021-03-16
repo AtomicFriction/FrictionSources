@@ -1,4 +1,5 @@
 from dtypes import typeof
+import numpy as np
 
 def parse(file):
     with open(file, 'r') as f:
@@ -23,7 +24,9 @@ def parse(file):
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
-            try: prot[key] = list(map(float, prot[key].split())); prot[key][2::3] = map(int, prot[key][2::3])
+            try: 
+                prot[key] = list(map(float, prot[key].split())); prot[key][2::3] = map(int, prot[key][2::3])
+                prot[key] = np.array(prot[key]).reshape(int(len(prot[key])/3), 3)
             except ValueError: print('The input run must consist of types (float, float, int), respectively.'); exit()
     for key, val in anal.items():
         if key != 'data':
@@ -40,7 +43,7 @@ def parse(file):
             try: slid[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'agent_pos' or key == 'slider_pos' or key == 'slider_vel':
-            try: slid[key] = list(map(float, slid[key].split()))
+            try: slid[key] = np.array(list(map(float, slid[key].split())))
             except ValueError: print('The input {} must consist of type {}'.format(key, typeof[key])); exit()
     for key, val in thermo.items():
         try: thermo[key] = typeof[key](val)
