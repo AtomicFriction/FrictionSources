@@ -14,7 +14,7 @@ _, prot_param, _, _, _, _ = parse('input.txt')
 
 dt = prot_param['dt']
 integrator = prot_param['integ']
-run = np.array(prot_param['run']).reshape(len(prot_param['run'])/3, 3)
+run = prot_param['run'])
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('input.txt')
