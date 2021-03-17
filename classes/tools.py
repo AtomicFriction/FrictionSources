@@ -42,38 +42,3 @@ Output: The value of f'(a).
 """
 def NumericalDiff(f, a, h):
     return (f(a + h) - f(a - h)) / (2 * h)
-
-
-"""
--> Returns "None" if (globals.kinetic_switch == 0).
-"""
-def KE():
-    if (globals.kinetic_switch == 1):
-        subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
-        agent_kin = (Agent.mass * np.sum(Agent.vel ** 2)) / 2
-        return subs_kin + agent_kin
-
-"""
--> Returns "None" if (globals.potential_switch == 0).
-"""
-def PE():
-    if (globals.potential_switch == 1):
-        rr_12 = (globals.rr ** 12)
-        rr_6 = (globals.rr ** 6)
-        sig_12 = (Agent.sigma ** 12)
-        sig_6 = (Agent.sigma ** 6)
-        lj_pot = np.sum((4 * Agent.epsilon) * ((sig_12 / rr_12) - (sig_6 / rr_6)))
-        ag_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
-        subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
-        return lj_pot + ag_pot + subs_pot
-
-
-"""
--> Projection of the spring force vector on the slider velocity vector calculated for the friction force.
--> Returns "None" if (globals.ff_switch == 0).
-"""
-def Friction():
-    if (globals.ff_switch == 1):
-        slid_vel_norm = np.sqrt(sum(Agent.slider_vel[0] ** 2))
-        ff = (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
-        return ff
