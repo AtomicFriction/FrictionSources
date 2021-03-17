@@ -2,6 +2,7 @@ import numpy as np
 from scipy.spatial import distance
 import timeit
 import sys
+from numba import jit
 
 
 from agent import Agent
@@ -12,8 +13,6 @@ from tools import SafeDivision, NumericalDiff
 
 # Lets the developer see big arrays.
 np.set_printoptions(threshold=sys.maxsize)
-#dev_analyze = input("Want to see forces? y/n:    ")
-dev_analyze = "n"
 
 """
 -> Calculates the total force present on the Agent.
@@ -54,28 +53,14 @@ def AgentForce():
 
     lj.clear()
 
-    ## Hooke's Law implementation. The equiliblium length taken as an input on the x-axis.
+    ## Hooke's Law implementation in 3D.
     spr_pot = []
-
-
     diff = Agent.pos - Agent.slider_pos
     globals.disp = np.linalg.norm(diff) - globals.eq_len
     normalized = diff / np.linalg.norm(diff)
-
-
     globals.spr_force = -1 * globals.agent_k * globals.disp * normalized
 
-    if (dev_analyze == "y"):
-        ## For debugging purposes.
-        print("LJ:    " + str(globals.lj_force))
-        print("SPR:    " + str(globals.spr_force))
-        print(np.shape(globals.spr_force))
-    elif (dev_analyze == "n"):
-        pass
-
     agent_force = globals.lj_agent + globals.spr_force
-
-    #print(globals.lj_force)
 
     return agent_force
 
@@ -99,10 +84,10 @@ def SubstrateForce():
 
     return globals.subs_force_fin
 
-
-## A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
+"""
+->A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
+"""
 def GetForces(force_select):
-    ##print("GetForces called.")
     if (force_select == "AGENT"):
         return AgentForce()
     elif (force_select == "SUBSTRATE"):
