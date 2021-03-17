@@ -11,8 +11,8 @@ Uses the unified GetForces() function for the force/acceleration calculations.
 """
 def EulerCromer(force_select, pos, vel, acc, mass):
     ## Updates of the target.
-    vel = vel + (acc * globals.dt)
-    pos = pos + (vel * globals.dt)
+    vel += (acc * globals.dt)
+    pos += (vel * globals.dt)
     acc = (GetForces(force_select) / mass)
     ## Updates of the slider, happens regardless of the target choice.
     slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
@@ -28,10 +28,10 @@ Uses the unified GetForces() function for the force/acceleration calculations.
 """
 def VelocityVerlet(force_select, pos, vel, acc, mass):
     ## Updates of the target.
-    pos = (pos + ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2))))
-    vel = (vel + (0.5 * acc * globals.dt))
+    pos += ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2)))
+    vel += (0.5 * acc * globals.dt)
     acc = (GetForces(force_select) / mass)
-    vel = (vel + (0.5 * acc * globals.dt))
+    vel += (0.5 * acc * globals.dt)
     ## Updates of the slider, happens regardless of the target choice.
     slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
     ## Operation to constrain the target, depends on the user input.
@@ -73,6 +73,7 @@ def RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos
 
 ## A method to unify all of the integration functions in one. This is needed for later use in the main function.
 def Integrate(force_select, pos, vel, acc, mass):
+    ##print("Integrator called.")
     if (globals.integrator == "ec"):
         return EulerCromer(force_select, pos, vel, acc, mass)
     elif (globals.integrator == "vv"):
