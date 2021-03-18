@@ -67,7 +67,7 @@ def Hessian():
             hessian[i][j] = ij_val
 
     _, eigvec = LA.eig(hessian)
-    vec_proj = np.dot(eigvec, Subs.R) / (LA.norm(eigvec) * LA.norm(Subs.R))
+    vec_proj = np.dot(eigvec, subs_pos_flat) / (LA.norm(eigvec) * LA.norm(Subs.R))
 
     print(vec_proj)
 
