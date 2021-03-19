@@ -1,4 +1,4 @@
-from dtypes import typeof
+from input_parser.dtypes import typeof
 import numpy as np
 
 def parse(file):
@@ -24,7 +24,7 @@ def parse(file):
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
-            try: 
+            try:
                 prot[key] = list(map(float, prot[key].split())); prot[key][2::3] = map(int, prot[key][2::3])
                 prot[key] = np.array(prot[key]).reshape(int(len(prot[key])/3), 3)
             except ValueError: print('The input run must consist of types (float, float, int), respectively.'); exit()
@@ -57,4 +57,4 @@ def parse(file):
     elif dim == 3 and subs['bound_cond'] == 'fixed':
         subs['bound_cond'] = 'periodic'
 
-    return gen, prot, anal, subs, slid, thermo 
+    return gen, prot, anal, subs, slid, thermo
