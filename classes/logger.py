@@ -6,7 +6,7 @@ import globals
 """
 def InitializeLog():
     # Copy the contents of "input.txt" to "log.txt"
-    with open("log.txt", "w") as file_1, open("input.txt", 'r') as file_2:
+    with open("log.txt", "w") as file_1, open('./input_parser/input.txt', 'r') as file_2:
         for line in file_2:
             file_1.write(line)
         file_1.write("\n")
