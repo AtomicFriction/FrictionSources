@@ -1,32 +1,30 @@
-from input_parser import parse
+from input_parser.input_parser import parse
 from scipy.spatial import distance
 import numpy as np
 
 """
 ---------------------------------
-
 For the sake of simulation to run well,
 Call find_neighbor first, then init_disp.
-
 ---------------------------------
 """
 
-_, _, _, subs_param, _, _ = parse('input.txt')
+_, _, _, subs_param, _, _ = parse('./input_parser/input.txt')
 class Substrate():
     def __init__(self):
         # define parameters
-        self.k = subs_param['k']
-        self.dim = subs_param['dim']
-        self.num = subs_param['num']
-        self.mass = subs_param['mass']
-        layers = subs_param['layers']
+        self.k = float(subs_param['k'])
+        self.dim = int(subs_param['dim'])
+        self.num = int(subs_param['num'])
+        self.mass = float(subs_param['mass'])
+        layers = int(subs_param['layers'])
         self.bound_cond = subs_param['bound_cond']
         self.displace_type = subs_param['displace_type']
-        self.latt_const = subs_param['latt_const']
-        self.cuto_const = subs_param['cuto_const']
-        fix_layers = subs_param['fix_layers']
+        self.latt_const = float(subs_param['latt_const'])
+        self.cuto_const = float(subs_param['cuto_const'])
+        fix_layers = int(subs_param['fix_layers'])
         self.L = self.num * self.latt_const
-        
+
         # initialize position and trap
         if self.dim == 1:
             zgrid, ygrid, xgrid = np.mgrid[0:layers, 0:1, 0:self.num] * self.latt_const
@@ -62,11 +60,11 @@ class Substrate():
         # initialize velocity and acceleration
         self.V = np.zeros(np.shape(self.R))
         self.A = np.zeros(np.shape(self.R))
-        
+
     def find_neighbor(self):
         if self.bound_cond == 'fixed':
             dR = distance.cdist(self.R, self.R, 'euclidean')
-                
+
         elif self.bound_cond == 'periodic':
             X = self.R[:, 0][np.newaxis]
             Y = self.R[:, 1][np.newaxis]
@@ -89,7 +87,7 @@ class Substrate():
             N[-self.numlayer:, :self.N[-1].size] = np.array(list(self.N[-self.numlayer:]))
             N[-self.numlayer:, -1] = np.arange(self.R.shape[0]-self.numlayer, self.R.shape[0])
             self.N = N.astype(np.int32)
-            
+
     def init_disp(self):
         if self.displace_type == 'random':
             if self.dim == 1:
@@ -97,7 +95,7 @@ class Substrate():
 
             elif self.dim != 1:
                 self.R[self.trap] += (np.random.rand(*np.shape(self.R[self.trap])) - 0.5) * 0.1
-            
+
         elif self.displace_type == 'sinusoidal':
             print('Sinusoidal displacement is not implemented yet.\n')
             choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
