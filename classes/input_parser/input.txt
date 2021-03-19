@@ -1,0 +1,47 @@
+&general
+cutoff = 20
+interact = LJ
+/
+&protocol
+numba = False
+dt = 0.01
+run = 1 1 1
+integ = ec
+/
+&analysis
+N_dump = 1000
+N_phonon = 50
+data = ff pe ke temp
+/
+&substrate
+dim = 2
+layers = 1
+num = 10
+bound_cond = fixed
+fix_layers = 0
+latt_const = 2
+cuto_const = 2.5
+displace_type = random
+k = 0.0514
+mass = 0.01
+/
+&slider
+mass = 1
+k = 1
+shape = single
+sigma = 3.4
+epsilon = 0.0103
+agent_pos = 5 5 10
+slider_pos = 0 5 10
+slider_vel = 10 0 0
+eq_len = 5
+constrain = none
+/
+&thermostat
+thermo = berendsen
+mode = full
+tau = 0.001
+s = 0.1
+Q = 0.1
+gamma = 0.1
+/
