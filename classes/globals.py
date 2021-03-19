@@ -1,41 +1,40 @@
-## Global definitions here.
-from input_parser import parse
+from input_parser.input_parser import parse
 import numpy as np
 from substrate import Subs
 
 ##################################################
 ##################################################
-gen_param, _, _, _, _, _ = parse('input.txt')
+gen_param, _, _, _, _, _ = parse('./input_parser/input.txt')
 
 cutoff = gen_param['cutoff']
 ##################################################
 ##################################################
-_, prot_param, _, _, _, _ = parse('input.txt')
+_, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 
 dt = prot_param['dt']
 integrator = prot_param['integ']
-run = prot_param['run'])
+run = np.array(prot_param['run']).reshape(int(len(prot_param['run'])/3), 3)
 ##################################################
 ##################################################
-_, _, analysis_param, _, _, _ = parse('input.txt')
+_, _, analysis_param, _, _, _ = parse('./input_parser/input.txt')
 data = analysis_param['data']
 ##################################################
 ##################################################
-_, _, _, subs_param, _, _ = parse('input.txt')
+_, _, _, subs_param, _, _ = parse('./input_parser/input.txt')
 
 num = subs_param['num']
 subs_k = subs_param['k']
 latt_const = subs_param['latt_const']
 ##################################################
 ##################################################
-_, _, _, _, agent_param, _ = parse('input.txt')
+_, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
 
 constrain = agent_param['constrain']
 eq_len = agent_param['eq_len']
 agent_k = agent_param['k']
 ##################################################
 ##################################################
-_, _, _, _, _, thermo_param = parse('input.txt')
+_, _, _, _, _, thermo_param = parse('./input_parser/input.txt')
 
 thermo = thermo_param['thermo']
 tau = thermo_param['tau']
