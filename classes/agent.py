@@ -1,5 +1,5 @@
 import numpy as np
-from input_parser import parse
+from input_parser.input_parser import parse
 import globals
 
 
@@ -7,7 +7,7 @@ import globals
 Uses the input data given by the user to initialize an agent and a slider.
 """
 
-_, _, _, _, agent_param, _ = parse('input.txt')
+_, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
 
 ## Agent class.
 class AgentSlider:
@@ -41,20 +41,20 @@ class AgentSlider:
 
 def AgentPeriodicity(agent_pos, slider_pos):
     if (agent_pos[0][0] > globals.L):
-        agent_pos[0][0] = agent_pos[0][0] - globals.L
-        slider_pos[0][0] = slider_pos[0][0] - globals.L
+        agent_pos[0][0] -= globals.L
+        slider_pos[0][0] -= globals.L
 
     if (agent_pos[0][0] < 0):
-        agent_pos[0][0] = agent_pos[0][0] + globals.L
-        slider_pos[0][0] = slider_pos[0][0] + globals.L
+        agent_pos[0][0] += globals.L
+        slider_pos[0][0] += globals.L
 
     if (agent_pos[0][1] > globals.L):
-        agent_pos[0][1] = agent_pos[0][1] - globals.L
-        slider_pos[0][1] = slider_pos[0][1] - globals.L
+        agent_pos[0][1] -= globals.L
+        slider_pos[0][1] -= globals.L
 
     if (agent_pos[0][1] < 0):
-        agent_pos[0][1] = agent_pos[0][1] + globals.L
-        slider_pos[0][1] = slider_pos[0][1] + globals.L
+        agent_pos[0][1] += globals.L
+        slider_pos[0][1] += globals.L
 
     return agent_pos, slider_pos
 
