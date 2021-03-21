@@ -1,43 +1,59 @@
 import numpy as np
 from numba import jit
 from interactions import GetForces
-from tools import constrain
 import globals
-from agent import Agent
+
+
+"""
+-> Constrains the motion to the desired axis by simple matrix multiplications.
+Input x: Constrains the motion on the x-axis. Nullifies the components of other axes.
+Input y: Constrains the motion on the y-axis. Nullifies the components of other axes.
+Else: Does nothing.
+"""
+def constrain(direction, vel, acc):
+    if (direction == "x"):
+        vel *= np.array([1, 0, 0])
+        acc *= np.array([1, 0, 0])
+        return (vel, acc)
+
+    elif (direction == "y"):
+        vel *= np.array([0, 1, 0])
+        acc *= np.array([0, 1, 0])
+        return (vel, acc)
+
+    else:
+        return (vel, acc)
+        
 
 """
 Euler-Cromer integration scheme implementation.
 Uses the unified GetForces() function for the force/acceleration calculations.
 """
-def EulerCromer(force_select, pos, vel, acc, mass):
+def EulerCromer(force, pos, vel, acc, mass):
     ## Updates of the target.
     vel += (acc * globals.dt)
     pos += (vel * globals.dt)
-    acc = (GetForces(force_select) / mass)
-    ## Updates of the slider, happens regardless of the target choice.
-    slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
+    acc = (force / mass)
     ## Operation to constrain the target, depends on the user input.
     (vel, acc) = constrain(globals.constrain, vel, acc)
 
-    return (pos, vel, acc), slider_pos
+    return pos, vel, acc
 
 
 """
 Velocity-Verlet integration scheme implementation.
 Uses the unified GetForces() function for the force/acceleration calculations.
 """
-def VelocityVerlet(force_select, pos, vel, acc, mass):
+def VelocityVerlet(force, pos, vel, acc, mass):
     ## Updates of the target.
     pos += ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2)))
     vel += (0.5 * acc * globals.dt)
-    acc = (GetForces(force_select) / mass)
+    acc = (force / mass)
     vel += (0.5 * acc * globals.dt)
-    ## Updates of the slider, happens regardless of the target choice.
-    slider_pos = Agent.slider_pos + (Agent.slider_vel * globals.dt)
     ## Operation to constrain the target, depends on the user input.
     (vel, acc) = constrain(globals.constrain, vel, acc)
 
-    return (pos, vel, acc), slider_pos
+    return pos, vel, acc
 
 
 """
