@@ -34,11 +34,11 @@ typeof = {'cutoff': float,
           'gamma': float
 }
 
-integtype = {('ec', 'eulercromer'): 'EulerCromer(force, pos, vel, acc, mass)',
-             ('vv', 'velocityverlet'): 'VelocityVerlet(force, pos, vel, acc, mass)'
+integtype = {('ec', 'eulercromer'): 'EulerCromer',
+             ('vv', 'velocityverlet'): 'VelocityVerlet'
 }
 
-thermotype = {('vs', 'velrescale'): 'VelRescale(target_temp)',
-              ('b', 'berendsen'): 'Berendsen(target_temp)',
-              ('l', 'langevin'): 'langevin(target_temp)'
+thermotype = {('vs', 'velrescale'): 'vs',
+              ('b', 'berendsen'): 'b',
+              ('l', 'langevin'): 'l'
 }        
