@@ -12,7 +12,9 @@ cutoff = gen_param['cutoff']
 _, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 
 dt = prot_param['dt']
-integrator = prot_param['integ']
+subs_integ = prot_param['integ'] + '(Subs.F, Subs.R, Subs.V, Subs.A, Subs.mass)'
+agent_integ = prot_param['integ'] + '(Agent.F, Agent.R, Agent.V, Agent.A, Agent.mass)'
+print(subs_integ)
 run = np.array(prot_param['run']).reshape(int(len(prot_param['run'])/3), 3)
 ##################################################
 ##################################################
@@ -36,7 +38,11 @@ agent_k = agent_param['k']
 ##################################################
 _, _, _, _, _, thermo_param = parse('./input_parser/input.txt')
 
-thermo = thermo_param['thermo']
+if thermo_param['thermo'] == 'vs': F_thermo = 'F'; V_thermo = 'VelRescale(target_temp)'
+elif thermo_param['thermo'] == 'b': F_thermo = 'F'; V_thermo = 'Berendsen(target_temp)'
+elif thermo_param['thermo'] == 'l': F_thermo = 'langevin(trap)'; V_thermo = 'V'
+elif thermo_param['thermo'] == 'nh': F_thermo = 'noosehover(trap)'; V_thermo = 'V'
+else: raise NameError('Undefined thermostat')
 tau = thermo_param['tau']
 s, Q = thermo_param['s'], thermo_param['q']
 gamma = thermo_param['gamma']
