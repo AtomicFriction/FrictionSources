@@ -27,8 +27,18 @@ typeof = {'cutoff': float,
           'constrain': str,
           'thermo': str,
           'mode': str,
+          'thickness': int,
           'tau': float,
           's': float,
           'q': float,
           'gamma': float
-        }
+}
+
+integtype = {('ec', 'eulercromer'): 'EulerCromer(force, pos, vel, acc, mass)',
+             ('vv', 'velocityverlet'): 'VelocityVerlet(force, pos, vel, acc, mass)'
+}
+
+thermotype = {('vs', 'velrescale'): 'VelRescale(target_temp)',
+              ('b', 'berendsen'): 'Berendsen(target_temp)',
+              ('l', 'langevin'): 'langevin(target_temp)'
+}        
