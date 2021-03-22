@@ -19,20 +19,20 @@ def CalcTemp():
     return globals.T_inst
 
 
-def VelRescale(TargetTemp):
+def VelRescale(target_temp, trap):
     """
     -> Velocity Rescaling Thermostat.
     -> Calculates the instantaneous temperature of the system using the equipartition theorem, T_inst.
     -> T (taken as an input), is the target temperature.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = SafeDivision(TargetTemp, globals.T_inst) ** (1 / 2)
+    L = SafeDivision(target_temp, globals.T_inst) ** (1 / 2) # is it necessary?
     ##L = T / T_inst ** (1 / 2)
-    V = Subs.V * L
-    return V
+    Subs.V[trap] *= L
+    return Subs.V
 
 
-def Berendsen(TargetTemp):
+def Berendsen(target_temp, trap):
     """
     -> Berendsen Thermostat.
     -> Calculates the instantaneous temperature of the system using the equipartition theorem, T_inst.
@@ -40,8 +40,9 @@ def Berendsen(TargetTemp):
     -> Tau is taken as an input.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = (1 + (globals.dt / globals.tau) * (SafeDivision(TargetTemp, globals.T_inst) - 1)) * (1/2)
-    V = Subs.V * L
+    V = np.zeros(Subs.V.shape)
+    L = (1 + (globals.dt / globals.tau) * (SafeDivision(target_temp, globals.T_inst) - 1)) * (1/2)
+    V[trap] = Subs.V[trap] * L
     return V
 
 
@@ -55,16 +56,11 @@ def nosehoover(mass, R):
 
 
 # What is T_inst? Target temp or calculated temp?
-def langevin():
-    comp1 = np.exp(-globals.gamma * globals.dt) * Subs.V
-    comp2 = np.random.normal(size = Subs.V.shape) * np.sqrt(boltz * globals.T_inst / mass * (1 - np.exp(-2 * globals.gamma * globals.dt)))
+def langevin(trap):
+    V = np.zeros(Subs.V.shape)
+    comp1 = np.exp(-globals.gamma * globals.dt) * Subs.V[trap]
+    comp2 = np.random.normal(size = Subs.V[trap].shape) * \
+        np.sqrt(globals.boltz * globals.T_inst / Subs.mass * (1 - np.exp(-2 * globals.gamma * globals.dt)))
     print(comp1.shape, comp2.shape)
-    V = comp1 + comp2
+    V[trap] = comp1 + comp2
     return V
-
-
-def ApplyThermostat(TargetTemp):
-    if (globals.thermo == "velrescale"):
-        return VelRescale(TargetTemp)
-    elif (globals.thermo == "berendsen"):
-        return Berendsen(TargetTemp)
