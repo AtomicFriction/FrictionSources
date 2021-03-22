@@ -1,4 +1,4 @@
-from input_profile import *
+from input_parser.input_profile import *
 import numpy as np
 
 def parse(file):
