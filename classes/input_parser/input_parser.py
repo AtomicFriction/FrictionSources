@@ -16,7 +16,7 @@ def parse(file):
     slid = dict(params[slid_ind+1:params.index(['/'], slid_ind)])
     thermo = dict(params[thermo_ind+1:params.index(['/'], thermo_ind)])
 
-    ### VALUE ERROR MUST BE TYPE ERROR
+    ### ALL THE ERROR TYPES TO BE CHECKED
     
     for key, val in gen.items():
         try: gen[key] = typeof[key](val)
@@ -74,7 +74,11 @@ def parse(file):
 
     elif dim == 3 and subs['bound_cond'] == 'fixed': subs['bound_cond'] = 'periodic'
 
-    elif thermo['mode'] == 'trap' and not thermo['thickness'] > 0: 
-        raise ValueError('Thickness must be a positive integer')
+    elif thermo['mode'] == 'trap':
+        if not thermo['thickness'] > 0: 
+            raise ValueError('Thickness must be a positive integer')
+        elif dim == 3 and (subs['layers'] - subs['fix_layers']) < thermo['thickness']:
+            raise ValueError('Thickness must be less than or equal to free layers of the 3D system')
+
 
     return gen, prot, anal, subs, slid, thermo 
