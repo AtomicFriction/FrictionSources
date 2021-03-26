@@ -33,7 +33,7 @@ def SubstrateForceH(R):
     return subs_force_fin
 
 
-def Hessian():
+def GetEigen():
     # Flatten the position array for easier indexing.
     subs_pos_flat = Subs.R.flatten()
     # Create an empty array of proper size.
@@ -47,16 +47,15 @@ def Hessian():
 
             # Calculate the "plus" force element for differentiation later on.
             subs_pos_flat[j] = pos_plus
-            plus_pos_mat = np.reshape(subs_pos_flat, (globals.num * globals.num, 3))
-            plus_force_calc = SubstrateForceH(plus_pos_mat) # The force function needs to take the altered position element as an input here.
+            plus_pos_mat = np.reshape(subs_pos_flat, (globals.num, 3))
+            plus_force_calc = SubstrateForce(plus_pos_mat) # The force function needs to take the altered position element as an input here.
             plus_force_flat = plus_force_calc.flatten()
             plus_force = plus_force_flat[i]
 
-
             # Calculate the "minus" force element for differentiation later on.
             subs_pos_flat[j] = pos_minus
-            min_pos_mat = np.reshape(subs_pos_flat, (globals.num * globals.num, 3))
-            minus_force_calc = SubstrateForceH(min_pos_mat) # The force function needs to take the altered position element as an input here.
+            min_pos_mat = np.reshape(subs_pos_flat, (globals.num, 3))
+            minus_force_calc = SubstrateForce(min_pos_mat) # The force function needs to take the altered position element as an input here.
             minus_force_flat = minus_force_calc.flatten()
             minus_force = minus_force_flat[i]
 
@@ -65,10 +64,11 @@ def Hessian():
 
             # Insert the calculated value to its place inside the Hessian matrix.
             hessian[i][j] = ij_val
-
     _, eigvec = LA.eig(hessian)
-    vec_proj = np.dot(eigvec, subs_pos_flat) / (LA.norm(eigvec) * LA.norm(subs_pos_flat))
+    
+    return eigvec
 
-    print(vec_proj)
-
-    return hessian, vec_proj
+def ProjectEigen(eigvec):
+    
+    vec_proj = np.dot(eigvec, Subs.R) / (LA.norm(eigvec) * LA.norm(Subs.R))
+    return vec_proj
