@@ -25,6 +25,7 @@ typeof = {'cutoff': float,
           'slider_vel': float,
           'eq_len': float,
           'constrain': str,
+          'n_thermo': int,
           'thermo': str,
           'mode': str,
           'thickness': int,
@@ -38,7 +39,8 @@ integtype = {('ec', 'eulercromer'): 'EulerCromer',
              ('vv', 'velocityverlet'): 'VelocityVerlet'
 }
 
-thermotype = {('vs', 'velrescale'): 'vs',
-              ('b', 'berendsen'): 'b',
-              ('l', 'langevin'): 'l'
+thermotype = {('vs', 'velrescale'): 'VelRescale',
+              ('b', 'berendsen'): 'Berendsen',
+              ('nh', 'nosehoover'): 'NooseHoover',
+              ('l', 'langevin'): 'Langevin'
 }        
