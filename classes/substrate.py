@@ -1,6 +1,9 @@
 from input_parser.input_parser import parse
 from scipy.spatial import distance
+from globals import run, boltz
 import numpy as np
+from dist import calc_dist
+import timeit
 
 """
 ---------------------------------
@@ -62,14 +65,15 @@ class Substrate():
             self.numlayer = int(self.R.shape[0] / layers)
 
         # initialize velocity and acceleration
-        self.V = np.zeros(np.shape(self.R))
+        self.V = np.random.normal(0, np.sqrt(boltz*run[0, 0]/self.mass), self.R.shape)
+        self.V = np.sqrt(self.mass/(2*np.pi*boltz*run[0, 0])) * np.exp(-self.mass*self.V**2/(2*boltz*run[0, 0]))
         self.A = np.zeros(np.shape(self.R))
 
         # set the trap for thermostat
         if mode == 'full':
             self.trap = np.arange(self.R.shape[0])
 
-        elif mode == 'trap': # unify dimensions if you can
+        elif mode == 'partial': # unify dimensions if you can
             if self.dim == 2:
                 self.trap = np.where((self.R-thickness >= 0).all(axis=1) & \
                     (self.R+thickness <= (self.num-1)*self.latt_const).all(axis=1))
@@ -79,8 +83,14 @@ class Substrate():
         
     def find_neighbor(self):
         if self.bound_cond == 'fixed':
+            t0 = timeit.default_timer()
+            dR = calc_dist(self.R)
+            print('Neighbortable by Numba: ', timeit.default_timer()-t0)
+
+            t1 = timeit.default_timer()
             dR = distance.cdist(self.R, self.R, 'euclidean')
-                
+            print('Neighbortable by Scipy: ', timeit.default_timer()-t1)
+            input('finished')
         elif self.bound_cond == 'periodic':
             X = self.R[:, 0][np.newaxis]
             Y = self.R[:, 1][np.newaxis]
@@ -142,4 +152,4 @@ class Substrate():
 
 Subs = Substrate()
 Subs.find_neighbor()
-Subs.init_disp()
+#Subs.init_disp()
