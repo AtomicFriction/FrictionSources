@@ -1,6 +1,6 @@
 import numpy as np
 import globals
-from tools import SafeDivision
+from math import sqrt
 from substrate import Subs
 
 """
@@ -19,20 +19,20 @@ def CalcTemp():
     return globals.T_inst
 
 
-def VelRescale(target_temp, trap):
+def VelRescale(F, T_target, trap):
     """
     -> Velocity Rescaling Thermostat.
     -> Calculates the instantaneous temperature of the system using the equipartition theorem, T_inst.
     -> T (taken as an input), is the target temperature.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = SafeDivision(target_temp, globals.T_inst) ** (1 / 2) # is it necessary?
-    ##L = T / T_inst ** (1 / 2)
+    L = sqrt(T_target / globals.T_inst)
     Subs.V[trap] *= L
-    return Subs.V
+    F = F
+    return Subs.V, F
 
 
-def Berendsen(target_temp, trap):
+def Berendsen(F, T_target, trap):
     """
     -> Berendsen Thermostat.
     -> Calculates the instantaneous temperature of the system using the equipartition theorem, T_inst.
@@ -40,27 +40,27 @@ def Berendsen(target_temp, trap):
     -> Tau is taken as an input.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    V = np.zeros(Subs.V.shape)
-    L = (1 + (globals.dt / globals.tau) * (SafeDivision(target_temp, globals.T_inst) - 1)) * (1/2)
-    V[trap] = Subs.V[trap] * L
-    return V
+    L = sqrt(1 + (globals.dt / globals.tau) * (T_target / globals.T_inst - 1))
+    Subs.V[trap] *= L
+    F = F
+    return Subs.V, F
 
 
-def nosehoover(mass, R):
-    s = None
-    Q = None
-    print("\n\nThis thermostat is not implementable yet.\n \
-            If you want to proceed with another thermostat, \
-            restart the program with another thermostat.\n\n")
-    return quit()
+def NoseHoover(F, T_target, trap):
+    N = F[trap].shape[0]
+    gamma_deriv = 1/globals.Q * (np.sum(Subs.mass * Subs.V[trap]**2) - 3*N * globals.boltz * T_target)
+    gamma = integrate(gamma_deriv)
+    F[trap] -= gamma * Subs.V[trap]
+    Subs.V = Subs.V
+    return Subs.V, F 
 
 
-# What is T_inst? Target temp or calculated temp?
-def langevin(trap):
-    V = np.zeros(Subs.V.shape)
-    comp1 = np.exp(-globals.gamma * globals.dt) * Subs.V[trap]
-    comp2 = np.random.normal(size = Subs.V[trap].shape) * \
-        np.sqrt(globals.boltz * globals.T_inst / Subs.mass * (1 - np.exp(-2 * globals.gamma * globals.dt)))
-    print(comp1.shape, comp2.shape)
-    V[trap] = comp1 + comp2
-    return V
+
+def Langevin(F, T_target, trap):
+    wiener = sqrt(globals.dt) * np.random.rand(*Subs.V[trap].shape)
+    F[trap] += (-1) * Subs.mass * globals.gamma * Subs.V[trap] + \
+        sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
+    Subs.V = Subs.V
+    return Subs.V, F
+
+ApplyThermo = eval(globals.thermotype)
