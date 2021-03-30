@@ -83,14 +83,8 @@ class Substrate():
         
     def find_neighbor(self):
         if self.bound_cond == 'fixed':
-            t0 = timeit.default_timer()
-            dR = calc_dist(self.R)
-            print('Neighbortable by Numba: ', timeit.default_timer()-t0)
-
-            t1 = timeit.default_timer()
             dR = distance.cdist(self.R, self.R, 'euclidean')
-            print('Neighbortable by Scipy: ', timeit.default_timer()-t1)
-            input('finished')
+            
         elif self.bound_cond == 'periodic':
             X = self.R[:, 0][np.newaxis]
             Y = self.R[:, 1][np.newaxis]
