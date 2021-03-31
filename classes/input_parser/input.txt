@@ -5,7 +5,7 @@ interact = LJ
 &protocol
 numba = False
 dt = 0.001
-run = 1 1 10000 1 300 10000 300 300 10000
+run = 1 1 1
 integ = ec
 /
 &analysis
@@ -14,10 +14,10 @@ N_phonon = 50
 data = ff etot ke pe
 /
 &substrate
-dim = 3
-layers = 3
-fix_layers = 2
-num = 30
+dim = 2
+layers = 1
+fix_layers = 1
+num = 10
 bound_cond = periodic
 latt_const = 2
 cuto_const = 2.5
@@ -31,15 +31,15 @@ k = 10
 shape = single
 sigma = 3.4
 epsilon = 0.0103
-agent_pos = 50 2 0
-slider_pos = 45 2 0
+agent_pos = 12 12 3
+slider_pos = 8 8 3
 slider_vel = 0.1 0 0
-eq_len = 10
+eq_len = 5
 constrain = none
 /
 &thermostat
 thermo = velrescale
-mode = trap
+mode = full
 thickness = 2
 tau = 0.1
 s = 0.1
