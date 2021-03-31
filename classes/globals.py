@@ -1,5 +1,6 @@
 from input_parser.input_parser import parse
 import numpy as np
+#from substrate import Subs
 
 ##################################################
 ##################################################
@@ -12,7 +13,7 @@ _, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 
 dt = prot_param['dt']
 integtype = prot_param['integ']
-run = np.array(prot_param['run'])
+run = prot_param['run']
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('./input_parser/input.txt')
@@ -38,7 +39,9 @@ _, _, _, _, _, thermo_param = parse('./input_parser/input.txt')
 thermotype = thermo_param['thermo']
 tau = thermo_param['tau']
 s, Q = thermo_param['s'], thermo_param['q']
-gamma = thermo_param['gamma']
+gamma = thermo_param['gamma'],
+mode = thermo_param['mode']
+thickness = thermo_param['thickness']
 boltz = 8.617333262e-5
 ##################################################
 ##################################################
@@ -56,8 +59,6 @@ etot = 0
 
 spr_force = np.zeros((1, 3))
 lj_force = np.zeros((num * num, 3))
-lj_agent = []
-subs_force_fin = 0
 
 rr = 0
 disp = 0
