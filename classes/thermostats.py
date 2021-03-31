@@ -21,9 +21,8 @@ def CalcTemp():
     'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
     Returns 'T_trap', 'T_nontrap', and total temperature
     """
-    nontrap = np.setdiff1d(Subs.bound, Subs.trap)
-    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size) ## num_bound to be the number of free atom
-    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[nontrap] ** 2) / (3 * globals.boltz * nontrap.size)
+    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size)
+    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.size) - globals.T_trap
     return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
 
 
