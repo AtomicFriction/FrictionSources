@@ -1,7 +1,7 @@
 import numpy as np
 import globals
-from math import sqrt
 from substrate import Subs
+import math
 
 """
 Since the constants below will be used in the functions,
@@ -10,30 +10,15 @@ are defined here, so whenever one of the functions below
 is called, the constants must be also called.
 """
 
-# Possible problem with "T" and increment here. Needs a discussion.
-# Possible take the T_inst calculation out of the thermostats and make it a seperate function.
-
-def CalcTemp():
-    """Calculates the temperatures of the atoms to whom the thermostat applied and the atoms to whom the thermostat is not applied, respectively
-
-    'trap' stands for the region the thermostat is applied
-    'nontrap' stands for the region the thermostat is not applied
-    'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
-    Returns 'T_trap', 'T_nontrap', and total temperature
-    """
-    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size)
-    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.size) - globals.T_trap
-    return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
-
 
 def VelRescale(F, T_target, trap):
-    """Updates only the velocity multiplying it by the factor 'L' calculated by using the ratio of target and instantaneous temperatures
-
+    """
+    Updates only the velocity multiplying it by the factor 'L' calculated by using the ratio of target and instantaneous temperatures
     Takes the parameters '(F, T_target, trap)'
     Indexes the velocity array with the array 'trap', and updates only that part of the velocity array
     Returns both velocity and force arrays
     """
-    L = sqrt(T_target / globals.T_inst)
+    L = (T_target / globals.temp) ** (1/2)
     Subs.V[trap] *= L
     F = F
     return Subs.V, F
@@ -47,7 +32,7 @@ def Berendsen(F, T_target, trap):
     -> Tau is taken as an input.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = sqrt(1 + (globals.dt / globals.tau) * (T_target / globals.T_inst - 1))
+    L = sqrt(1 + (globals.dt / globals.tau) * (T_target / globals.temp - 1))
     Subs.V[trap] *= L
     F = F
     return Subs.V, F
@@ -59,7 +44,7 @@ def NoseHoover(F, T_target, trap):
     gamma = integrate(gamma_deriv)
     F[trap] -= gamma * Subs.V[trap]
     Subs.V = Subs.V
-    return Subs.V, F 
+    return Subs.V, F
 
 
 
