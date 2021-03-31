@@ -1,6 +1,5 @@
 from input_parser.input_parser import parse
 import numpy as np
-from substrate import Subs
 
 ##################################################
 ##################################################
@@ -12,10 +11,8 @@ cutoff = gen_param['cutoff']
 _, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 
 dt = prot_param['dt']
-subs_integ = prot_param['integ'] + '(Subs.F, Subs.R, Subs.V, Subs.A, Subs.mass)'
-agent_integ = prot_param['integ'] + '(Agent.F, Agent.R, Agent.V, Agent.A, Agent.mass)'
-print(subs_integ)
-run = np.array(prot_param['run']).reshape(int(len(prot_param['run'])/3), 3)
+integtype = prot_param['integ']
+run = np.array(prot_param['run'])
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('./input_parser/input.txt')
@@ -60,7 +57,6 @@ etot = 0
 spr_force = np.zeros((1, 3))
 lj_force = np.zeros((num * num, 3))
 lj_agent = []
-L = Subs.num * Subs.latt_const
 subs_force_fin = 0
 
 rr = 0
