@@ -87,12 +87,4 @@ def RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos
 
     return (pos, vel, acc), slider_pos
 
-## A method to unify all of the integration functions in one. This is needed for later use in the main function.
-def Integrate(force_select, pos, vel, acc, mass):
-    ##print("Integrator called.")
-    if (globals.integrator == "ec"):
-        return EulerCromer(force_select, pos, vel, acc, mass)
-    elif (globals.integrator == "vv"):
-        return VelocityVerlet(force_select, pos, vel, acc, mass)
-    elif (globals.integrator == "rk4"):
-        return RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos, vel, acc)
+Integrate = eval(globals.integtype)
