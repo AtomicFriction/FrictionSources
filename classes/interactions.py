@@ -69,7 +69,7 @@ def SubstrateForce():
     subs_force = np.zeros(Subs.R.shape)
 
     R_N = Subs.R[Subs.N]
-    R_A = Subs.R[Subs.trap].reshape((R_N.shape[0], 1, 3))
+    R_A = Subs.R[Subs.bound].reshape((R_N.shape[0], 1, 3))
     dist = R_N - R_A
     dist[dist > Subs.L/2] -= Subs.L
     dist[dist < -Subs.L/2] += Subs.L
@@ -83,12 +83,3 @@ def SubstrateForce():
     globals.subs_force_fin = subs_force - lj_force
 
     return globals.subs_force_fin
-
-"""
-->A method to unify all of the force calculator functions in one. This is needed for later use in the integrators.
-"""
-def GetForces(force_select):
-    if (force_select == "AGENT"):
-        return AgentForce()
-    elif (force_select == "SUBSTRATE"):
-        return SubstrateForce()
