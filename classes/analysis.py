@@ -20,7 +20,7 @@ def FF():
 -> Not evaluated if (globals.potential_switch == 0).
 """
 def PE():
-    if (globals.potential_switch == 1):
+    if (globals.potential_switch == 1 or globals.etot_switch == 1):
         rr_12 = (globals.rr ** 12)
         rr_6 = (globals.rr ** 6)
         sig_12 = (Agent.sigma ** 12)
@@ -37,7 +37,7 @@ def PE():
 -> Not evaluated if (globals.kinetic_switch == 0).
 """
 def KE():
-    if (globals.kinetic_switch == 1):
+    if (globals.kinetic_switch == 1 or globals.etot_switch == 1):
         subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
         agent_kin = (Agent.mass * np.sum(Agent.vel ** 2)) / 2
         globals.ke = subs_kin + agent_kin
@@ -56,9 +56,15 @@ def Etot():
 -> Temprature is always calculated, because it is needed for the thermostats.
 """
 def Temp():
-    num_bound = 4 * (globals.num - 1)
-    globals.temp =  Subs.mass * np.sum(Subs.V ** 2) / (3 * globals.boltz * num_bound)
-    return globals.temp
+    """Calculates the temperatures of the atoms to whom the thermostat applied and the atoms to whom the thermostat is not applied, respectively
+    'trap' stands for the region the thermostat is applied
+    'nontrap' stands for the region the thermostat is not applied
+    'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
+    Returns 'T_trap', 'T_nontrap', and total temperature
+    """
+    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size)
+    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.size) - globals.T_trap
+    return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
 
 
 """
@@ -70,4 +76,3 @@ def Analysis():
     PE()
     KE()
     Etot()
-    Temp()
