@@ -14,17 +14,25 @@ is called, the constants must be also called.
 # Possible take the T_inst calculation out of the thermostats and make it a seperate function.
 
 def CalcTemp():
-    num_bound = 4 * (globals.num - 1)
-    globals.T_inst =  Subs.mass * np.sum(Subs.V ** 2) / (3 * globals.boltz * num_bound)
-    return globals.T_inst
+    """Calculates the temperatures of the atoms to whom the thermostat applied and the atoms to whom the thermostat is not applied, respectively
+
+    'trap' stands for the region the thermostat is applied
+    'nontrap' stands for the region the thermostat is not applied
+    'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
+    Returns 'T_trap', 'T_nontrap', and total temperature
+    """
+    nontrap = np.setdiff1d(Subs.bound, Subs.trap)
+    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size) ## num_bound to be the number of free atom
+    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[nontrap] ** 2) / (3 * globals.boltz * nontrap.size)
+    return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
 
 
 def VelRescale(F, T_target, trap):
-    """
-    -> Velocity Rescaling Thermostat.
-    -> Calculates the instantaneous temperature of the system using the equipartition theorem, T_inst.
-    -> T (taken as an input), is the target temperature.
-    -> Returns a constant L to multiply with velocity of the particles in the system.
+    """Updates only the velocity multiplying it by the factor 'L' calculated by using the ratio of target and instantaneous temperatures
+
+    Takes the parameters '(F, T_target, trap)'
+    Indexes the velocity array with the array 'trap', and updates only that part of the velocity array
+    Returns both velocity and force arrays
     """
     L = sqrt(T_target / globals.T_inst)
     Subs.V[trap] *= L
