@@ -1,14 +1,14 @@
 import numpy as np
 from input_parser.input_parser import parse
 import globals
+from numba import njit
 
 
 """
-Uses the input data given by the user to initialize an agent and a slider.
+Uses the input data given by the user to initial size an agent and a slider.
 """
 
 _, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
-
 ## Agent class.
 class AgentSlider:
 
@@ -27,6 +27,7 @@ class AgentSlider:
         self.slider_pos = np.array(agent_param["slider_pos"]).reshape(1, 3)
         ## The velocity of the slider.
         self.slider_vel = np.array(agent_param["slider_vel"]).reshape(1, 3)
+        self.F = 0
 
         ## Initialize agent position, velocity and acceleration as (1 x 3) arrays depending on the user selected shape.
         if (self.shape == "single"):
@@ -39,24 +40,24 @@ class AgentSlider:
             pass
 
 
-def AgentPeriodicity(agent_pos, slider_pos):
-    if (agent_pos[0][0] > globals.L):
-        agent_pos[0][0] -= globals.L
-        slider_pos[0][0] -= globals.L
+def AgentPeriodicity(agent_position, slider_position, box_len):
+    if (agent_position[0][0] > box_len):
+        agent_position[0][0] -= box_len
+        slider_position[0][0] -= box_len
 
-    if (agent_pos[0][0] < 0):
-        agent_pos[0][0] += globals.L
-        slider_pos[0][0] += globals.L
+    if (agent_position[0][0] < 0):
+        agent_position[0][0] += box_len
+        slider_position[0][0] += box_len
 
-    if (agent_pos[0][1] > globals.L):
-        agent_pos[0][1] -= globals.L
-        slider_pos[0][1] -= globals.L
+    if (agent_position[0][1] > box_len):
+        agent_position[0][1] -= box_len
+        slider_position[0][1] -= box_len
 
-    if (agent_pos[0][1] < 0):
-        agent_pos[0][1] += globals.L
-        slider_pos[0][1] += globals.L
+    if (agent_position[0][1] < 0):
+        agent_position[0][1] += box_len
+        slider_position[0][1] += box_len
 
-    return agent_pos, slider_pos
+    return agent_position, slider_position
 
 
 Agent = AgentSlider()
