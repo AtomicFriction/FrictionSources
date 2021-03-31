@@ -65,8 +65,9 @@ class Substrate():
             self.numlayer = int(self.R.shape[0] / layers)
 
         # initialize velocity and acceleration
-        self.V = np.random.normal(0, np.sqrt(boltz*run[0, 0]/self.mass), self.R.shape)
-        self.V = np.sqrt(self.mass/(2*np.pi*boltz*run[0, 0])) * np.exp(-self.mass*self.V**2/(2*boltz*run[0, 0]))
+        self.V = np.zeros(self.R.shape)
+        self.V[self.bound] = np.random.normal(0, np.sqrt(boltz*run[0, 0]/self.mass))
+        self.V[self.bound] = np.sqrt(self.mass/(2*np.pi*boltz*run[0, 0])) * np.exp(-self.mass*self.V[self.bound]**2/(2*boltz*run[0, 0]))
         self.A = np.zeros(np.shape(self.R))
 
         # set the trap for thermostat
