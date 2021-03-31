@@ -1,6 +1,5 @@
 import numpy as np
 from numba import jit
-from interactions import GetForces
 import globals
 
 
@@ -23,11 +22,12 @@ def constrain(direction, vel, acc):
 
     else:
         return (vel, acc)
-        
+
 
 """
 Euler-Cromer integration scheme implementation.
 Uses the unified GetForces() function for the force/acceleration calculations.
+JIT compilation makes the function slower.
 """
 def EulerCromer(force, pos, vel, acc, mass):
     ## Updates of the target.
@@ -35,7 +35,7 @@ def EulerCromer(force, pos, vel, acc, mass):
     pos += (vel * globals.dt)
     acc = (force / mass)
     ## Operation to constrain the target, depends on the user input.
-    (vel, acc) = constrain(globals.constrain, vel, acc)
+    #(vel, acc) = constrain(globals.constrain, vel, acc)
 
     return pos, vel, acc
 
@@ -51,7 +51,7 @@ def VelocityVerlet(force, pos, vel, acc, mass):
     acc = (force / mass)
     vel += (0.5 * acc * globals.dt)
     ## Operation to constrain the target, depends on the user input.
-    (vel, acc) = constrain(globals.constrain, vel, acc)
+    #(vel, acc) = constrain(globals.constrain, vel, acc)
 
     return pos, vel, acc
 
