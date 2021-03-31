@@ -75,8 +75,8 @@ class Substrate():
 
         elif mode == 'partial': # unify dimensions if you can
             if self.dim == 2:
-                self.trap = np.where((self.R-thickness >= 0).all(axis=1) & \
-                    (self.R+thickness <= (self.num-1)*self.latt_const).all(axis=1))
+                self.trap = np.where((self.R[:, :2]-thickness >= 0).all(axis=1) & \
+                    (self.R[:, :2]+thickness <= (self.num-1)*self.latt_const).all(axis=1))[0]
                     
             elif self.dim == 3:
                 self.trap = np.arange(self.numlayer * fix_layers, self.numlayer * (fix_layers + thickness))
