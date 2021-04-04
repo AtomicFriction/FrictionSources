@@ -17,12 +17,12 @@ data = ff etot ke pe
 dim = 2
 layers = 1
 fix_layers = 1
-num = 10
-bound_cond = periodic
+num = 5
+bound_cond = fixed
 latt_const = 2
 cuto_const = 2.5
 displace_type = random
-k = 1
+k = 10
 mass = 1
 /
 &slider
