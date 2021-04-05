@@ -2,8 +2,28 @@
 
 ### How To Run The Software:
 
-1) Download the source code here. Following commands will assume that you are operating on ```/home``` directory.
-2) Adjust the inputs to your liking at ```/FrictionSources-main/classes/input_parser/input.txt```.
-On the terminal execute the following commands:
-3) ```cd FrictionSources-main/classes```
-4) ```python3 main.py```
+1) Go to the directory you want the code at.
+```
+cd my/directory
+```
+2) Download the source code.
+```
+git clone https://github.com/AtomicFriction/FrictionSources.git
+```
+3) Locate and access the ``` input.txt``` file which will allow you to change the parameters of the simulation to your liking.
+```
+cd FrictionSources/classes/input_parser
+```
+For UNIX based systems:
+```
+nano input.txt
+```
+For Windows:
+```
+start notebad input.txt
+```
+4) Once you configure the parameters at step 3, the software is ready to run. Go back to the previous directory and run the software.
+```
+cd -
+python3 main.py
+```
