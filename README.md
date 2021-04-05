@@ -20,7 +20,7 @@ nano input.txt
 ```
 For Windows:
 ```
-start notebad input.txt
+start notepad input.txt
 ```
 4) Once you configure the parameters at step 3, the software is ready to run. Go back to the previous directory and run the software.
 ```
