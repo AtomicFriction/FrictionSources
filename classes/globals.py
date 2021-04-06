@@ -32,6 +32,10 @@ _, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
 constrain = agent_param['constrain']
 eq_len = agent_param['eq_len']
 agent_k = agent_param['k']
+# The constant sigma for The Lennard Jones interaction.
+sigma = (agent_param['sigma'])
+# The constant epsilon for The Lennard Jones interaction.
+epsilon = (agent_param['epsilon'])
 ##################################################
 ##################################################
 _, _, _, _, _, thermo_param = parse('./input_parser/input.txt')
@@ -60,9 +64,14 @@ etot = 0
 spr_force = np.zeros((1, 3))
 lj_force = np.zeros((num * num, 3))
 
-rr = 0
+rr_12 = []
+rr_6 = []
 disp = 0
 subs_dR = 0
+
+# For Lennard-Jones calculations.
+sig_12 = (sigma ** 12)
+sig_6 = (sigma ** 6)
 
 """
 agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
