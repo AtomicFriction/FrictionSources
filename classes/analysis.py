@@ -20,12 +20,12 @@ def FF():
 -> Not evaluated if (globals.potential_switch == 0).
 """
 def PE():
+    # globals.rr list olarak al, her rr değeri için ayrı pe hesabı yapıp topla.
     if (globals.potential_switch == 1 or globals.etot_switch == 1):
-        rr_12 = (globals.rr ** 12)
-        rr_6 = (globals.rr ** 6)
-        sig_12 = (Agent.sigma ** 12)
-        sig_6 = (Agent.sigma ** 6)
-        lj_pot = np.sum((4 * Agent.epsilon) * ((sig_12 / rr_12) - (sig_6 / rr_6)))
+        lj_pot_arr = []
+        for i in range(len(globals.rr_12)):
+            lj_pot_arr.append(np.sum((4 * globals.epsilon) * ((globals.sig_12 / globals.rr_12[i]) - (globals.sig_6 / globals.rr_6[i]))))
+        lj_pot = np.sum(lj_pot_arr, axis = 0)
         ag_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
         subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
         globals.pe = lj_pot + ag_pot + subs_pot
