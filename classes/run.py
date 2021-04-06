@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import time
+from tqdm import tqdm
 
 import globals
 from agent import Agent
@@ -14,6 +15,15 @@ from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
 from integrators import Integrate
 
+
+"""
+-> sigma is in Angstroms.
+-> epsilon is in eV.
+-> substrate spring constant is in eV/Angstroms^2.
+-> substrate mass is in amu(atomic mass units).
+-> latt_const for Argon is in Angstroms.
+-> Coutoff constant taken as 2.5 * sigma.
+"""
 
 """
 -> If you are interested in using the plotting tools, use:
@@ -39,17 +49,7 @@ def main():
 
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
     # The eigenvectors of the hessian can be saved here in case you want to run tests on them. Comment this out otherwise.
-    #np.save('eigtest', eigvec)
-
-
-    """
-    -> sigma is in Angstroms.
-    -> epsilon is in eV.
-    -> substrate spring constant is in eV/Angstroms^2.
-    -> substrate mass is in amu(atomic mass units).
-    -> latt_const for Argon is in Angstroms.
-    -> Coutoff constant taken as 2.5 * sigma.
-    """
+    np.save('eigtest', eigvec)
 
     # DEV TOOL SET 1: Empty arrays for plots.
     """
@@ -67,7 +67,8 @@ def main():
     for i in range(len(globals.run)):
         # Write the outline for the log file.
         LogProtocol(i)
-        for j in range(int(globals.run[i][2])):
+        print("Executing protocol step " + str(i + 1) + " out of " + str(len(globals.run)))
+        for j in tqdm(range(int(globals.run[i][2]))):
             # DEV TOOL SET 2:
             """
             # Start of 3D animated plot here. Just start commenting out here.
