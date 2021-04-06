@@ -18,7 +18,7 @@ np.set_printoptions(threshold=sys.maxsize)
             3D Lennard-Jones force calculation between agent and substrate,
             3D spring force calculation between agent and slider.
 """
-def AgentForce(agent_pos, slider_pos, substrate_pos, lj_sigma, lj_epsilon):
+def AgentForce(agent_pos, slider_pos, substrate_pos):
     """
     Lennard-Jones Potential implementation in 3D.
     """
@@ -38,16 +38,13 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, lj_sigma, lj_epsilon):
             -> "rr" is the distance between the agent and the substrate atom that lies inside the cutoff region.
             -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /analysis.py/PE()).
             """
-            globals.rr = rr
             # The following four variables are calculated for the Lennard-Jones potential.
-            rr_12 = (rr ** 12)
-            rr_6 = (rr ** 6)
-            sig_12 = (lj_sigma ** 12)
-            sig_6 = (lj_sigma ** 6)
+            globals.rr_12.append(rr ** 12)
+            globals.rr_6.append(rr ** 6)
             # Evaluation of the direction of the Lennard-Jones force.
             dir = (agent_pos - substrate_pos[table[0][i]]) / rr
             # Evaluation of the Lennard-Jones force.
-            lj_force_whole = (((48 * lj_epsilon) * ((sig_12) / (rr_12 * rr))) - ((24 * lj_epsilon) * ((sig_6) / (rr_6 * rr)))) * dir
+            lj_force_whole = (((48 * globals.epsilon) * ((globals.sig_12) / (globals.rr_12[i] * rr))) - ((24 * globals.epsilon) * ((globals.sig_6) / (globals.rr_6[i] * rr)))) * dir
             # Append the calculated force to the "lj" array to sum it all up later.
             lj.append(lj_force_whole)
             """
