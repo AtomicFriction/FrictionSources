@@ -4,6 +4,7 @@ typeof = {'cutoff': float,
           'dt': float,
           'run': [float, float, int],
           'integ': str,
+          'apply_agent': [int],
           'n_dump': int,
           'n_phonon': int,
           'data': str,
@@ -43,4 +44,4 @@ thermotype = {('vs', 'velrescale'): 'VelRescale',
               ('b', 'berendsen'): 'Berendsen',
               ('nh', 'nosehoover'): 'NooseHoover',
               ('l', 'langevin'): 'Langevin'
-}        
+}
