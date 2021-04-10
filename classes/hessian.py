@@ -14,6 +14,8 @@ pos_minus = pos[j] - h
 hessian[i][j] = (F(pos_plus)[i] - F(pos_minus)[i]) / (2 * h)
 """
 
+# These functions are here to make the analysis process easier. They will be removed later on.
+
 # Creates an array of tuples that can be used to print forces and the atoms that those forces belong to.
 def IndexedArray(arr):
     num_elements = sum(len(x) for x in arr)
