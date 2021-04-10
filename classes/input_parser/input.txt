@@ -5,8 +5,9 @@ interact = LJ
 &protocol
 numba = False
 dt = 0.001
-run = 1 1 1
+run = 1 1 10000 1 1 10000 1 1 1000
 integ = ec
+apply_agent = 0 0 0 0
 /
 &analysis
 N_dump = 1000
@@ -17,23 +18,23 @@ data = ff etot ke pe
 dim = 2
 layers = 1
 fix_layers = 1
-num = 5
+num = 10
 bound_cond = fixed
 latt_const = 2
 cuto_const = 2.5
 displace_type = random
-k = 10
-mass = 1
+k = 1
+mass = 40
 /
 &slider
 mass = 40
-k = 10
+k = 100
 shape = single
 sigma = 3.4
 epsilon = 0.0103
-agent_pos = 12 12 3
-slider_pos = 8 8 3
-slider_vel = 0.1 0 0
+agent_pos = 8 12 5
+slider_pos = 7 8 5
+slider_vel = 10 0 0
 eq_len = 5
 constrain = none
 /
