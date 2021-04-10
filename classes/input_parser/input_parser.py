@@ -16,14 +16,14 @@ def parse(file):
     slid = dict(params[slid_ind+1:params.index(['/'], slid_ind)])
     thermo = dict(params[thermo_ind+1:params.index(['/'], thermo_ind)])
 
-    ### ALL THE ERROR TYPES TO BE CHECKED
-    
+    ### VALUE ERROR MUST BE TYPE ERROR
+
     for key, val in gen.items():
         try: gen[key] = typeof[key](val)
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
 
     for key, val in prot.items():
-        if key != 'run' and key != 'integ':
+        if key != 'run' and key != 'integ' and key != 'apply_agent':
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
@@ -36,6 +36,10 @@ def parse(file):
                 if val in integrator:
                     try: prot[key] = integtype.get(integrator)
                     except: print('Undefined integrator') # error type is to be specified
+        elif key == "apply_agent":
+            try:
+                prot[key] = list(map(int, prot[key].split()))
+            except: print('Agent application combination must consist of "0" and "1" values.')
 
     for key, val in anal.items():
         if key != 'data':
@@ -66,7 +70,7 @@ def parse(file):
                     if val in thermostat:
                         try: thermo[key] = thermotype.get(thermostat)
                         except: print('Undefined thermostat') # error type is to be specified
-                    
+
     dim = subs['dim']
     if not dim >= 1 and dim <= 3: exit('Unexpected dimension')
 
@@ -74,11 +78,7 @@ def parse(file):
 
     elif dim == 3 and subs['bound_cond'] == 'fixed': subs['bound_cond'] = 'periodic'
 
-    elif thermo['mode'] == 'trap':
-        if not thermo['thickness'] > 0: 
-            raise ValueError('Thickness must be a positive integer')
-        elif dim == 3 and (subs['layers'] - subs['fix_layers']) < thermo['thickness']:
-            raise ValueError('Thickness must be less than or equal to free layers of the 3D system')
+    elif thermo['mode'] == 'trap' and not thermo['thickness'] > 0:
+        raise ValueError('Thickness must be a positive integer')
 
-
-    return gen, prot, anal, subs, slid, thermo 
+    return gen, prot, anal, subs, slid, thermo
