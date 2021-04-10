@@ -17,10 +17,6 @@ class AgentSlider:
         self.mass = (agent_param['mass'])
         ## Spring constant between slider and agent.
         self.k = (agent_param['k'])
-        ## The constant sigma for The Lennard Jones interaction.
-        self.sigma = (agent_param['sigma'])
-        ## The constant epsilon for The Lennard Jones interaction.
-        self.epsilon = (agent_param['epsilon'])
         ## Shape of the agent.
         self.shape = agent_param['shape']
         ## The position of the slider.
@@ -40,24 +36,21 @@ class AgentSlider:
             pass
 
 
-def AgentPeriodicity(agent_position, slider_position, box_len):
-    if (agent_position[0][0] > box_len):
-        agent_position[0][0] -= box_len
-        slider_position[0][0] -= box_len
+    def AgentPeriodicity(self, box_len):
+        if (self.pos[0][0] > box_len):
+            self.pos[0][0] -= box_len
+            self.slider_pos[0][0] -= box_len
 
-    if (agent_position[0][0] < 0):
-        agent_position[0][0] += box_len
-        slider_position[0][0] += box_len
+        if (self.pos[0][0] < 0):
+            self.pos[0][0] += box_len
+            self.slider_pos[0][0] += box_len
 
-    if (agent_position[0][1] > box_len):
-        agent_position[0][1] -= box_len
-        slider_position[0][1] -= box_len
+        if (self.pos[0][1] > box_len):
+            self.pos[0][1] -= box_len
+            self.slider_pos[0][1] -= box_len
 
-    if (agent_position[0][1] < 0):
-        agent_position[0][1] += box_len
-        slider_position[0][1] += box_len
-
-    return agent_position, slider_position
-
+        if (self.pos[0][1] < 0):
+            self.pos[0][1] += box_len
+            self.slider_pos[0][1] += box_len
 
 Agent = AgentSlider()
