@@ -37,7 +37,7 @@ def main():
     # Initialize the log file.
     InitializeLog()
 
-
+    """
     # Initialize the hessian matrix.
     print('Hessian matrix calculations started...')
 
@@ -50,7 +50,7 @@ def main():
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
     # The eigenvectors of the hessian can be saved here in case you want to run tests on them. Comment this out otherwise.
     np.save('eigtest', eigvec)
-
+    """
     # DEV TOOL SET 1: Empty arrays for plots.
     """
     time = []
@@ -62,7 +62,7 @@ def main():
     # DEV TOOL SET 1: Set the axis to 3D projection mode for the 3D plots.
     #ax = plt.axes(projection='3d')
     # DEV TOOL SET 2: Initialize a figure for the animated plot.
-    #fig = plt.figure()
+    fig = plt.figure()
 
     for i in range(len(globals.run)):
         # Write the outline for the log file.
@@ -71,8 +71,7 @@ def main():
         for j in tqdm(range(int(globals.run[i][2]))):
             # DEV TOOL SET 2:
             """
-            # Start of 3D animated plot here. Just start commenting out here.
-            if (j % 300 == 0):
+            if (j % 100 == 0):
                 plt.ion()
                 ax = fig.add_subplot(111, projection='3d')
                 R = Subs.R
@@ -81,8 +80,8 @@ def main():
                 ax.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], Agent.slider_pos[0][2], "s", markerfacecolor = "k", markersize = 16)
                 ax.axis("tight")
                 ax.set(zlim = (0, 7))
-                ax.set(xlim = (0, 20))
-                ax.set(ylim = (0, 20))
+                ax.set(xlim = (0, 30))
+                ax.set(ylim = (0, 30))
                 plt.draw()
                 plt.pause(0.1)
                 ax.cla()
@@ -92,9 +91,8 @@ def main():
             # End of 3D animated plot here. Just end commenting out here.
             temp_inc = (((globals.run[i][1]) - (globals.run[i][0])) / (globals.run[i][2]))
             # Integration of the entire system here.
-            Agent.slider_pos += Agent.slider_vel * globals.dt
             (Subs.R, Subs.V, Subs.A) = SimulateSubs(globals.temp + temp_inc, ApplyThermo, Integrate)
-            (Agent.pos, Agent.vel, Agent.acc) = SimulateAgent(Integrate)
+            (Agent.pos, Agent.vel, Agent.acc) = SimulateAgent(globals.apply_agent[i], Integrate)
             # Run the necessary "analysis" functions.
             Analysis()
             # Write the wanted quatities to the log file.
