@@ -14,6 +14,7 @@ _, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 dt = prot_param['dt']
 integtype = prot_param['integ']
 run = prot_param['run']
+apply_agent = prot_param['apply_agent']
 ##################################################
 ##################################################
 _, _, analysis_param, _, _, _ = parse('./input_parser/input.txt')
