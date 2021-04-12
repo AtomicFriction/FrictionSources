@@ -2,7 +2,7 @@
 
 ### How To Run The Software:
 
-1) Go to the directory you want the code at.
+1) Go to the directory you want to download the code at.
 ```
 cd my/directory
 ```
