@@ -8,9 +8,9 @@ import globals
 from agent import Agent
 from substrate import Subs
 from analysis import Analysis, Temp
-from logger import InitializeLog, LogProtocol, WriteLog
+from logger import InitLog, ProtLog, WriteLog
 import hessian
-from hessian import GetEigen, ProjectEigen
+from hessian import GetEigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
 from integrators import Integrate
@@ -35,22 +35,25 @@ from integrators import Integrate
 
 def main():
     # Initialize the log file.
-    InitializeLog()
+    InitLog()
 
-    """
+
     # Initialize the hessian matrix.
     print('Hessian matrix calculations started...')
 
     hess_start = time.perf_counter()
 
-    eigvec = GetEigen()
+    eigval, eigvec = GetEigen()
 
     hess_end = time.perf_counter()
 
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
-    # The eigenvectors of the hessian can be saved here in case you want to run tests on them. Comment this out otherwise.
-    np.save('eigtest', eigvec)
     """
+    # The eigenvectors of the hessian can be saved here in case you want to run tests on them. Comment this out otherwise.
+    np.save('eigtest_eigvec', eigvec)
+    np.save('eigtest_eigval', eigval)
+    """
+
     # DEV TOOL SET 1: Empty arrays for plots.
     """
     time = []
@@ -66,7 +69,7 @@ def main():
 
     for i in range(len(globals.run)):
         # Write the outline for the log file.
-        LogProtocol(i)
+        ProtLog(i)
         print("Executing protocol step " + str(i + 1) + " out of " + str(len(globals.run)))
         for j in tqdm(range(int(globals.run[i][2]))):
             # DEV TOOL SET 2:
@@ -95,6 +98,8 @@ def main():
             (Agent.pos, Agent.vel, Agent.acc) = SimulateAgent(globals.apply_agent[i], Integrate)
             # Run the necessary "analysis" functions.
             Analysis()
+            # Calculate eigenvector projections.
+            # ProjectEigen(eigvec, Subs.R, globals.proj_prot[i], globals.proj_prot[i + 1], j)
             # Write the wanted quatities to the log file.
             WriteLog(i, j)
 
