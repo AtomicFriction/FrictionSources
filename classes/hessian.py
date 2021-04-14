@@ -51,13 +51,22 @@ def ShowWhere(number_of_atoms, atom_number):
     print(shaped)
 
 
+def check_symmetric(M, rtol=1e-05, atol=1e-08):
+    return np.allclose(M, M.T, rtol=rtol, atol=atol)
+
+
+def check_diagonal(M):
+    i, j = np.nonzero(M)
+    return np.all(i == j)
+
+
 def GetEigen():
-    h = 1e-1
+    h = 1e-3
     # Create an empty array of proper size.
-    hessian = np.empty([3 * (globals.num ** 2) * Subs.layers, 3 * (globals.num ** 2) * Subs.layers])
+    hessian = np.zeros([3 * Subs.bound.shape[0], 3 * Subs.bound.shape[0]])
     # Nested loop used for indexing.
-    for i in tqdm(range(3 * (globals.num ** 2) * Subs.layers)):
-        for j in range(3 * (globals.num ** 2) * Subs.layers):
+    for i in tqdm(range(3 * Subs.bound.shape[0])):
+        for j in range(3 * Subs.bound.shape[0]):
             """
             Divider()
             print("Execution is at: i (outer loop) = " + str(i) + ", j (inner loop) = " + str(j))
@@ -65,7 +74,7 @@ def GetEigen():
             ShowWhere((globals.num ** 2) * Subs.layers, atom_num)
             """
             # Flatten the position array for easier indexing.
-            subs_pos_flat = Subs.R.flatten()
+            subs_pos_flat = Subs.R[Subs.bound].flatten()
             #print("Without alteration: " + str(subs_pos_flat[j]))
             # Define "plus" and "minus" position elements here.
             pos_plus = subs_pos_flat[j] + h
@@ -73,7 +82,7 @@ def GetEigen():
 
             # Calculate the "plus" force element for differentiation later on.
             subs_pos_flat[j] = pos_plus
-            plus_pos_mat = np.reshape(subs_pos_flat, ((globals.num ** 2) * Subs.layers, 3))
+            plus_pos_mat = (np.reshape(subs_pos_flat, (Subs.bound.shape[0], 3)))
             plus_force_calc = SubstrateForce(plus_pos_mat, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L) # The force function needs to take the altered position element as an input here.
             #IndexedArray(plus_force_calc)
             plus_force_flat = plus_force_calc.ravel()
@@ -81,7 +90,7 @@ def GetEigen():
 
             # Calculate the "minus" force element for differentiation later on.
             subs_pos_flat[j] = pos_minus
-            min_pos_mat = np.reshape(subs_pos_flat, ((globals.num ** 2) * Subs.layers, 3))
+            min_pos_mat = np.reshape(subs_pos_flat, (Subs.bound.shape[0], 3))
             minus_force_calc = SubstrateForce(min_pos_mat, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L) # The force function needs to take the altered position element as an input here.
             #IndexedArray(minus_force_calc)
             minus_force_flat = minus_force_calc.ravel()
@@ -96,12 +105,16 @@ def GetEigen():
 
     hessian = 0.5 * (hessian + np.transpose(hessian))
 
-    _, eigvec = LA.eig(hessian)
-
-    return eigvec
+    eigval, eigvec = LA.eig(hessian)
 
 
-def ProjectEigen(eigvec, subs_pos):
-    subs_pos_flat = subs_pos.flatten()
-    vec_proj = np.dot(eigvec, subs_pos_flat) / (LA.norm(eigvec) * LA.norm(subs_pos))
-    return vec_proj
+    return eigval.real, eigvec.real
+
+"""
+def ProjectEigen(eigvec, subs_pos, interval, eigvec_num, step_num):
+    if (step_num % interval == 0):
+        subs_pos_flat = subs_pos.flatten()
+        eigvec_select = eigvec[:, 0:(eigvec_num + 1)]
+        globals.vec_proj = np.dot(eigvec_select, subs_pos_flat) / (LA.norm(eigvec_select) * LA.norm(subs_pos))
+        return globals.vec_proj
+"""
