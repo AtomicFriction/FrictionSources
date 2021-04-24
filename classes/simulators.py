@@ -15,16 +15,16 @@ Performs a "status check" to see if the user wants to apply the agent on the sub
 def SimulateAgent(status, Integrate):
     # "on" choice simulates the agent normally.
     if (status == 1):
-        agent_force = AgentForce(Agent.pos, Agent.slider_pos, Subs.R)
+        agent_force = AgentForce(Agent.R, Agent.slider_pos, Subs.R)
         Agent.AgentPeriodicity(Subs.L)
         Agent.slider_pos += Agent.slider_vel * globals.dt
-        return Integrate(agent_force, Agent.pos, Agent.vel, Agent.acc, Agent.mass)
+        return Integrate(agent_force, Agent.R, Agent.V, Agent.A, Agent.mass)
 
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
     elif (status == 0):
         # The global variable containing the Lennard-Jones force needs to be nullified, so that it won't effect the substrate force calculations.
-        globals.lj_force = 0
-        return (Agent.pos, Agent.vel, Agent.acc)
+        globals.lj_force = np.zeros((globals.num * globals.num, 3))
+        return (Agent.R, Agent.V, Agent.A)
 
 
 def SimulateSubs(T_target, ApplyThermo, Integrate):
