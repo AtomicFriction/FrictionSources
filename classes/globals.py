@@ -14,6 +14,7 @@ _, prot_param, _, _, _, _ = parse('./input_parser/input.txt')
 dt = prot_param['dt']
 integtype = prot_param['integ']
 run = prot_param['run']
+eig_proj = prot_param['eig_proj']
 apply_agent = prot_param['apply_agent']
 ##################################################
 ##################################################
@@ -60,6 +61,7 @@ temp_switch = 0
 temp = 0
 etot_switch = 0
 etot = 0
+vec_proj = 0
 
 
 spr_force = np.zeros((1, 3))
@@ -80,3 +82,8 @@ agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
 
 agent_pot = []
 subs_pot = []
+
+save_progress = 0
+from_progress = False
+save_hess_eig = False
+animate = 0
