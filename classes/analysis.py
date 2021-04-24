@@ -39,7 +39,7 @@ def PE():
 def KE():
     if (globals.kinetic_switch == 1 or globals.etot_switch == 1):
         subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
-        agent_kin = (Agent.mass * np.sum(Agent.vel ** 2)) / 2
+        agent_kin = (Agent.mass * np.sum(Agent.V ** 2)) / 2
         globals.ke = subs_kin + agent_kin
         return globals.ke
 
