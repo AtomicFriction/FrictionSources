@@ -27,9 +27,9 @@ class AgentSlider:
 
         ## Initialize agent position, velocity and acceleration as (1 x 3) arrays depending on the user selected shape.
         if (self.shape == "single"):
-            self.pos = np.array(agent_param["agent_pos"]).reshape(1, 3)
-            self.vel = np.zeros((1, 3))
-            self.acc = np.zeros((1, 3))
+            self.R = np.array(agent_param["agent_pos"]).reshape(1, 3)
+            self.V = np.zeros((1, 3))
+            self.A = np.zeros((1, 3))
 
         elif (self.shape == "hemisphere"):
             ## Not in use right now.
@@ -37,20 +37,20 @@ class AgentSlider:
 
 
     def AgentPeriodicity(self, box_len):
-        if (self.pos[0][0] > box_len):
-            self.pos[0][0] -= box_len
+        if (self.R[0][0] > box_len):
+            self.R[0][0] -= box_len
             self.slider_pos[0][0] -= box_len
 
-        if (self.pos[0][0] < 0):
-            self.pos[0][0] += box_len
+        if (self.R[0][0] < 0):
+            self.R[0][0] += box_len
             self.slider_pos[0][0] += box_len
 
-        if (self.pos[0][1] > box_len):
-            self.pos[0][1] -= box_len
+        if (self.R[0][1] > box_len):
+            self.R[0][1] -= box_len
             self.slider_pos[0][1] -= box_len
 
-        if (self.pos[0][1] < 0):
-            self.pos[0][1] += box_len
+        if (self.R[0][1] < 0):
+            self.R[0][1] += box_len
             self.slider_pos[0][1] += box_len
 
 Agent = AgentSlider()
