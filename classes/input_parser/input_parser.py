@@ -23,7 +23,7 @@ def parse(file):
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
 
     for key, val in prot.items():
-        if key != 'run' and key != 'integ' and key != 'apply_agent':
+        if key != 'run' and key != 'integ' and key != 'apply_agent' and key != 'eig_proj':
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
@@ -36,10 +36,15 @@ def parse(file):
                 if val in integrator:
                     try: prot[key] = integtype.get(integrator)
                     except: print('Undefined integrator') # error type is to be specified
-        elif key == "apply_agent":
+        elif key == 'apply_agent':
             try:
                 prot[key] = list(map(int, prot[key].split()))
             except: print('Agent application combination must consist of "0" and "1" values.')
+        elif key == 'eig_proj':
+            try:
+                prot[key] = list(map(int, prot[key].split()))
+            except: print('Eigenvector projection selection combination error.')
+
 
     for key, val in anal.items():
         if key != 'data':
