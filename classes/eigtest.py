@@ -6,19 +6,14 @@ from substrate import Subs
 from mpl_toolkits.mplot3d import Axes3D
 
 eigvec_all = np.load('eigtest_eigvec.npy')
-
 eigval_all = np.load('eigtest_eigval.npy')
-idx = eigval_all.argsort()[::-1]
-eigval_all = eigval_all[idx]
-eigvec_all = eigvec_all[:,idx]
-
 
 
 def eigtest(eigvec):
 
-    eigvec_pl = eigvec[:, 0] ## 223
+    eigvec_pl = eigvec[:, 0] ## 0, 1, 4, 5, 6, 7, 11, 15
 
-    reshaped_eigvec = np.reshape(eigvec_pl, (globals.num * globals.num, 3))
+    reshaped_eigvec = np.reshape(eigvec_pl, (Subs.bound.shape[0], 3))
 
     R_disp = []
 
@@ -32,9 +27,9 @@ def eigtest(eigvec):
 
 
         plt.ion()
-        R_disp = Subs.R + ((reshaped_eigvec * a))
+        R_disp = Subs.R[Subs.bound] + ((reshaped_eigvec * a))
 
-        ax.plot_trisurf(R_disp[:,0], R_disp[:,1], R_disp[:,2], cmap=cm.inferno)
+        ax.plot_trisurf(R_disp[:,0].real, R_disp[:,1].real, R_disp[:,2].real, cmap=cm.inferno)
 
         ax.scatter(R_disp[:,0], R_disp[:,1], R_disp[:,2], color = "red")
 
