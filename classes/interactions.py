@@ -85,20 +85,29 @@ def AgentForce(agent_pos, slider_pos, substrate_pos):
 
 
 def SubstrateForce(subs_pos, subs_bound, subs_N, latt_const, subs_k, subs_L):
+    # Define a zero array for force with the shape Nx3
     subs_force = np.zeros(subs_pos.shape)
 
+    # Define a position array of neighboring atoms with the shape Nx1x3
     R_N = subs_pos[subs_N]
+    # Define a position array of atoms themselves with the shape Nx1x3
     R_A = subs_pos[subs_bound].reshape((R_N.shape[0], 1, 3))
+    # Calculate distance between atoms and their neighbors in xyz directions separately
     dist = R_N - R_A
+    # If the substrate is periodic, recompute the distance array for boundary atoms
     dist[dist > subs_L/2] -= subs_L
     dist[dist < -subs_L/2] += subs_L
+    # Compute the norm using distance array, and increase the dimension by one
     norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
+    # For 3D system, eliminate the contribution of the imaginary neighbors to the force
     norm[norm[:, :, -1] == 0, -1] = latt_const
 
+    # Define an array for the distance from equilibrium
     dR = (norm - latt_const) / norm @ dist
+    # Update the force array for free atoms in terms of Hooke's Law
     subs_force[subs_bound] = np.squeeze(subs_k * dR, axis=1)
 
-    lj_force = globals.lj_force
-    subs_force_fin = subs_force - lj_force
+    # Adds the contribution of Lennard-Jones to the force
+    subs_force_fin = subs_force - globals.lj_force
 
     return subs_force_fin
