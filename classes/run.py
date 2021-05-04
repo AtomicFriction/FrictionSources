@@ -8,15 +8,17 @@ import globals
 from agent import Agent
 from substrate import Subs
 from analysis import Analysis, Temp
-from logger import InitLog, ProtLog, WriteLog
+from logger import InitLog, ProtLog, WriteLog, EigProjLogInit, EigProjLog
 import hessian
-from hessian import GetEigen
+from hessian import GetEigen, ProjectEigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
 from integrators import Integrate
 
 
 """
+-> distance is in Angstroms.
+-> time is in picoseconds.
 -> sigma is in Angstroms.
 -> epsilon is in eV.
 -> substrate spring constant is in eV/Angstroms^2.
@@ -29,6 +31,7 @@ from integrators import Integrate
 def main():
     # Initialize the log file.
     InitLog()
+    EigProjLogInit()
 
     # Triggers if the user wants to run the previous system state.
     if (globals.from_progress == True):
@@ -40,6 +43,7 @@ def main():
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     else:
         # Initialize the hessian matrix.
+
         print('Hessian matrix calculations started...')
 
         hess_start = time.perf_counter()
@@ -49,6 +53,7 @@ def main():
         hess_end = time.perf_counter()
 
         print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
+
 
         if (globals.save_hess_eig == True):
             # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
@@ -88,12 +93,13 @@ def main():
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], Integrate)
             # Run the necessary "analysis" functions.
             Analysis()
-            # Calculate eigenvector projections.
-            # ProjectEigen(eigvec, Subs.R, globals.proj_prot[i], globals.proj_prot[i + 1], j)
             # Write the wanted quatities to the log file.
             WriteLog(i, j)
 
-            #proj = ProjectEigen(eigvec, Subs.R, globals.eig_proj[0], globals.eig_proj[1], j)
+            # Calculate eigenvector projections.
+            if (j % globals.eig_proj[1] == 0):
+                proj = ProjectEigen(eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+                EigProjLog(i, j, proj)
 
             # Triggers if the user wants to save the system state.
             if (globals.save_progress != None and j % int(globals.save_progress) == 0):
