@@ -57,54 +57,82 @@ def check_diagonal(M):
 
 
 def GetEigen():
-    h = 1e-6
+    h = 1e-3
     # Create an empty array of proper size.
     hessian = np.zeros([3 * Subs.bound.shape[0], 3 * Subs.bound.shape[0]])
     # Nested loop used for indexing.
     for i in tqdm(range(3 * Subs.bound.shape[0])):
         for j in range(3 * Subs.bound.shape[0]):
-
+            """
             Divider()
             print("Execution is at: i (outer loop) = " + str(i) + ", j (inner loop) = " + str(j))
             atom_num = FindEffectedComponent(j)
             ShowWhere((Subs.bound.shape[0]), atom_num)
-
+            """
+            full = np.copy(Subs.R)
+            print(full is Subs.R)
             # Flatten the position array for easier indexing.
-            subs_pos_flat = Subs.R.flatten()
-            print("Without alteration: " + str(subs_pos_flat[j]))
-            # Define "plus" and "minus" position elements here.
+            subs_pos_flat = full[Subs.bound].flatten()
+            #print("Without alteration: " + str(subs_pos_flat[j]))
             pos_plus = subs_pos_flat[j] + h
             pos_minus = subs_pos_flat[j] - h
 
             # Calculate the "plus" force element for differentiation later on.
+            #print("initial " + str(subs_pos_flat[j]))
             subs_pos_flat[j] = pos_plus
-            plus_pos_mat = np.reshape(subs_pos_flat, (Subs.R.shape[0], 3))
-            plus_force_calc = SubstrateForce(plus_pos_mat, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)[Subs.bound]
-            IndexedArray(plus_force_calc, Subs.bound.shape[0])
-            plus_force_flat = plus_force_calc.ravel()
+            #print("eklendikten sonra " + str(subs_pos_flat[j]))
+            plus_pos_mat = np.reshape(subs_pos_flat, (Subs.bound.shape[0], 3))
+            full[Subs.bound] = plus_pos_mat
+            plus_force_calc = SubstrateForce(full, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)[Subs.bound]
+            #IndexedArray(plus_force_calc, Subs.bound.shape[0])
+            plus_force_flat = plus_force_calc.flatten()
             plus_force = plus_force_flat[i]
 
             # Calculate the "minus" force element for differentiation later on.
             subs_pos_flat[j] = pos_minus
-            min_pos_mat = np.reshape(subs_pos_flat, (Subs.R.shape[0], 3))
-            minus_force_calc = SubstrateForce(min_pos_mat, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)[Subs.bound]
-            IndexedArray(minus_force_calc, Subs.bound.shape[0])
-            minus_force_flat = minus_force_calc.ravel()
+            #print("çıkarmadan sonra " + str(subs_pos_flat[j]))
+            min_pos_mat = np.reshape(subs_pos_flat, (Subs.bound.shape[0], 3))
+            full[Subs.bound] = min_pos_mat
+            minus_force_calc = SubstrateForce(full, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)[Subs.bound]
+            #IndexedArray(minus_force_calc, Subs.bound.shape[0])
+            minus_force_flat = minus_force_calc.flatten()
             minus_force = minus_force_flat[i]
 
             # Perform the actual differentiation here.
             ij_val = (plus_force - minus_force) / (2 * h)
-            print("This is the second derivative ij: " + str(ij_val))
+            #print("This is the second derivative ij: " + str(ij_val))
 
             # Insert the calculated value to its place inside the Hessian matrix.
             hessian[i][j] = -ij_val
 
+        #print(np.shape(hessian))
 
-    print(check_symmetric(hessian))
+
+
+
+    """
+    Fixed hessian is not symmetric, periodic hessian is.
+    """
+
+    #print(check_symmetric(hessian))
     #print(check_diagonal(hessian))
+    """
+    for i in tqdm(range(3 * Subs.bound.shape[0])):
+        for j in range(3 * Subs.bound.shape[0]):
+            if (hessian[i][j] == hessian[j][i]):
+                print("EQUAL")
+            else:
+                print("NOT EQUAL AT i = " + str(i) + " and j = " + str(j))
+                print("ij val = " + str(hessian[i][j]))
+                print("ji val = " + str(hessian[j][i]))
+    """
 
-
+    """
+    There are non-equal ij-ji pairs in the hessian calculation bu this operation apparently fixes it.
+    This operation apparently solves the symmetricity problem as well.
+    """
     hessian = 0.5 * (hessian + np.transpose(hessian))
+    #print(check_symmetric(hessian))
 
     eigval, eigvec = LA.eig(hessian)
 
@@ -113,11 +141,14 @@ def GetEigen():
     eigvaln = eigval[idx]
     eigvecn = eigvec[:,idx]
 
-    np.savetxt("hessian.csv", hessian)
-
-    #print(np.nonzero(hessian))
-
-    print(np.array2string(hessian.round(), suppress_small=True, formatter={'float': '{:0.4f}'.format}))
+    """
+    for i in tqdm(range(3 * Subs.bound.shape[0])):
+        for j in range(3 * Subs.bound.shape[0]):
+            if (hessian[i][j] == hessian[j][i]):
+                print("EQUAL")
+            else:
+                print("NOT EQUAL AT i = " + str(i) + " and j = " + str(j))
+    """
 
     return eigvaln, eigvecn
 
