@@ -142,4 +142,5 @@ class Substrate():
 
 Subs = Substrate()
 Subs.find_neighbor()
+globals.initial_Subs_R = Subs.R
 #Subs.init_disp()
