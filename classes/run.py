@@ -55,11 +55,10 @@ def main():
         print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
 
 
-        if (globals.save_hess_eig == True):
-            # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
-            np.save('eigtest_eigvec', eigvec)
-            np.save('eigtest_eigval', eigval)
-            print("Hessian matrix eigenvalues and eigenfunctions are saved.")
+    # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
+    np.save('eigtest_eigvec', eigvec)
+    np.save('eigtest_eigval', eigval)
+    print("Hessian matrix eigenvalues and eigenfunctions are saved.")
 
     # ınitialize a figure in case the user wants to animate the system.
     fig = plt.figure()
