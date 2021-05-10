@@ -70,7 +70,6 @@ def GetEigen():
             ShowWhere((Subs.bound.shape[0]), atom_num)
             """
             full = np.copy(Subs.R)
-            print(full is Subs.R)
             # Flatten the position array for easier indexing.
             subs_pos_flat = full[Subs.bound].flatten()
             #print("Without alteration: " + str(subs_pos_flat[j]))
