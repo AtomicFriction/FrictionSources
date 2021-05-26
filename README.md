@@ -12,7 +12,7 @@ git clone https://github.com/AtomicFriction/FrictionSources.git
 ```
 3) Locate and access the ``` input.txt``` file which will allow you to change the parameters of the simulation to your liking.
 ```
-cd FrictionSources/classes/input_parser
+cd FrictionSources/codebase/input_parser
 ```
 For UNIX based systems:
 ```
