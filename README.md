@@ -1,6 +1,8 @@
 # 0.1.0 Development Release Is Now Live!
 
-### How To Run The Software:
+## For Users
+
+### Quick Start
 
 1) Go to the directory you want to download the code at.
 ```
@@ -27,7 +29,36 @@ start notepad input.txt
 cd -
 python main.py
 ```
-### How To Benchmark The Software:
+
+### Execution Modes
+
+Assumin that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
+```
+python main.py --help
+```
+##### The ```--save_progress``` Mode
+This mode can be used by the following command, replace ```save_per_steps``` with the step interval you prefer for the saving proccess.
+```
+python main.py --save_progress save_per_steps
+```
+Saves the state of the system to a ".npz" file every ```save_per_steps``` steps. This option is implemented to prevent progress loss, may be preferred for longer runs. The save file is a compressed NumPy file, the size of the file is relatively small.
+
+##### The ```--from_progress``` Mode
+This mode can be used by the following command, does not require additional arguements.
+```
+python main.py --from_progress
+```
+Finds the saved ".npz" file and resumes the interrupted run. Keep in mind that this mode requires the same "input.txt" file that you used to save the previous state, changing the "input.txt" file may result in unwanted consequences.
+
+##### The ```--animate``` Mode
+```
+python main.py --animate animate_per_steps
+```
+Animates the system per ```animate_per_steps``` steps. This is a very basic visualization, may be used to get a rough understanding of the system.
+
+## For Developers
+
+### Benchmarking
 
 ##### Keep in mind that the software will already show the elapsed time and maximum memory used at the end of execution.
 
