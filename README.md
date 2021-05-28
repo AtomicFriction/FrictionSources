@@ -1,6 +1,8 @@
 # 0.1.0 Development Release Is Now Live!
 
+
 ## For Users
+
 
 ### Quick Start
 
@@ -30,6 +32,8 @@ cd -
 python main.py
 ```
 
+
+
 ### Execution Modes
 
 Assumin that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
@@ -56,7 +60,10 @@ python main.py --animate animate_per_steps
 ```
 Animates the system per ```animate_per_steps``` steps. This is a very basic visualization, may be used to get a rough understanding of the system.
 
+
+
 ## For Developers
+
 
 ### Benchmarking
 
