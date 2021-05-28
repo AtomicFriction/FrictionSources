@@ -36,7 +36,7 @@ python main.py
 
 ### Execution Modes
 
-Assumin that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
+Assuming that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
 ```
 python main.py --help
 ```
@@ -75,7 +75,7 @@ cd Desktop/FrictionSources/codebase
 ```
 2) Use cProfile to profile the software and print them on the terminal in decreasing total time taken to execute.
 ```
-python -m cProfile -tottime main.py
+python -m cProfile -s tottime main.py
 ```
 ##### If you prefer to visualize the cProfile results, here is how you do it:
 
