@@ -1,5 +1,5 @@
 # 0.1.0 Development Release Is Now Live!
-
+![System Visualization](https://github.com/AtomicFriction/FrictionSources/blob/tests/.github/FricS.PNG)
 
 ## For Users
 
