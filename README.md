@@ -1,6 +1,18 @@
 # 0.1.0 Development Release Is Now Live!
 ![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)
 
+Friction Sources is ....
+
+The units used for the system are:  
+-> distance is in Angstroms.  
+-> time is in picoseconds.  
+-> sigma is in Angstroms.  
+-> epsilon is in eV.  
+-> substrate spring constant is in eV/Angstroms^2.  
+-> substrate mass is in amu(atomic mass units).  
+-> latt_const for Argon is in Angstroms.  
+-> Cutoff constant taken as 2.5 * sigma.  
+
 ## For Users
 
 
