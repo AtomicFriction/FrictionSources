@@ -14,8 +14,8 @@ The units used for the system are:
 -> Cutoff constant taken as 2.5 * sigma.  
 
 ## For Users
-
-
+  
+  
 ### Quick Start
 
 1) Go to the directory you want to download the code at.
@@ -43,9 +43,8 @@ start notepad input.txt
 cd -
 python main.py
 ```
-
-
-
+  
+  
 ### Execution Modes
 
 Assuming that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
@@ -71,12 +70,11 @@ Finds the saved ".npz" file and resumes the interrupted run. Keep in mind that t
 python main.py --animate animate_per_steps
 ```
 Animates the system per ```animate_per_steps``` steps. This is a very basic visualization, may be used to get a rough understanding of the system.
-
-
-
+  
+  
 ## For Developers
-
-
+  
+  
 ### Benchmarking
 
 ##### Keep in mind that the software will already show the elapsed time and maximum memory used at the end of execution.
