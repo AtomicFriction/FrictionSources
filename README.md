@@ -38,9 +38,16 @@ For Windows:
 ```
 start notepad input.txt
 ```
-4) Once you configure the parameters at step 3, the software is ready to run. Go back to the previous directory and run the software.
+4) Once you configure the parameters at step 3, the software is ready to run. Go back to the previous directory ```./FrictionSources/codebase```.
 ```
-cd -
+cd ..
+```
+##### At this point, please make sure you have the necessary packages installed. The following command can be used to automatically install all the necessary packages.
+```
+pip install -r requirements.txt
+```
+5) Run the software!
+```
 python main.py
 ```
   
