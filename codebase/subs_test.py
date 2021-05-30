@@ -1,6 +1,5 @@
 from input_parser.input_parser import parse
-from MDAnalysis.lib.nsgrid import FastNS
-from scipy.spatial import distance
+from scipy.spatial import distance, cKDTree
 import numpy as np
 import globals
 import warnings
@@ -104,31 +103,34 @@ class Substrate():
             N[-self.numlayer:, :self.N_def[-1].size] = np.array(list(self.N_def[-self.numlayer:]))
             N[-self.numlayer:, -1] = np.arange(self.R.shape[0]-self.numlayer, self.R.shape[0])
             self.N_def = N.astype(np.int32, copy=False)
+        print(self.N_def)
 
-    def neighbor_FNS(self):
-        # MDAnalysis package 1.0.0 raises deprecation warning with Python 3.9.x, so the following line filters the warning.
-        warnings.filterwarnings('ignore', category=DeprecationWarning)
+    def neighbor_tree(self):
+        # Box size might be increased to prevent atoms to exceed the box if the function is to be called for multiple times.
 
         if self.bound_cond == 'fixed':
-            pseudobox = np.array([self.L, self.L, self.L, 90, 90, 90])
-            trie = FastNS(self.cuto_const, self.R, box=pseudobox, pbc=False).self_search()
-            self.N_mda = list(np.array(trie.get_indices(), dtype=object)[self.bound])
+            trie = cKDTree(self.R, boxsize=None)
+            self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const)[self.bound])
 
         elif self.bound_cond == 'periodic':
+            trie = cKDTree(self.R, boxsize=[self.L, self.L, self.L])
+
             if self.dim != 3:
-                box = np.array([self.L, self.L, self.L, 90, 90, 90])
-                trie = FastNS(self.cuto_const, self.R, box=box, pbc=True).self_search()
-                self.N_mda = np.array(trie.get_indices())
-            
+                self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const))
+
             if self.dim == 3:
-                box = np.array([self.L, self.L, self.L, 90, 90, 90])
-                trie = FastNS(self.cuto_const, self.R, box=box, pbc=True).self_search()
-                N_list = np.array(trie.get_indices(), dtype=object)[self.fix_layers*self.numlayer:]
-                N_lower = np.array(list(N_list[:-self.numlayer]))
+                '''Queries the tree to construct neighbor table for 3D system
+
+                Removes the fixed layer from the table
+                Counts the last layer atoms as neighbors to themselves for all the arrays to have compatible sizes
+                '''
+
+                N_list = trie.query_ball_point(self.R, self.latt_const)
                 upplayer = np.array(list(N_list[-self.numlayer:]))
-                ran = np.arange(self.numlayer*(self.layers-1), self.numlayer*self.layers)
-                N_upper = np.hstack((upplayer, ran[:, np.newaxis]))
-                self.N_mda = np.vstack((N_lower, N_upper))
+                self_neigh = self.bound[-self.numlayer:]
+                N_upper = np.hstack((upplayer, self_neigh[:, np.newaxis]))
+                N_lower = np.array(list(N_list[self.fix_layers*self.numlayer:-self.numlayer]))
+                self.N = np.vstack((N_lower, N_upper))
 
     def init_disp(self):
         if self.displace_type == 'random':
@@ -168,6 +170,6 @@ class Substrate():
 
 Subs = Substrate()
 #Subs.neighbor_def()
-Subs.neighbor_FNS()
+Subs.neighbor_tree()
 globals.initial_Subs_R = Subs.R
 #Subs.init_disp()
