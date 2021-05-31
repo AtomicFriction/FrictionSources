@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial import distance
+from scipy.spatial import distance, cKDTree
 import timeit
 import sys
 from numba import jit
@@ -18,7 +18,7 @@ np.set_printoptions(threshold=sys.maxsize)
             3D Lennard-Jones force calculation between agent and substrate,
             3D spring force calculation between agent and slider.
 """
-def AgentForce(agent_pos, slider_pos, substrate_pos):
+def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     """
     Lennard-Jones Potential implementation in 3D.
     """
@@ -30,6 +30,14 @@ def AgentForce(agent_pos, slider_pos, substrate_pos):
     extract = np.where(cutoff == 1)
     idx = np.unique(extract[0], return_index=True)
     table = np.array_split(extract[1], idx[1])[1:]
+            
+    """ Create cKDTree, and query for the neighbors in the cut off region.
+
+    If the system is fixed, box=None.
+    If it is periodic, then box=[Subs.L, Subs.L, Subs.L], where L is the boxsize along i-th dimension.
+    """
+    trie = cKDTree(substrate_pos, box=box)
+    N = trie.query_ball_point(agent_pos, globals.cutoff)
 
     if (len(table) == 1):
         for i in range(len(table[0])):
@@ -100,7 +108,7 @@ def SubstrateForce(subs_pos, subs_bound, subs_N, latt_const, subs_k, subs_L):
     # Compute the norm using distance array, and increase the dimension by one
     norm = np.linalg.norm(dist, axis=2)[:, np.newaxis]
     # For 3D system, eliminate the contribution of the imaginary neighbors to the force
-    norm[norm[:, :, -1] == 0, -1] = latt_const
+    norm[norm == 0] = latt_const
 
     # Define an array for the distance from equilibrium
     dR = (norm - latt_const) / norm @ dist

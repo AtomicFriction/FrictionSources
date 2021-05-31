@@ -1,5 +1,4 @@
 import numpy as np
-from numba import jit
 import globals
 
 
@@ -7,6 +6,7 @@ import globals
 -> Constrains the motion to the desired axis by simple matrix multiplications.
 Input x: Constrains the motion on the x-axis. Nullifies the components of other axes.
 Input y: Constrains the motion on the y-axis. Nullifies the components of other axes.
+Input y: Constrains the motion on the z-axis. Nullifies the components of other axes.
 Else: Does nothing.
 """
 def constrain(direction, vel, acc):
@@ -19,7 +19,10 @@ def constrain(direction, vel, acc):
         vel *= np.array([0, 1, 0])
         acc *= np.array([0, 1, 0])
         return (vel, acc)
-
+    elif (direction == "z"):
+        vel *= np.array([0, 0, 1])
+        acc *= np.array([0, 0, 1])
+        return (vel, acc)
     else:
         return (vel, acc)
 

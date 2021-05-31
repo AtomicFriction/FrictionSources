@@ -13,6 +13,7 @@ def InitLog():
         file_1.write("\n")
         file_1.write("\n")
 
+
 """
 -> Writes the protocol step and the analyzed quantities.
 -> Needs to run "counter_i" times.
@@ -24,20 +25,23 @@ def ProtLog(counter_i):
         file_1.write("Step")
         if ("ff" in globals.data):
             globals.ff_switch = 1
-            file_1.write("  " + "ff")
+            file_1.write("," + "ff_x")
+            file_1.write("," + "ff_y")
+            file_1.write("," + "ff_z")
         if ("pe" in globals.data):
             globals.potential_switch = 1
-            file_1.write("      " + "pe")
+            file_1.write("," + "pe")
         if ("ke" in globals.data):
             globals.kinetic_switch = 1
-            file_1.write("  " + "ke")
+            file_1.write("," + "ke")
         if ("etot" in globals.data):
             globals.etot_switch = 1
-            file_1.write("  " + "etot")
+            file_1.write("," + "etot")
         if ("temp" in globals.data):
             globals.temp_switch = 1
-            file_1.write("  " + "temp")
+            file_1.write("," + "temp")
         file_1.write("\n")
+
 
 """
 -> Logs the desired analysis parameters each step.
@@ -45,27 +49,33 @@ def ProtLog(counter_i):
 def WriteLog(counter_i, counter_j):
     log = open('log.csv', 'a')
     if (counter_j <= globals.run[counter_i][2]):
-        log.write(str(counter_j) + "  ")
+        log.write(str(counter_j) + ",")
         if (globals.ff_switch == 1):
-            log.write(str(list(globals.ff)) + "  ")
+            log.write(str(list(globals.ff)) + ",")
         if (globals.potential_switch == 1):
-            log.write(str(globals.pe) + "  ")
+            log.write(str(globals.pe) + ",")
         if (globals.kinetic_switch == 1):
-            log.write(str(globals.ke) + "  ")
+            log.write(str(globals.ke) + ",")
         if (globals.etot_switch == 1):
-            log.write(str(globals.etot) + "  ")
+            log.write(str(globals.etot) + ",")
         if (globals.temp_switch == 1):
-            log.write(str(globals.temp) + "  ")
+            log.write(str(globals.temp) + ",")
 
         log.write("\n")
 
 
+"""
+-> 
+"""
 def EigProjLogInit():
     with open('eig_proj_log.csv', 'w') as proj_log:
         proj_log.write("Eigenvector Projection Log")
         proj_log.write("\n")
 
 
+"""
+-> 
+"""
 def EigProjLog(counter_i, counter_j, proj):
     with open('eig_proj_log.csv', 'a') as proj_log:
         proj_log.write("Protocol: " + str(counter_i) + " step: " + str(counter_j) + "  ")

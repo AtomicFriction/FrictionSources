@@ -5,7 +5,7 @@ from substrate import Subs
 
 
 """
--> Projection of the spring force vector on the slider velocity vector, calculated to obtain the friction force.
+-> Projection of the spring force vector on the slider velocity vector calculated to obtain the friction force.
 -> Not evaluated if (globals.ff_switch == 0).
 """
 def FF():
@@ -16,21 +16,20 @@ def FF():
 
 
 """
--> Potential energy calculation that consists of agent-substrate Lennard Jones Potential, agent-slider spring potential and substrate spring potentials.
+-> Potential energy calculation that consists of agent-substrate Lennard Jones Potential, agent-slider spring potential and substrate-substrate spring potentials.
 -> Not evaluated if (globals.potential_switch == 0).
 """
 def PE():
-    # globals.rr list olarak al, her rr değeri için ayrı pe hesabı yapıp topla.
     if (globals.potential_switch == 1 or globals.etot_switch == 1):
-        lj_pot_arr = []
-        for i in range(len(globals.rr_12)):
-            lj_pot_arr.append(np.sum((4 * globals.epsilon) * ((globals.sig_12 / globals.rr_12[i]) - (globals.sig_6 / globals.rr_6[i]))))
-        lj_pot = np.sum(lj_pot_arr, axis = 0)
+        # Lennard-Jones potential calculation between agent-substrate.
+        lj_pot = (np.sum((4 * globals.epsilon) * ((globals.sig_12 / np.array(globals.rr_12)) - (globals.sig_6 / np.array(globals.rr_6)))))
+        # Spring potential calculation between agent-slider.
         ag_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
+        # Spring potential calculation between substrate-substrate.
         subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
         globals.pe = lj_pot + ag_pot + subs_pot
         return globals.pe
-
+        
 
 """
 -> Kinetic energy calculation of agent and susbtrate atoms.
@@ -38,10 +37,13 @@ def PE():
 """
 def KE():
     if (globals.kinetic_switch == 1 or globals.etot_switch == 1):
+        # Kinetic energy calculation for substrate atoms.
         subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
+        # Kinetic energy calculation for the agent atom.
         agent_kin = (Agent.mass * np.sum(Agent.V ** 2)) / 2
         globals.ke = subs_kin + agent_kin
         return globals.ke
+
 
 """
 -> Adds the already calculated potential and kinetic energies.
@@ -52,16 +54,15 @@ def Etot():
         globals.etot = globals.pe + globals.ke
         return globals.etot
 
+
 """
--> Temprature is always calculated, because it is needed for the thermostats.
+-> Calculates the temperatures of the atoms to whom the thermostat is applied and the atoms to whom the thermostat is not applied separately.
+-> 'trap' stands for the region the thermostat is applied
+-> 'nontrap' stands for the region the thermostat is not applied
+-> 'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
+-> Returns 'T_trap', 'T_nontrap', and total temperature
 """
 def Temp():
-    """Calculates the temperatures of the atoms to whom the thermostat applied and the atoms to whom the thermostat is not applied, respectively
-    'trap' stands for the region the thermostat is applied
-    'nontrap' stands for the region the thermostat is not applied
-    'T_trap' and 'T_nontrap' stand for the temperatures of these regions, respectively
-    Returns 'T_trap', 'T_nontrap', and total temperature
-    """
     globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size)
     globals.T_nontrap =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.size) - globals.T_trap
     return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
@@ -69,7 +70,7 @@ def Temp():
 
 """
 -> Group all the "analysis" funcitons together and call them all at once,
-there will be just one line for "analysis" in the main function thanks to this approach.
+-> There will be just one line for "analysis" in the main function thanks to this approach.
 """
 def Analysis():
     FF()
