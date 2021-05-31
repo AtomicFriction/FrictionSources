@@ -102,7 +102,7 @@ pip install snakeviz
 ```
 4) Use cProfile to profile the software and save the results to a ".dat" file
 ```
-python -m cProfile -0 temp.dat main.py
+python -m cProfile -o temp.dat main.py
 ```
 5) Use the snakeviz package to visualize the result.
 ```
