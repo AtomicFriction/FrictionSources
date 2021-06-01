@@ -14,11 +14,11 @@ The units used for the system are:
 -> latt_const for Argon is in Angstroms.  
 -> Cutoff constant taken as 2.5 * sigma.
 
-Argon parameters sources:
--> Lennard Jones parameters, sigma and epsilon: http://www.sklogwiki.org/SklogWiki/index.php/Argon
--> Argon spring constant: Foundations of Nanomechanics, page 6
--> Argon lattice constant: https://www.infoplease.com/inert-gases/argon and http://users.jyu.fi/~hahakkin/opetus/simu_2006/Lecture5.pdf
--> Equilibrium length of the spring between agent-slider: Foundations of Nanomechanics, page 3
+Argon parameters sources:  
+-> Lennard Jones parameters, sigma and epsilon: http://www.sklogwiki.org/SklogWiki/index.php/Argon  
+-> Argon spring constant: Foundations of Nanomechanics, page 6  
+-> Argon lattice constant: https://www.infoplease.com/inert-gases/argon and http://users.jyu.fi/~hahakkin/opetus/simu_2006/Lecture5.pdf  
+-> Equilibrium length of the spring between agent-slider: Foundations of Nanomechanics, page 3  
 
 ## For Users
   
