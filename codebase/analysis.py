@@ -39,6 +39,10 @@ def KE():
     if (globals.kinetic_switch == 1 or globals.etot_switch == 1):
         # Kinetic energy calculation for substrate atoms.
         subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
+        # Kinetic energy calculation for frame atoms.
+        frame_kin = (Subs.mass * np.sum(Subs.V[Subs.frame] ** 2)) / 2
+        # Kinetic energy calculation for trap atoms.
+        trap_kin = (Subs.mass * np.sum(Subs.V[Subs.trap] ** 2)) / 2
         # Kinetic energy calculation for the agent atom.
         agent_kin = (Agent.mass * np.sum(Agent.V ** 2)) / 2
         globals.ke = subs_kin + agent_kin
@@ -63,9 +67,8 @@ def Etot():
 -> Returns 'T_trap', 'T_nontrap', and total temperature
 """
 def Temp():
-    globals.T_trap =  Subs.mass * np.sum(Subs.V[Subs.trap] ** 2) / (3 * globals.boltz * Subs.trap.size)
-    globals.T_nontrap =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.size) - globals.T_trap
-    return globals.T_trap, globals.T_nontrap, globals.T_trap + globals.T_nontrap
+    globals.T_bound =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.shape[0]) - globals.T_trap
+    return globals.T_bound
 
 
 """
