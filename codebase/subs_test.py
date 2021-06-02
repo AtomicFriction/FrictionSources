@@ -64,16 +64,22 @@ class Substrate():
         self.V[self.bound] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound].shape)
         self.A = np.zeros(np.shape(self.R))
 
-        # set the trap for thermostat
+        # set the frame and the trap for thermostat
         if globals.mode == 'full':
             self.trap = np.arange(self.R.shape[0])
+            self.trap = np.array([])
 
-        elif globals.mode == 'partial': # unify dimensions if you can
+        elif globals.mode == 'partial':
             if self.dim == 2:
-                self.trap = np.where((self.R[:, :2]-globals.thickness >= 0).all(axis=1) & \
-                    (self.R[:, :2]+globals.thickness <= (self.num-1)*self.latt_const).all(axis=1))[0]
+                self.frame = np.where(\
+                    (self.R[:, 0] - globals.thickness < 0) | \
+                    (self.R[:, 1] - globals.thickness < 0) | \
+                    (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
+                    (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
 
-            elif self.dim == 3:
+                self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame) 
+                
+            elif self.dim == 3: # add trap
                 self.trap = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
 
     def neighbor_def(self):
