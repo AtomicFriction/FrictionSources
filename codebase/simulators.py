@@ -36,6 +36,6 @@ def SimulateSubs(T_target, ApplyThermo, Integrate):
     Returns the result of the function 'Integrate'
     """
 
-    Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.trap)
+    Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
 
     return Integrate(subs_force, Subs.R, Subs.V, Subs.A, Subs.mass)
