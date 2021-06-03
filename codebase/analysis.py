@@ -67,7 +67,7 @@ def Etot():
 -> Returns 'T_trap', 'T_nontrap', and total temperature
 """
 def Temp():
-    globals.T_bound =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.shape[0]) - globals.T_trap
+    globals.T_bound =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.shape[0])
     return globals.T_bound
 
 
