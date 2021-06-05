@@ -1,7 +1,8 @@
 from input_parser.input_parser import parse
-from scipy.spatial import distance
+from scipy.spatial import distance, cKDTree
 import numpy as np
 import globals
+import warnings
 
 """
 ---------------------------------
@@ -23,7 +24,7 @@ class Substrate():
         self.displace_type = subs_param['displace_type']
         self.latt_const = float(subs_param['latt_const'])
         self.cuto_const = float(subs_param['cuto_const'])
-        fix_layers = int(subs_param['fix_layers'])
+        self.fix_layers = int(subs_param['fix_layers'])
         self.L = self.num * self.latt_const
 
         # initialize position and set the boundary condition
@@ -55,7 +56,7 @@ class Substrate():
             Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
 
-            self.bound = np.where(np.isin(self.R[:, 2], np.arange(fix_layers)*self.latt_const) == False)[0]
+            self.bound = np.where(np.isin(self.R[:, 2], np.arange(self.fix_layers)*self.latt_const) == False)[0]
             self.numlayer = int(self.R.shape[0] / self.layers)
 
         # initialize velocity and acceleration
@@ -63,20 +64,25 @@ class Substrate():
         self.V[self.bound] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound].shape)
         self.A = np.zeros(np.shape(self.R))
 
-        # set the trap for thermostat
+        # set the frame and the trap for thermostat
         if globals.mode == 'full':
             self.trap = np.arange(self.R.shape[0])
+            self.trap = np.array([])
 
-        elif globals.mode == 'partial': # unify dimensions if you can
+        elif globals.mode == 'partial':
             if self.dim == 2:
-                self.trap = np.where((self.R[:, :2]-globals.thickness >= 0).all(axis=1) & \
-                    (self.R[:, :2]+globals.thickness <= (self.num-1)*self.latt_const).all(axis=1))[0]
+                self.frame = np.where(\
+                    (self.R[:, 0] - globals.thickness < 0) | \
+                    (self.R[:, 1] - globals.thickness < 0) | \
+                    (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
+                    (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
 
-            elif self.dim == 3:
-                self.trap = np.arange(self.numlayer * fix_layers, self.numlayer * (fix_layers + globals.thickness))
+                self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame) 
+                
+            elif self.dim == 3: # add trap
+                self.trap = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
 
-
-    def find_neighbor(self):
+    def neighbor_def(self):
         if self.bound_cond == 'fixed':
             dR = distance.cdist(self.R, self.R, 'euclidean')
 
@@ -95,13 +101,40 @@ class Substrate():
         cutoff = (dR[self.bound] != 0) & (dR[self.bound] < self.cuto_const)
         extract = np.where(cutoff == True)
         idx = np.unique(extract[0], return_index=True)
-        self.N = np.array(np.split(extract[1], idx[1])[1:])
+        self.N_def = np.array(np.split(extract[1], idx[1])[1:])
         if self.dim == 3:
             N = np.zeros((self.N.size, self.N[0].size))
-            N[:-self.numlayer] = np.array(list(self.N[:-self.numlayer]))
-            N[-self.numlayer:, :self.N[-1].size] = np.array(list(self.N[-self.numlayer:]))
+            N[:-self.numlayer] = np.array(list(self.N_def[:-self.numlayer]))
+            N[-self.numlayer:, :self.N_def[-1].size] = np.array(list(self.N_def[-self.numlayer:]))
             N[-self.numlayer:, -1] = np.arange(self.R.shape[0]-self.numlayer, self.R.shape[0])
-            self.N = N.astype(np.int32, copy=False)
+            self.N_def = N.astype(np.int32, copy=False)
+        print(self.N_def)
+
+    def neighbor_tree(self):
+        # Box size might be increased to prevent atoms to exceed the box if the function is to be called for multiple times.
+
+        if self.bound_cond == 'fixed':
+            trie = cKDTree(self.R, boxsize=None)
+            self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const)[self.bound])
+
+        elif self.bound_cond == 'periodic':
+            trie = cKDTree(self.R, boxsize=[self.L, self.L, self.L])
+
+            if self.dim != 3:
+                self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const))
+
+            if self.dim == 3:
+                '''Queries the tree to construct neighbor table for 3D system
+                Removes the fixed layer from the table
+                Counts the last layer atoms as neighbors to themselves for all the arrays to have compatible sizes
+                '''
+
+                N_list = trie.query_ball_point(self.R, self.latt_const)
+                upplayer = np.array(list(N_list[-self.numlayer:]))
+                self_neigh = self.bound[-self.numlayer:]
+                N_upper = np.hstack((upplayer, self_neigh[:, np.newaxis]))
+                N_lower = np.array(list(N_list[self.fix_layers*self.numlayer:-self.numlayer]))
+                self.N = np.vstack((N_lower, N_upper))
 
     def init_disp(self):
         if self.displace_type == 'random':
@@ -140,6 +173,7 @@ class Substrate():
                 choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
 
 Subs = Substrate()
-Subs.find_neighbor()
+#Subs.neighbor_def()
+Subs.neighbor_tree()
 globals.initial_Subs_R = Subs.R
 #Subs.init_disp()
