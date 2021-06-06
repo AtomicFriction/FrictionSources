@@ -1,0 +1,50 @@
+&general
+cutoff = 8.25
+interact = LJ
+/
+&protocol
+numba = False
+dt = 0.001 
+run = 100 100 125000 100 100 875000
+eig_proj = 10 100
+integ = ec
+apply_agent = 0 1
+/
+&analysis
+N_dump = 100000
+N_phonon = 50
+data = ff vf temp
+/
+&substrate
+dim = 2
+layers = 1
+fix_layers = 1
+num = 25
+bound_cond = fixed
+latt_const = 5
+cuto_const = 8.25
+displace_type = random
+k = 0.518
+mass = 40
+/
+&slider
+mass = 40
+k = 0.518
+shape = single
+sigma = 3.3
+epsilon = 0.01077166
+agent_pos = 32.8 32.8 3
+slider_pos = 30 30 3
+slider_vel = 0.0001 0 0
+eq_len = 3.8
+constrain = none
+/
+&thermostat
+thermo = velrescale
+mode = partial
+thickness = 2
+tau = 0.1
+s = 0.1
+Q = 0.1
+gamma = 0.1
+/
