@@ -1,8 +1,6 @@
 import numpy as np
 from input_parser.input_parser import parse
 import globals
-from numba import njit
-
 
 """
 Uses the input data given by the user to initial size an agent and a slider.
