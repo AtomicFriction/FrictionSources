@@ -19,7 +19,7 @@ def eigtest(eigvec):
 
     fig = plt.figure(figsize=(15,7))
     ax = fig.add_subplot(111, projection = "3d")
-    for a in np.arange(-10, 10, 1):
+    for a in np.arange(-10, 10, 0.5):
 
         ax.set(zlim = (-0.3e1, 0.3e1))
         ax.set(xlim = (0, 20))
@@ -33,7 +33,7 @@ def eigtest(eigvec):
 
         ax.scatter(R_disp[:,0], R_disp[:,1], R_disp[:,2], color = "red")
 
-        plt.pause(0.1)
+        plt.pause(0.05)
 
         plt.show()
 
