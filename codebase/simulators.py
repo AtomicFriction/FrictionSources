@@ -23,7 +23,7 @@ def SimulateAgent(status, Integrate, i, j):
         Agent.slider_pos += Agent.slider_vel * globals.dt
         # Calculate eigenvector projections.
         if (j % globals.eig_proj[1] == 0):
-            proj = ProjectEigen(eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+            proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
             EigProjLog(i, j, proj)
             # Run the necessary "analysis" functions.
             Analysis()
