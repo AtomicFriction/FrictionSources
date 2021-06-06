@@ -2,8 +2,6 @@ import numpy as np
 from scipy.spatial import distance, cKDTree
 import timeit
 import sys
-from numba import jit
-
 
 import globals
 from substrate import Subs
