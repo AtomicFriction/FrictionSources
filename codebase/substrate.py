@@ -2,7 +2,6 @@ from input_parser.input_parser import parse
 from scipy.spatial import distance, cKDTree
 import numpy as np
 import globals
-import warnings
 
 """
 ---------------------------------
@@ -66,7 +65,7 @@ class Substrate():
 
         # set the frame and the trap for thermostat
         if globals.mode == 'full':
-            self.trap = np.arange(self.R.shape[0])
+            self.frame = np.arange(self.R.shape[0])
             self.trap = np.array([])
 
         elif globals.mode == 'partial':
@@ -76,11 +75,11 @@ class Substrate():
                     (self.R[:, 1] - globals.thickness < 0) | \
                     (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
                     (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
-
-                self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame) 
                 
-            elif self.dim == 3: # add trap
-                self.trap = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
+            elif self.dim == 3:
+                self.frame = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
+                
+            self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
 
     def neighbor_def(self):
         if self.bound_cond == 'fixed':
