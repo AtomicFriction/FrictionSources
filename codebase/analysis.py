@@ -20,7 +20,7 @@ def FF():
 -> Not evaluated if (globals.potential_switch == 0).
 """
 def PE():
-    if (globals.potential_switch == 1 or globals.etot_switch == 1):
+    if (globals.pe_switch == 1 or globals.etot_switch == 1):
         # Lennard-Jones potential calculation between agent-substrate.
         lj_pot = (np.sum((4 * globals.epsilon) * ((globals.sig_12 / np.array(globals.rr_12)) - (globals.sig_6 / np.array(globals.rr_6)))))
         # Spring potential calculation between agent-slider.
@@ -36,7 +36,7 @@ def PE():
 -> Not evaluated if (globals.kinetic_switch == 0).
 """
 def KE():
-    if (globals.kinetic_switch == 1 or globals.etot_switch == 1):
+    if (globals.ke_switch == 1 or globals.etot_switch == 1):
         # Kinetic energy calculation for substrate atoms.
         subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
         # Kinetic energy calculation for frame atoms.
