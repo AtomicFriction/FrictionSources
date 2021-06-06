@@ -60,6 +60,8 @@ ke_switch = 0
 ke = 0
 ff_switch = 0
 ff = 0
+vf_switch = 0
+vf = 0
 temp_switch = 0
 temp = 0
 etot_switch = 0
@@ -73,12 +75,15 @@ rr_6 = []
 disp = 0
 subs_dR = 0
 
+agent_zcomp = 0
+
 
 # Agent force calculation variables.
 sig_12 = (sigma ** 12)
 sig_6 = (sigma ** 6)
 spr_force = np.zeros((1, 3))
 lj_force = np.zeros((num * num, 3))
+agent_force = 0
 
 """
 agent_pot = subs_pot = fric = lj_force = np.zeros(np.sum(run[:, 2]))
@@ -91,7 +96,8 @@ subs_pot = []
 initial_Subs_R = 0
 
 # Command line arguement switches.
-save_progress = 0
+save_progress = 0 # This arguement needs an integer input form the user.
 from_progress = False
-save_hess_eig = False
-animate = 0
+calc_hessian = False
+load_eigs = False
+animate = 0 # This arguement needs an integer input form the user.
