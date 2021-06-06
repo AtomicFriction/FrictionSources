@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import time
+import sys
 from tqdm import tqdm
 import globals
 from agent import Agent
@@ -48,6 +49,9 @@ def main():
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
         eigvec = np.load("eigtest_eigvec.npy")
         eigval = np.load("eigtest_eigval.npy")
+    else:
+        print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
+        sys.exit()
     
 
 
