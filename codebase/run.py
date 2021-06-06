@@ -32,13 +32,13 @@ def main():
         with np.load("system_state.npz") as system_state:
             Subs.R, Subs.V, Subs.A, Agent.R, Agent.V, Agent.A, Agent.slider_pos, Agent.slider_vel, i, j = system_state["Subs_R"], system_state["Subs_V"], system_state["Subs_A"], system_state["Agent_R"], system_state["Agent_V"], system_state["Agent_A"], system_state["Agent_slider_pos"], system_state["Agent_slider_vel"], system_state["prot_i"], system_state["prot_j"]
         # Load the eigenvalues and eigenvectors of the Hessian matrix from the previously saved files.
-        eigval, eigvec = np.load('eigtest_eigval.npy'), np.load('eigtest_eigvec.npy')
+        globals.eigval, globals.eigvec = np.load('eigtest_eigval.npy'), np.load('eigtest_eigvec.npy')
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     elif (globals.from_progress == False and globals.calc_hessian == True and globals.load_eigs == False):
         # Initialize the hessian matrix.
         print('Hessian matrix calculations started...')
         hess_start = time.perf_counter()
-        eigval, eigvec = GetEigen()
+        globals.eigval, globals.eigvec = GetEigen()
         hess_end = time.perf_counter()
         print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
     
@@ -47,8 +47,8 @@ def main():
         np.save('eigtest_eigval', eigval)
         print("Hessian matrix eigenvalues and eigenfunctions are saved.")
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
-        eigvec = np.load("eigtest_eigvec.npy")
-        eigval = np.load("eigtest_eigval.npy")
+        globals.eigvec = np.load("eigtest_eigvec.npy")
+        globals.eigval = np.load("eigtest_eigval.npy")
     else:
         print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
         sys.exit()
