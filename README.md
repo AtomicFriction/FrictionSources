@@ -1,6 +1,19 @@
 # 0.1.0 Development Release Is Now Live!
 ![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)
 
+# THE CODE WILL NOT RUN WITHOUT A COMMAND LINE ARGUEMENT. SEE EXECUTION MODES BELOW. 
+
+##### TL;DR:
+If you are using a new input configuration,
+```
+python main.py --calc_hessian
+```
+If you have alrady calculated Hessian matrix once for your configuration,
+```
+python main.py --load_eigs
+```
+
+
 Friction Sources is ....
 
 The units used for the system are:  
@@ -65,6 +78,21 @@ Assuming that you are operating in the ``` codebase ```directory, use the follow
 ```
 python main.py --help
 ```
+    
+#### The software needs the eigenvectors and eigenvalues from the Hessian matrix. Therefore, you need to calculate the Hessian matrix at least once for each input configuration. If you have calculated the Hessian matrix once, you can just load the eigenvectors and eigenvalues if you are using the same input configuration.    
+
+##### The ```--calc_hessian``` Mode
+Calculates the Hessian matrix and saves its eigenvectors and eigenvalues, then goes on to run the protocols. Choose this option if you are using a new input configuration.
+```
+python main.py --calc_hessian
+```
+
+##### The ```--load_eigs``` Mode
+Skips the Hessian matrix calculation,directly loads pre-calculated eigenvectors and eigenvalues from the disk. Choose this option if you have already calculated the Hessian matrix for your input configuration.
+```
+python main.py --load_eigs
+```
+
 ##### The ```--save_progress``` Mode
 This mode can be used by the following command, replace ```save_per_steps``` with the step interval you prefer for the saving proccess.
 ```
