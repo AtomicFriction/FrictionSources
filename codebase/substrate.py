@@ -68,20 +68,29 @@ class Substrate():
         # set the frame and the trap for thermostat
         if globals.mode == 'full':
             self.frame = np.arange(self.R.shape[0])
-            self.trap = np.array([])
+            self.trap = []
 
         elif globals.mode == 'partial':
             if self.dim == 2:
-                self.frame = np.where(\
-                    (self.R[:, 0] - globals.thickness < 0) | \
-                    (self.R[:, 1] - globals.thickness < 0) | \
-                    (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
-                    (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
-                
+                if self.bound_cond == 'fixed':
+                    self.trap = np.where(\
+                        (self.R[:, 0:2] - (globals.thickness + self.latt_const) >= 0).all(axis=1) & \
+                        (self.R[:, 0:2] + (globals.thickness + self.latt_const) <= self.L - self.latt_const).all(axis=1))
+                    
+                    self.frame = np.setdiff1d(self.bound, self.trap)
+
+                elif self.bound_cond == 'periodic':
+                    self.frame = np.where(\
+                        (self.R[:, 0] - globals.thickness < 0) | \
+                        (self.R[:, 1] - globals.thickness < 0) | \
+                        (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
+                        (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
+                    
+                    self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
+
             elif self.dim == 3:
                 self.frame = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
-                
-            self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
+                self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
 
     def neighbor_def(self):
         if self.bound_cond == 'fixed':
