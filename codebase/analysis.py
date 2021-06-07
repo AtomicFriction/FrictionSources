@@ -14,6 +14,14 @@ def FF():
         globals.ff = (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
         return globals.ff
 
+"""
+-> Vertical force on the agent.
+"""
+def VF():
+    if (globals.vf_switch == 1):
+        globals.vf = globals.agent_force[0][2]
+        return globals.vf
+
 
 """
 -> Potential energy calculation that consists of agent-substrate Lennard Jones Potential, agent-slider spring potential and substrate-substrate spring potentials.
@@ -37,12 +45,12 @@ def PE():
 """
 def KE():
     if (globals.ke_switch == 1 or globals.etot_switch == 1):
-        # Kinetic energy calculation for substrate atoms.
-        subs_kin = (Subs.mass * np.sum(Subs.V ** 2)) / 2
         # Kinetic energy calculation for frame atoms.
         frame_kin = (Subs.mass * np.sum(Subs.V[Subs.frame] ** 2)) / 2
         # Kinetic energy calculation for trap atoms.
         trap_kin = (Subs.mass * np.sum(Subs.V[Subs.trap] ** 2)) / 2
+        # Kinetic energy calculation for substrate atoms.
+        subs_kin = frame_kin + trap_kin
         # Kinetic energy calculation for the agent atom.
         agent_kin = (Agent.mass * np.sum(Agent.V ** 2)) / 2
         globals.ke = subs_kin + agent_kin
@@ -77,6 +85,7 @@ def Temp():
 """
 def Analysis():
     FF()
+    VF()
     PE()
     KE()
     Etot()
