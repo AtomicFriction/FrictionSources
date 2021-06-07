@@ -60,7 +60,9 @@ class Substrate():
 
         # initialize velocity and acceleration
         self.V = np.zeros(self.R.shape)
-        self.V[self.bound] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound].shape)
+        self.V[self.bound, 0] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 0].shape)
+        self.V[self.bound, 1] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 1].shape)
+        self.V[self.bound, 2] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 2].shape)
         self.A = np.zeros(np.shape(self.R))
 
         # set the frame and the trap for thermostat
