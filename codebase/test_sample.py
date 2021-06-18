@@ -1,2 +1,2 @@
-def pass_test():
+def test_pass():
     assert a == a
