@@ -16,6 +16,7 @@ integtype = prot_param['integ']
 run = prot_param['run']
 eig_proj = prot_param['eig_proj']
 apply_agent = prot_param['apply_agent']
+apply_thermo = prot_param['apply_thermo']
 
 
 # "analysis" parameters from the input file.
@@ -67,6 +68,9 @@ temp = 0
 etot_switch = 0
 etot = 0
 vec_proj = 0
+
+eigvec = 0
+eigval = 0
 
 
 # Potential energy calculation variables.
