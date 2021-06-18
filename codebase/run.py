@@ -43,8 +43,8 @@ def main():
         print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
     
         # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
-        np.save('eigtest_eigvec', eigvec)
-        np.save('eigtest_eigval', eigval)
+        np.save('eigtest_eigvec', globals.eigvec)
+        np.save('eigtest_eigval', globals.eigval)
         print("Hessian matrix eigenvalues and eigenfunctions are saved.")
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
         globals.eigvec = np.load("eigtest_eigvec.npy")
@@ -52,9 +52,8 @@ def main():
     else:
         print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
         sys.exit()
+
     
-
-
     # Initialize a figure in case the user wants to animate the system.
     fig = plt.figure()
 
@@ -62,6 +61,7 @@ def main():
         # Write the outline for the log file.
         ProtLog(i)
         print("Executing protocol step " + str(i + 1) + " out of " + str(len(globals.run)))
+        print(globals.temp)
         for j in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.
             if (globals.animate != None and j % int(globals.animate) == 0):
@@ -79,10 +79,9 @@ def main():
                 ax.cla()
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.temp = Temp()
-            # End of 3D animated plot here. Just end commenting out here.
-            temp_inc = (((globals.run[i][1]) - (globals.run[i][0])) / (globals.run[i][2]))
+            temp_inc = (((globals.run[i][1]) - globals.temp) / (globals.run[i][2]))
             # Integration of the entire system here.
-            (Subs.R, Subs.V, Subs.A) = SimulateSubs(globals.temp + temp_inc, ApplyThermo, Integrate)
+            (Subs.R, Subs.V, Subs.A) = SimulateSubs(temp_inc, ApplyThermo, Integrate, i, j)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], Integrate, i, j)
 
             # Triggers if the user wants to save the system state.
@@ -90,4 +89,5 @@ def main():
                 # Save the whole state of the system.
                 np.savez("system_state.npz", Subs_R = Subs.R, Subs_V = Subs.V, Subs_A = Subs.A, Agent_R = Agent.R, Agent_V = Agent.V, Agent_A = Agent.A, Agent_slider_pos = Agent.slider_pos, Agent_slider_vel = Agent.slider_vel, prot_i = i, prot_j = j)
                 print("System state saved at step " + str(j) + " of protocol run " + str(i + 1) + " out of " + str(len(globals.run)))
+            
             
