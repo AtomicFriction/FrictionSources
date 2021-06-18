@@ -1,2 +1,3 @@
+a = True
 def test_pass():
-    assert a == a
+    assert a == True
