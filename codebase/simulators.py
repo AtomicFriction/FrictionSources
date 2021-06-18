@@ -37,7 +37,7 @@ def SimulateAgent(status, Integrate, i, j):
         return (Agent.R, Agent.V, Agent.A)
 
 
-def SimulateSubs(T_target, ApplyThermo, Integrate, j):
+def SimulateSubs(T_target, ApplyThermo, Integrate, i, j):
     """Simulates substrate atoms for that time step using thermostat and integrator
     Takes the parameters '(T_target, ApplyThermo, Integrate)'
     Calls the function 'ApplyThermo' providing it with the function 'SubstrateForce',
@@ -45,7 +45,7 @@ def SimulateSubs(T_target, ApplyThermo, Integrate, j):
     Returns the result of the function 'Integrate'
     """
 
-    if (j % globals.apply_thermo == 0):
+    if (j % globals.apply_thermo[i] == 0):
         Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
     else:
         subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
