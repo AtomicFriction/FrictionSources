@@ -12,7 +12,6 @@ from analysis import Analysis, Temp
 
 """
 Simulates the agent and slider atoms for every time step.
-Only takes the integrator as input.
 Performs a "status check" to see if the user wants to apply the agent on the substrate atoms.
 """
 def SimulateAgent(status, Integrate, i, j):
@@ -38,7 +37,7 @@ def SimulateAgent(status, Integrate, i, j):
         return (Agent.R, Agent.V, Agent.A)
 
 
-def SimulateSubs(T_target, ApplyThermo, Integrate):
+def SimulateSubs(T_target, ApplyThermo, Integrate, j):
     """Simulates substrate atoms for that time step using thermostat and integrator
     Takes the parameters '(T_target, ApplyThermo, Integrate)'
     Calls the function 'ApplyThermo' providing it with the function 'SubstrateForce',
@@ -46,6 +45,9 @@ def SimulateSubs(T_target, ApplyThermo, Integrate):
     Returns the result of the function 'Integrate'
     """
 
-    Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
+    if (j % globals.apply_thermo == 0):
+        Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
+    else:
+        subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
 
     return Integrate(subs_force, Subs.R, Subs.V, Subs.A, Subs.mass)
