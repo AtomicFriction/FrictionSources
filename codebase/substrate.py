@@ -196,5 +196,6 @@ class Substrate():
 Subs = Substrate()
 #Subs.neighbor_def()
 Subs.neighbor_tree()
-globals.initial_Subs_R = Subs.R
+globals.initial_Subs_R = np.copy(Subs.R)
+globals.lj_force = np.zeros(np.shape(globals.initial_Subs_R))
 #Subs.init_disp()
