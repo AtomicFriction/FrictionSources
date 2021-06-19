@@ -139,12 +139,23 @@ class Substrate():
                 Counts the last layer atoms as neighbors to themselves for all the arrays to have compatible sizes
                 '''
 
+                # Query the trie for a radius of r = latt_const
                 N_list = trie.query_ball_point(self.R, self.latt_const)
-                upplayer = np.array(list(N_list[-self.numlayer:]))
-                self_neigh = self.bound[-self.numlayer:]
-                N_upper = np.hstack((upplayer, self_neigh[:, np.newaxis]))
-                N_lower = np.array(list(N_list[self.fix_layers*self.numlayer:-self.numlayer]))
-                self.N = np.vstack((N_lower, N_upper))
+                # If there is only one free layer, draw the neighbor table of that layer
+                if (self.layers - self.fix_layers) == 1: 
+                    self.N = np.array(list(N_list[-self.numlayer:]))
+                # If there are multiple free layers, ...
+                else:
+                    # Draw the neighbor table of uppermost layer from the rest
+                    upp_neigh = np.array(list(N_list[-self.numlayer:]))
+                    # Create an array of atoms neighboring themselves for the upmost layer
+                    self_neigh = self.bound[-self.numlayer:]
+                    # Add self-neighboring atoms to the neighbor table of upmost atoms
+                    N_upper = np.hstack((upp_neigh, self_neigh[:, np.newaxis]))
+                    # Draw the neighbor table of the atoms below the upmost layer and above the fixed layers         
+                    N_lower = np.array(list(N_list[self.fix_layers*self.numlayer:-self.numlayer]))
+                    # Concatenate the neighbor tables vertically
+                    self.N = np.vstack((N_lower, N_upper))
 
     def init_disp(self):
         if self.displace_type == 'random':
