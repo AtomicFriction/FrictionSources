@@ -33,7 +33,7 @@ def SimulateAgent(status, Integrate, i, j):
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
     elif (status == 0):
         # The global variable containing the Lennard-Jones force needs to be nullified, so that it won't effect the substrate force calculations.
-        globals.lj_force = np.zeros((globals.num * globals.num, 3))
+        globals.lj_force = np.zeros(np.shape(globals.initial_Subs_R))
         return (Agent.R, Agent.V, Agent.A)
 
 
