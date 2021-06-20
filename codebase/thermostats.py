@@ -20,6 +20,7 @@ def VelRescale(F, T_target, frame):
     """
     L = (T_target / globals.temp) ** (1/2)
     Subs.V[frame] *= L
+
     F = F
     return Subs.V, F
 
@@ -32,7 +33,7 @@ def Berendsen(F, T_target, frame):
     -> Tau is taken as an input.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = sqrt(1 + (globals.dt / globals.tau) * (T_target / globals.temp - 1))
+    L = (1 + (globals.dt / globals.tau) * (T_target / globals.temp - 1)) ** (0.5)
     Subs.V[frame] *= L
     F = F
     return Subs.V, F
@@ -55,4 +56,5 @@ def Langevin(F, T_target, frame):
     Subs.V = Subs.V
     return Subs.V, F
 
+# Evaluates the proper function depending on the user choice, the dictionary used is at ./input_parser/input_profile.py
 ApplyThermo = eval(globals.thermotype)
