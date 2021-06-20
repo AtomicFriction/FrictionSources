@@ -1,7 +1,8 @@
 import numpy as np
-from scipy.spatial import distance, cKDTree
+from scipy.spatial import distance, KDTree
 import timeit
 import sys
+
 
 import globals
 from substrate import Subs
@@ -22,24 +23,22 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     """
     lj = []
     # Evaluates all the distance values between the agent and the substrate atoms.
-    dist = distance.cdist(agent_pos, substrate_pos, 'euclidean')
-
-    cutoff = (dist != 0) & (dist < globals.cutoff) * 1
-    extract = np.where(cutoff == 1)
-    idx = np.unique(extract[0], return_index=True)
-    table = np.array_split(extract[1], idx[1])[1:]
-            
+    #dist = distance.cdist(agent_pos, substrate_pos, 'euclidean')
     """ Create cKDTree, and query for the neighbors in the cut off region.
-
     If the system is fixed, box=None.
     If it is periodic, then box=[Subs.L, Subs.L, Subs.L], where L is the boxsize along i-th dimension.
     """
-    trie = cKDTree(substrate_pos, box=box)
-    N = trie.query_ball_point(agent_pos, globals.cutoff)
+    
+    trie = KDTree(substrate_pos, boxsize=box)
+    N = (trie.query_ball_point(agent_pos, globals.cutoff))
+    N = np.array([N[0]])
+    dist = distance.cdist(agent_pos, substrate_pos[N[0]], 'euclidean')
 
-    if (len(table) == 1):
-        for i in range(len(table[0])):
-            rr = dist[0][table[0][i]]
+
+    if (len(N) == 1):
+        for i in range(len(N)):
+            rr = dist[0][i]
+            #print(rr)
             """
             -> "rr" is the distance between the agent and the substrate atom that lies inside the cutoff region.
             -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /analysis.py/PE()).
@@ -48,7 +47,7 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
             globals.rr_12.append(rr ** 12)
             globals.rr_6.append(rr ** 6)
             # Evaluation of the direction of the Lennard-Jones force.
-            dir = (agent_pos - substrate_pos[table[0][i]]) / rr
+            dir = (agent_pos - substrate_pos[N[i]]) / rr
             # Evaluation of the Lennard-Jones force.
             lj_force_whole = (((48 * globals.epsilon) * ((globals.sig_12) / (globals.rr_12[i] * rr))) - ((24 * globals.epsilon) * ((globals.sig_6) / (globals.rr_6[i] * rr)))) * dir
             # Append the calculated force to the "lj" array to sum it all up later.
@@ -57,13 +56,12 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
             -> The Lennard-Jones force on each substrate atom with their index is calculated here and needed for the substrate force calculation.
             -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /interactions.py/SubstrateForce()).
             """
-            globals.lj_force[table[0][i]] = lj[i][0]
+            globals.lj_force[N[i]] = lj[i][0]
         # Sum the Lennord-Jones forces for every agent-susbtrate pair.
-        lj_agent = np.sum(lj, axis = 0)
+        lj_agent = np.sum(lj[0], axis = 0)
     else:
         # This is to avoid "division by zero" errors if there are no substrate atoms lying inside the cutoff region.
         lj_agent = [[0, 0, 0]]
-
 
     """
     Hooke's Law implementation in 3D.
@@ -84,10 +82,10 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     globals.spr_force = -1 * globals.agent_k * globals.disp * normalized
 
     # Evaluate the total force on the agent.
-    agent_force = lj_agent + globals.spr_force
+    globals.agent_force = lj_agent + globals.spr_force
 
     # Return the total force on the agent.
-    return agent_force
+    return globals.agent_force
 
 
 def SubstrateForce(subs_pos, subs_bound, subs_N, latt_const, subs_k, subs_L):
