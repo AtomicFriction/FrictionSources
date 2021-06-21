@@ -1,8 +1,9 @@
 import globals
 import numpy as np
+import numpy.linalg as LA
 from agent import Agent
 from substrate import Subs
-
+import sys
 
 """
 -> Projection of the spring force vector on the slider velocity vector calculated to obtain the friction force.
@@ -15,7 +16,7 @@ def FF():
         return globals.ff
 
 """
--> Vertical force on the agent.
+-> Vertical force on the agent defined as the force on the "z-axis".
 """
 def VF():
     if (globals.vf_switch == 1):
@@ -75,9 +76,22 @@ def Etot():
 -> Returns 'T_trap', 'T_nontrap', and total temperature
 """
 def Temp():
-    globals.T_bound =  Subs.mass * np.sum(Subs.V[Subs.bound] ** 2) / (3 * globals.boltz * Subs.bound.shape[0])
-    return globals.T_bound
+    t_bound =  (Subs.mass * np.sum(Subs.V[Subs.bound] ** 2)) / (3 * globals.boltz * Subs.bound.shape[0])
+    if(np.isnan(t_bound) == True):
+        print("NaN at temperature calc.")
+        sys.exit()
+    return t_bound
 
+
+def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
+    eigvec_select = eigvec[:, 0:(eigvec_num)]
+    vec_proj = abs(np.dot((subs_pos[subs_bound] - initial_pos[subs_bound]).ravel(), eigvec_select)) / (LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))
+    print(LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))
+    print(vec_proj)
+    if(np.isnan(vec_proj[0]) == True):
+        print("NaN at eigenvector projections.")
+        sys.exit()
+    return vec_proj
 
 """
 -> Group all the "analysis" funcitons together and call them all at once,

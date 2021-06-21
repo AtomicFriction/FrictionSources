@@ -3,24 +3,24 @@ from input_parser.input_parser import parse
 import globals
 
 """
-Uses the input data given by the user to initial size an agent and a slider.
+Uses the input data given by the user to initialize an agent and a slider. Both the agent and the slider are single atoms for now.
 """
 
 _, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
-## Agent class.
 class AgentSlider:
 
     def __init__(self):
-        ## Mass of the agent.
+        # Mass of the agent.
         self.mass = (agent_param['mass'])
-        ## Spring constant between slider and agent.
+        # Spring constant between slider and agent.
         self.k = (agent_param['k'])
-        ## Shape of the agent.
+        # Shape of the agent.
         self.shape = agent_param['shape']
-        ## The position of the slider.
+        # The position of the slider.
         self.slider_pos = np.array(agent_param["slider_pos"]).reshape(1, 3)
-        ## The velocity of the slider.
+        # The velocity of the slider.
         self.slider_vel = np.array(agent_param["slider_vel"]).reshape(1, 3)
+        # The force on the agent.
         self.F = 0
 
         ## Initialize agent position, velocity and acceleration as (1 x 3) arrays depending on the user selected shape.

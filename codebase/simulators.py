@@ -5,9 +5,9 @@ from substrate import Subs
 from interactions import AgentForce, SubstrateForce
 from integrators import Integrate
 from thermostats import ApplyThermo
-from hessian import GetEigen, ProjectEigen
+from hessian import GetEigen
 from logger import InitLog, ProtLog, WriteLog, EigProjLogInit, EigProjLog
-from analysis import Analysis, Temp
+from analysis import Analysis, Temp, ProjectEigen
 
 
 """
@@ -22,8 +22,9 @@ def SimulateAgent(status, Integrate, i, j):
         Agent.slider_pos += Agent.slider_vel * globals.dt
         # Calculate eigenvector projections.
         if (j % globals.eig_proj[1] == 0):
-            proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
-            EigProjLog(i, j, proj)
+            #proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+            #print("a")
+            #EigProjLog(i, j, proj)
             # Run the necessary "analysis" functions.
             Analysis()
             # Write the wanted quatities to the log file.
@@ -33,7 +34,7 @@ def SimulateAgent(status, Integrate, i, j):
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
     elif (status == 0):
         # The global variable containing the Lennard-Jones force needs to be nullified, so that it won't effect the substrate force calculations.
-        globals.lj_force = np.zeros((globals.num * globals.num, 3))
+        globals.lj_force = np.zeros(np.shape(globals.initial_Subs_R))
         return (Agent.R, Agent.V, Agent.A)
 
 

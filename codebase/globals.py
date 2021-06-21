@@ -86,7 +86,7 @@ agent_zcomp = 0
 sig_12 = (sigma ** 12)
 sig_6 = (sigma ** 6)
 spr_force = np.zeros((1, 3))
-lj_force = np.zeros((num * num, 3))
+lj_force = 0
 agent_force = 0
 
 """
@@ -100,8 +100,10 @@ subs_pot = []
 initial_Subs_R = 0
 
 # Command line arguement switches.
-save_progress = 0 # This arguement needs an integer input form the user.
+save_progress = False # This arguement needs an integer input form the user.
 from_progress = False
 calc_hessian = False
 load_eigs = False
-animate = 0 # This arguement needs an integer input form the user.
+animate = False # This arguement needs an integer input form the user.
+save_progress_step = 0
+animate_step = 0

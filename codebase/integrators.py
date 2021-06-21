@@ -58,7 +58,7 @@ def VelocityVerlet(force, pos, vel, acc, mass):
 
     return pos, vel, acc
 
-
+'''
 """
 4th Order Runge-Kutta integration scheme implementation. Uses the unified GetForces() function for the force/acceleration calculations.
 -> Problematic right now. Needs substrate-agent control.
@@ -89,5 +89,7 @@ def RK4(force_select, ag_pos, subs_pos, slider_pos, slider_vel, neigh, mass, pos
     (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return (pos, vel, acc), slider_pos
+'''
 
+# Evaluates the proper function depending on the user choice, the dictionary used is at ./input_parser/input_profile.py
 Integrate = eval(globals.integtype)

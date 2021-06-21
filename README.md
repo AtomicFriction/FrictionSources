@@ -1,5 +1,6 @@
 # 0.1.0 Development Release Is Now Live!
-![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)
+![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)  
+[![Automated App Tests and Linter](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml/badge.svg)](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml)
 
 # THE CODE WILL NOT RUN WITHOUT A COMMAND LINE ARGUEMENT. SEE EXECUTION MODES BELOW. 
 
