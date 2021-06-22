@@ -63,31 +63,32 @@ def main():
         #print(globals.temp)
         for j in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.
-            if (globals.animate != False and j % int(globals.animate_step) == 0):
-                plt.ion()
-                ax = fig.add_subplot(111, projection='3d')
-                ax.plot(Subs.R[:, 0], Subs.R[:, 1], Subs.R[:, 2], "o", markerfacecolor = "b", markersize = 5)
-                ax.plot(Agent.R[0][0], Agent.R[0][1], Agent.R[0][2], "8", markerfacecolor = "red", markersize = 16)
-                ax.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], Agent.slider_pos[0][2], "s", markerfacecolor = "k", markersize = 8)
-                ax.axis("tight")
-                ax.set(zlim = (0, 7))
-                ax.set(xlim = (0, Subs.L))
-                ax.set(ylim = (0, Subs.L))
-                plt.draw()
-                plt.pause(0.1)
-                ax.cla()
+            if (globals.animate != False and globals.animate != None):
+                if (j % int(globals.animate_step) == 0):
+                    plt.ion()
+                    ax = fig.add_subplot(111, projection='3d')
+                    ax.plot(Subs.R[:, 0], Subs.R[:, 1], Subs.R[:, 2], "o", markerfacecolor = "b", markersize = 5)
+                    ax.plot(Agent.R[0][0], Agent.R[0][1], Agent.R[0][2], "8", markerfacecolor = "red", markersize = 16)
+                    ax.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], Agent.slider_pos[0][2], "s", markerfacecolor = "k", markersize = 8)
+                    ax.axis("tight")
+                    ax.set(zlim = (0, 7))
+                    ax.set(xlim = (0, Subs.L))
+                    ax.set(ylim = (0, Subs.L))
+                    plt.draw()
+                    plt.pause(0.1)
+                    ax.cla()
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.temp = Temp()
             #print(globals.temp)
-            #temp_inc = (((globals.run[i][1]) - globals.temp) / (globals.run[i][2]))
+            temp_inc = (((globals.run[i][1]) - globals.temp) / (globals.run[i][2]))
             # Integration of the entire system here.
-            (Subs.R, Subs.V, Subs.A) = SimulateSubs(100000, ApplyThermo, Integrate, i, j)
+            (Subs.R, Subs.V, Subs.A) = SimulateSubs((globals.run[i][1]), ApplyThermo, Integrate, i, j)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], Integrate, i, j)
-
             # Triggers if the user wants to save the system state.
-            if (globals.save_progress != False and j % int(globals.save_progress_step) == 0):
-                # Save the whole state of the system.
-                np.savez("system_state.npz", Subs_R = Subs.R, Subs_V = Subs.V, Subs_A = Subs.A, Agent_R = Agent.R, Agent_V = Agent.V, Agent_A = Agent.A, Agent_slider_pos = Agent.slider_pos, Agent_slider_vel = Agent.slider_vel, prot_i = i, prot_j = j)
-                print("System state saved at step " + str(j) + " of protocol run " + str(i + 1) + " out of " + str(len(globals.run)))
+            if (globals.save_progress != False and globals.save_progress != None):
+                if (j % int(globals.save_progress_step) == 0):
+                    # Save the whole state of the system.
+                    np.savez("system_state.npz", Subs_R = Subs.R, Subs_V = Subs.V, Subs_A = Subs.A, Agent_R = Agent.R, Agent_V = Agent.V, Agent_A = Agent.A, Agent_slider_pos = Agent.slider_pos, Agent_slider_vel = Agent.slider_vel, prot_i = i, prot_j = j)
+                    print("System state saved at step " + str(j) + " of protocol run " + str(i + 1) + " out of " + str(len(globals.run)))
             
             
