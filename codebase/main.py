@@ -16,7 +16,7 @@ if __name__ == "__main__":
     f = Figlet(font='basic')
     print(f.renderText('Friction Sources'))
 
-    
+
     # This part is for the command line arguements.
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_progress", help = "Saves the state of the system every given step interval in case it gets interrupt somehow. For example, '-save_progress 10000' means that the state of the system will be saved every 10000 steps.")
@@ -32,10 +32,8 @@ if __name__ == "__main__":
     globals.calc_hessian = args.calc_hessian
     globals.load_eigs = args.load_eigs
     globals.animate = args.animate
-    print(args.load_eigs)
 
-    
-    if (args.save_progress == None and args.from_progress == None and args.calc_hessian == None and args.load_eigs == None and args.animate == None):
+    if (args.save_progress == None and args.from_progress == False and args.calc_hessian == False and args.load_eigs == False and args.animate == None):
         # This part is for the CLI menu.
         questions = [
             {
@@ -91,7 +89,6 @@ if __name__ == "__main__":
         if (answers["Animate"] == True):
             globals.animate_step = answers["AnimationInterval"]
 
-            
     print('Code execution started.')
     # Run the code.
     main()
