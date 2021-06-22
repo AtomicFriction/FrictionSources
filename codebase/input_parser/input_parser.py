@@ -81,13 +81,17 @@ def parse(file):
                         except: print('Undefined thermostat') # error type is to be specified
 
     dim = subs['dim']
-    if not dim >= 1 and dim <= 3: exit('Unexpected dimension')
+    free_layers = subs['layers'] - subs['fix_layers']
+
+    if not dim >= 1 and dim <= 3: raise ValueError('Unexpected dimension')
 
     elif dim == 1 or dim == 2: subs['layers'] = 1; subs['fix_layers'] = 0
 
-    elif dim == 3 and subs['bound_cond'] == 'fixed': subs['bound_cond'] = 'periodic'
+    elif free_layers < 1: raise ValueError('The input "layers" must be greater than "fix_layers"')
 
-    elif thermo['mode'] == 'trap' and not thermo['thickness'] > 0:
+    elif dim == 3 and free_layers != 1: subs['bound_cond'] = 'periodic'
+
+    if thermo['mode'] == 'partial' and not thermo['thickness'] > 0:
         raise ValueError('Thickness must be a positive integer')
 
     return gen, prot, anal, subs, slid, thermo
