@@ -1,5 +1,6 @@
 from input_parser.input_parser import parse
 from scipy.spatial import distance, cKDTree
+import matplotlib.pyplot as plt
 import numpy as np
 import globals
 
@@ -18,7 +19,6 @@ class Substrate():
         self.displace_type = subs_param['displace_type']
         self.latt_const = float(subs_param['latt_const'])
         self.cuto_const = float(subs_param['cuto_const'])
-        
         self.L = self.num * self.latt_const
 
         # initialize position and set the boundary condition
@@ -49,9 +49,24 @@ class Substrate():
             zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:self.num, 0:self.num] * self.latt_const
             Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
-
-            self.bound = np.where(np.isin(self.R[:, 2], np.arange(self.fix_layers)*self.latt_const) == False)[0]
             self.numlayer = int(self.R.shape[0] / self.layers)
+
+            if self.free_layers == 1:
+                # In 2D system with fixed floor, find the atom indices 
+                layer_2D = np.where(np.isin(self.R[:, 2], np.arange(self.fix_layers)*self.latt_const) == False)[0]
+
+                if self.bound_cond == 'fixed':
+                    bound_2D = np.where(\
+                        (self.R[:, 0] != 0) & (self.R[:, 0] != (self.num-1) * self.latt_const) & \
+                        (self.R[:, 1] != 0) & (self.R[:, 1] != (self.num-1) * self.latt_const))[0]
+
+                elif self.bound_cond == 'periodic':
+                    bound_2D = np.arange(self.R.shape[0])
+
+                self.bound = np.intersect1d(layer_2D, bound_2D)
+
+            elif self.free_layers != 1:
+                self.bound = np.where(np.isin(self.R[:, 2], np.arange(self.fix_layers)*self.latt_const) == False)[0]
 
         # initialize velocity and acceleration
         self.V = np.zeros(self.R.shape)
@@ -59,53 +74,56 @@ class Substrate():
         self.V[self.bound, 0] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 0].shape)
         self.V[self.bound, 1] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 1].shape)
         self.V[self.bound, 2] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 2].shape)
-        """ plt.hist(np.sqrt(np.sum(self.V**2, axis=1)), bins=self.num)
-        plt.show() """
-        self.A = np.zeros(np.shape(self.R))
+        self.A = np.zeros(self.R.shape)
 
         # set the frame and the trap for thermostat
         if globals.mode == 'full':
-            self.frame = np.arange(self.R.shape[0])
+            self.frame = np.arange(self.R.shape[0])[self.bound]
             self.trap = []
 
         elif globals.mode == 'partial':
             if self.dim == 2:
                 if self.bound_cond == 'fixed':
-                    self.trap = np.where(\
-                        (self.R[:, 0:2] - (globals.thickness + self.latt_const) >= 0).all(axis=1) & \
-                        (self.R[:, 0:2] + (globals.thickness + self.latt_const) <= self.L - self.latt_const).all(axis=1))
-                    
-                    self.frame = np.setdiff1d(self.bound, self.trap)
+                    # '1' in (1 + globals.thickness) is for eliminating the fixed boundary
+                    self.frame = np.setdiff1d(self.bound, np.where(\
+                        (self.R[:, 0] - self.latt_const * (1 + globals.thickness) >= 0) & \
+                        (self.R[:, 1] - self.latt_const * (1 + globals.thickness) >= 0) & \
+                        (self.R[:, 0] + self.latt_const * (1 + globals.thickness) <= self.L - self.latt_const) & \
+                        (self.R[:, 1] + self.latt_const * (1 + globals.thickness) <= self.L - self.latt_const)))
 
+                    self.trap = np.setdiff1d(self.bound, self.frame)
+                    
                 elif self.bound_cond == 'periodic':
                     self.frame = np.where(\
-                        (self.R[:, 0] - globals.thickness < 0) | \
-                        (self.R[:, 1] - globals.thickness < 0) | \
-                        (self.R[:, 0] + globals.thickness > self.L - self.latt_const) | \
-                        (self.R[:, 1] + globals.thickness > self.L - self.latt_const))[0]
+                        (self.R[:, 0] - self.latt_const * globals.thickness < 0) | \
+                        (self.R[:, 1] - self.latt_const * globals.thickness < 0) | \
+                        (self.R[:, 0] + self.latt_const * globals.thickness > self.L - self.latt_const) | \
+                        (self.R[:, 1] + self.latt_const * globals.thickness > self.L - self.latt_const))[0]
                     
-                    self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
+                    self.trap = np.setdiff1d(self.bound, self.frame)
 
             elif self.dim == 3:
                 if self.free_layers == 1:
                     if self.bound_cond == 'fixed':
-                        self.trap = np.where(\
-                            (self.R[self.bound, 0:2] - (globals.thickness + self.latt_const) >= 0).all(axis=1) & \
-                            (self.R[self.bound, 0:2] + (globals.thickness + self.latt_const) <= self.L - self.latt_const).all(axis=1))
-                        
-                        self.frame = np.setdiff1d(self.bound, self.trap)
+                        self.frame = np.setdiff1d(self.bound, np.where(\
+                            (self.R[:, 0] - self.latt_const * (1 + globals.thickness) >= 0) & \
+                            (self.R[:, 1] - self.latt_const * (1 + globals.thickness) >= 0) & \
+                            (self.R[:, 0] + self.latt_const * (1 + globals.thickness) <= self.L - self.latt_const) & \
+                            (self.R[:, 1] + self.latt_const * (1 + globals.thickness) <= self.L - self.latt_const)))
+
+                        self.trap = np.setdiff1d(self.bound, self.frame)
 
                     elif self.bound_cond == 'periodic':
-                        self.frame = np.where(\
-                            (self.R[self.bound, 0] - globals.thickness < 0) | \
-                            (self.R[self.bound, 1] - globals.thickness < 0) | \
-                            (self.R[self.bound, 0] + globals.thickness > self.L - self.latt_const) | \
-                            (self.R[self.bound, 1] + globals.thickness > self.L - self.latt_const))[0]
+                        self.frame = np.intersect1d(self.bound, np.where(\
+                            (self.R[:, 0] - self.latt_const * globals.thickness < 0) | \
+                            (self.R[:, 1] - self.latt_const * globals.thickness < 0) | \
+                            (self.R[:, 0] + self.latt_const * globals.thickness > self.L - self.latt_const) | \
+                            (self.R[:, 1] + self.latt_const * globals.thickness > self.L - self.latt_const))[0])
                         
-                        self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
+                        self.trap = np.setdiff1d(self.bound, self.frame)
                 else:
                     self.frame = np.arange(self.numlayer * self.fix_layers, self.numlayer * (self.fix_layers + globals.thickness))
-                    self.trap = np.setdiff1d(np.arange(self.R.shape[0]), self.frame)
+                    self.trap = np.setdiff1d(self.bound, self.frame)
 
     def neighbor_def(self):
         if self.bound_cond == 'fixed':
@@ -136,43 +154,43 @@ class Substrate():
         print(self.N_def)
 
     def neighbor_tree(self):
-        # Box size might be increased to prevent atoms to exceed the box if the function is to be called for multiple times.
-
         if self.bound_cond == 'fixed':
+            # Create tree without a box size
             trie = cKDTree(self.R, boxsize=None)
             self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const)[self.bound])
 
         elif self.bound_cond == 'periodic':
+            # Create tree with box size
             trie = cKDTree(self.R, boxsize=[self.L, self.L, self.L])
 
             if self.dim != 3:
                 self.N = np.vstack(trie.query_ball_point(self.R, self.latt_const))
 
-            if self.dim == 3:
+            elif self.dim == 3:
                 '''Queries the tree to construct neighbor table for 3D system
 
                 Removes the fixed layer from the table
                 Counts the uppermost layer atoms as neighbors to themselves for all the arrays to have compatible sizes
                 '''
-
+                
                 # Query the trie for a radius of r = latt_const
                 N_list = trie.query_ball_point(self.R, self.latt_const)
                 # If there is only one free layer, draw the neighbor table of that layer
                 if self.free_layers == 1: 
-                    self.N = np.array(list(N_list[-self.numlayer:]))
+                    self.N = np.vstack(N_list[self.bound])
                 # If there are multiple free layers, ...
                 else:
                     # Draw the neighbor table of uppermost layer from the rest
-                    upp_neigh = np.array(list(N_list[-self.numlayer:]))
+                    upp_neigh = np.vstack(N_list[-self.numlayer:])
                     # Create an array of atoms neighboring themselves for the upmost layer
-                    self_neigh = self.bound[-self.numlayer:]
+                    self_neigh = self.bound[-self.numlayer:]    # may be moved to out of the function
                     # Add self-neighboring atoms to the neighbor table of upmost atoms
                     N_upper = np.hstack((upp_neigh, self_neigh[:, np.newaxis]))
                     # Draw the neighbor table of the atoms below the upmost layer and above the fixed layers         
-                    N_lower = np.array(list(N_list[self.fix_layers*self.numlayer:-self.numlayer]))
+                    N_lower = np.vstack(N_list[self.fix_layers*self.numlayer:-self.numlayer])
                     # Concatenate the neighbor tables vertically
                     self.N = np.vstack((N_lower, N_upper))
-
+                
     def init_disp(self):
         if self.displace_type == 'random':
             if self.dim == 1:
