@@ -2,12 +2,12 @@
 
 Please include the the issue here. If it is a bug, please write the steps to reproduce the bug. 
 
-## Type of issue
+## Tasks To Solve This Issue
 
-- [ ] New Feature
-- [ ] Bug
-- [ ] Documentation
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
 
-## Possible Fixes / Implementations
+## Additional Notes & Explanations
 
 If you have any ideas about the possible fixes (for bugs) and implementations (for new features) include them here.
