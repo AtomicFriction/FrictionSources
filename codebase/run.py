@@ -67,8 +67,11 @@ def main():
                 if (j % int(globals.animate_step) == 0):
                     # Opens an xyz file with the setting 'ab', which stands for (a)ppend in (b)inary mode
                     with open('coord.xyz', 'ab') as coord:
-                        # Save the Subs.R array to the file with the total atom number and time step as headers
-                        np.savetxt(coord, Subs.R, header='{}\n{}'.format(Subs.tot_num, j), comments='')
+                        # Save the positions of substrate atoms to the file along with the total atom number and time step as headers
+                        np.savetxt(coord, Subs.R, header='{}\n{}'.format(Subs.tot_num+2, j), comments='')
+                        # Save the positions of agent and slider atoms at the end of the time step
+                        np.savetxt(coord, Agent.R)
+                        np.savetxt(coord, Agent.slider_pos)
                         
                     """ plt.ion()
                     ax = fig.add_subplot(111, projection='3d')
