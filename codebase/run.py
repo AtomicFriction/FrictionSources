@@ -65,7 +65,12 @@ def main():
             # Triggers if the user wants to animate the system.
             if (globals.animate != False and globals.animate != None):
                 if (j % int(globals.animate_step) == 0):
-                    plt.ion()
+                    # Opens an xyz file with the setting 'ab', which stands for (a)ppend in (b)inary mode
+                    with open('coord.xyz', 'ab') as coord:
+                        # Save the Subs.R array to the file with the total atom number and time step as headers
+                        np.savetxt(coord, Subs.R, header='{}\n{}'.format(Subs.tot_num, j), comments='')
+                        
+                    """ plt.ion()
                     ax = fig.add_subplot(111, projection='3d')
                     ax.plot(Subs.R[:, 0], Subs.R[:, 1], Subs.R[:, 2], "o", markerfacecolor = "b", markersize = 5)
                     ax.plot(Agent.R[0][0], Agent.R[0][1], Agent.R[0][2], "8", markerfacecolor = "red", markersize = 16)
@@ -76,7 +81,7 @@ def main():
                     ax.set(ylim = (0, Subs.L))
                     plt.draw()
                     plt.pause(0.1)
-                    ax.cla()
+                    ax.cla() """
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.temp = Temp()
             #print(globals.temp)
