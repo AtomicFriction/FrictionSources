@@ -26,6 +26,7 @@ class Substrate():
             zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:1, 0:self.num] * self.latt_const
             Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
+            self.tot_num = self.num
 
             if self.bound_cond == 'fixed':
                 self.bound = np.where(\
@@ -37,6 +38,7 @@ class Substrate():
             zgrid, ygrid, xgrid = np.mgrid[0:self.layers, 0:self.num, 0:self.num] * self.latt_const
             Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
+            self.tot_num = self.num**2
 
             if self.bound_cond == 'fixed':
                 self.bound = np.where(\
@@ -50,7 +52,8 @@ class Substrate():
             Rx, Ry, Rz = np.vstack(xgrid.ravel()), np.vstack(ygrid.ravel()), np.vstack(zgrid.ravel())
             self.R = np.hstack((Rx, Ry, Rz))
             self.numlayer = int(self.R.shape[0] / self.layers)
-
+            self.tot_num = self.num**2 * self.layers
+            
             if self.free_layers == 1:
                 # In 2D system with fixed floor, find the atom indices 
                 layer_2D = np.where(np.isin(self.R[:, 2], np.arange(self.fix_layers)*self.latt_const) == False)[0]
