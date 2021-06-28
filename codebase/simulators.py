@@ -14,21 +14,21 @@ from analysis import Analysis, Temp, ProjectEigen
 Simulates the agent and slider atoms for every time step.
 Performs a "status check" to see if the user wants to apply the agent on the substrate atoms.
 """
-def SimulateAgent(status, Integrate, i, j):
+def SimulateAgent(status, Integrate, i, step):
     # "on" choice simulates the agent normally.
     if (status == 1):
         agent_force = AgentForce(Agent.R, Agent.slider_pos, Subs.R, None)
         Agent.AgentPeriodicity(Subs.L)
         Agent.slider_pos += Agent.slider_vel * globals.dt
         # Calculate eigenvector projections.
-        if (j % globals.eig_proj[1] == 0):
-            #proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+        if (step % globals.eig_proj[1] == 0):
+            proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
             #print("a")
-            #EigProjLog(i, j, proj)
+            EigProjLog(i, step, proj)
             # Run the necessary "analysis" functions.
             Analysis()
             # Write the wanted quatities to the log file.
-            WriteLog(i, j)
+            WriteLog(i, step)
         return Integrate(agent_force, Agent.R, Agent.V, Agent.A, Agent.mass)
 
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
@@ -38,7 +38,7 @@ def SimulateAgent(status, Integrate, i, j):
         return (Agent.R, Agent.V, Agent.A)
 
 
-def SimulateSubs(T_target, ApplyThermo, Integrate, i, j):
+def SimulateSubs(T_target, ApplyThermo, Integrate, i, step):
     """Simulates substrate atoms for that time step using thermostat and integrator
     Takes the parameters '(T_target, ApplyThermo, Integrate)'
     Calls the function 'ApplyThermo' providing it with the function 'SubstrateForce',
@@ -46,7 +46,7 @@ def SimulateSubs(T_target, ApplyThermo, Integrate, i, j):
     Returns the result of the function 'Integrate'
     """
 
-    if (j % globals.apply_thermo[i] == 0):
+    if (step % globals.apply_thermo[i] == 0):
         Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
     else:
         subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
