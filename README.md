@@ -2,14 +2,21 @@
 ![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)  
 [![Automated App Tests and Linter](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml/badge.svg)](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml)
 
-# THE CODE WILL NOT RUN WITHOUT A COMMAND LINE ARGUEMENT. SEE EXECUTION MODES BELOW. 
+##### Our software has a command line interface, but you can bypass it by using command line arguments if you are familiar with them.
+
+You can access the command line interface by running the software the usual way,
+
+```
+python main.py
+```
 
 ##### TL;DR:
+
 If you are using a new input configuration,
 ```
 python main.py --calc_hessian
 ```
-If you have alrady calculated Hessian matrix once for your configuration,
+If you have already calculated Hessian matrix once for your configuration,
 ```
 python main.py --load_eigs
 ```
@@ -28,15 +35,9 @@ The units used for the system are:
 -> latt_const for Argon is in Angstroms.  
 -> Cutoff constant taken as 2.5 * sigma.
 
-Argon parameters sources:  
--> Lennard Jones parameters, sigma and epsilon: http://www.sklogwiki.org/SklogWiki/index.php/Argon  
--> Argon spring constant: Foundations of Nanomechanics, page 6  
--> Argon lattice constant: https://www.infoplease.com/inert-gases/argon and http://users.jyu.fi/~hahakkin/opetus/simu_2006/Lecture5.pdf  
--> Equilibrium length of the spring between agent-slider: Foundations of Nanomechanics, page 3  
-
 ## For Users
-  
-  
+
+
 ### Quick Start
 
 1) Go to the directory you want to download the code at.
@@ -71,15 +72,15 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
-  
-  
-### Execution Modes
 
-Assuming that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguements
+
+### Execution Modes With Command Line Arguments
+
+Assuming that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguments
 ```
 python main.py --help
 ```
-    
+
 #### The software needs the eigenvectors and eigenvalues from the Hessian matrix. Therefore, you need to calculate the Hessian matrix at least once for each input configuration. If you have calculated the Hessian matrix once, you can just load the eigenvectors and eigenvalues if you are using the same input configuration.    
 
 ##### The ```--calc_hessian``` Mode
@@ -95,14 +96,14 @@ python main.py --load_eigs
 ```
 
 ##### The ```--save_progress``` Mode
-This mode can be used by the following command, replace ```save_per_steps``` with the step interval you prefer for the saving proccess.
+This mode can be used by the following command, replace ```save_per_steps``` with the step interval you prefer for the saving process.
 ```
 python main.py --save_progress save_per_steps
 ```
 Saves the state of the system to a ".npz" file every ```save_per_steps``` steps. This option is implemented to prevent progress loss, may be preferred for longer runs. The save file is a compressed NumPy file, the size of the file is relatively small.
 
 ##### The ```--from_progress``` Mode
-This mode can be used by the following command, does not require additional arguements.
+This mode can be used by the following command, does not require additional arguments.
 ```
 python main.py --from_progress
 ```
@@ -113,16 +114,17 @@ Finds the saved ".npz" file and resumes the interrupted run. Keep in mind that t
 python main.py --animate animate_per_steps
 ```
 Animates the system per ```animate_per_steps``` steps. This is a very basic visualization, may be used to get a rough understanding of the system.
-  
-  
+
+
 ## For Developers
-  
-  
+
+
 ### Benchmarking
 
 ##### Keep in mind that the software will already show the elapsed time and maximum memory used at the end of execution.
 
-1) Locate to the repository, assuming that you have the repo at ./Desktop.
+1) Locate to the repository, assuming that you have the repository at ./Desktop.
+
 ```
 cd Desktop/FrictionSources/codebase
 ```
