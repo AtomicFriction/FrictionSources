@@ -1,44 +1,29 @@
 # 0.1.0 Development Release Is Now Live!
-![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)  
 [![Automated App Tests and Linter](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml/badge.svg)](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml)
-
-##### Our software has a command line interface, but you can bypass it by using command line arguments if you are familiar with them.
-
-You can access the command line interface by running the software the usual way,
-
-```
-python main.py
-```
-
-##### TL;DR:
-
-If you are using a new input configuration,
-```
-python main.py --calc_hessian
-```
-If you have already calculated Hessian matrix once for your configuration,
-```
-python main.py --load_eigs
-```
 
 
 Friction Sources is ....
 
-The units used for the system are:  
+
+# System Explanation
+There is a substrate system that can either be in one, two or three dimensions. Thermostats can be apllied to the substrate system any way the user wants to. On top of the substrate system, there is a slider that moves from a user specified position with a user specified constant velocity which is connected to an agent atom with a spring. The slider basically slides the agent atom on the substrate system. Here is a little visualization:  
+![System Visualization](https://media.giphy.com/media/uixLzupbeZH3X5mTk2/giphy.gif)   
+The list of units used are:  
 -> distance is in Angstroms.  
 -> time is in picoseconds.  
 -> sigma is in Angstroms.  
--> equilibrium length of the spring between agent-slider is in Angstroms.
+-> equilibrium length of the spring between agent-slider is in Angstroms.  
 -> epsilon is in eV.  
 -> substrate spring constant is in eV/Angstroms^2.  
 -> substrate mass is in amu(atomic mass units).  
 -> latt_const for Argon is in Angstroms.  
 -> Cutoff constant taken as 2.5 * sigma.
 
-## For Users
+
+# For Users
 
 
-### Quick Start
+## Quick Start
 
 1) Go to the directory you want to download the code at.
 ```
@@ -68,13 +53,78 @@ cd ..
 ```
 pip install -r requirements.txt
 ```
-5) Run the software!
+5) Run the software! This will fire up our command line interface.
 ```
 python main.py
 ```
+##### Alternatively you can use command line arguements to bypass the interface and directly run the software.
+- If you are using a new input configuration,
+```
+python main.py --calc_hessian
+```
+- If you have already calculated Hessian matrix once for your configuration,
+```
+python main.py --load_eigs
+```
+
+## Input File Configuration
+The explanation of the input file for our software is below:
+```
+&general
+cutoff = 8
+interact = LJ
+/
+&protocol
+numba = False
+dt = 0.001
+run = 60 100 125000 100 100 1250 100 100 375000
+eig_proj = 1587 100
+integ = ec
+apply_agent = 0 0 1
+apply_thermo = 100 100 100
+/
+&analysis
+N_dump = 100000
+data = ff vf temp
+/
+&substrate
+dim = Number of dimensions for the substrate system. (1 or 2 or 3)
+layers = Number of layers for the substrate system. (int)
+fix_layers = Number of layers that will be fixed, they will not move when the system starts. (int)
+num = Number of atoms for the substrate system. (int)
+bound_cond = Boundary condition selection for the susbtrate system. (fixed or periodic)
+latt_const = Lattice constant selectrion. (float or int)
+cuto_const = Cutoff constant selection for the atoms in the substrate system. (float or int)
+displace_type = random
+k = Spring constant selection for the springs between the atoms in the substrate system. (float or int)
+mass = Mass of the atoms in the substrate system. (float or int)
+/
+&slider
+mass = Mass of the agent atom. (float or int)
+k = Spring constant selection fior the spring between the slider and the agent atom. (float or int)
+shape = WIP
+sigma = Sigma value selection for the Lennard-Jones interaction between the agent atom and the substrate system. (float or int)
+epsilon = Epsilon value selection for the Lennard-Jones interaction between the agent atom and the substrate system. (float or int)
+agent_pos = Starting position of the agent atom. (float, float, float)
+slider_pos = Starting position of the slider. (float, float, float)
+slider_vel = Constant velocity of the slider. (float, float, float)
+eq_len = Equilibrium length of the spring between the agent atom and the slider. (float or int)
+constrain = Choice to constrain the motion the agent atom. (none or x or y or z)
+/
+&thermostat
+thermo = Type of the thermostat that will be applied on the substrate system. (vel_rescale, berendsen)
+mode = partial
+thickness = 2
+tau = 0.1
+s = 0.1
+Q = 0.1
+gamma = 0.1
+/
+
+```
 
 
-### Execution Modes With Command Line Arguments
+### Details About Execution Modes With Command Line Arguments
 
 Assuming that you are operating in the ``` codebase ```directory, use the following command to see possible command line arguments
 ```
@@ -116,10 +166,10 @@ python main.py --animate animate_per_steps
 Animates the system per ```animate_per_steps``` steps. This is a very basic visualization, may be used to get a rough understanding of the system.
 
 
-## For Developers
+# For Developers
 
 
-### Benchmarking
+## Benchmarking
 
 ##### Keep in mind that the software will already show the elapsed time and maximum memory used at the end of execution.
 
@@ -146,3 +196,10 @@ python -m cProfile -o temp.dat main.py
 ```
 snakeviz temp.dat
 ```
+
+## Contributing and Contact
+Feel free to create issues in this repository if you have any problems, ideas or suggestions. To work on a new feature, please create an issue first so that the developers can track the progress easier. Simply create a pull-request when you are done with your work. 
+
+The developers can be contacted for questions/ideas/suggestions via email:
+- Bartu Yaman, <yaman.bartu@metu.edu.tr>
+- Cagdas Kilic, <>
