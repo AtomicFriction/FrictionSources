@@ -202,4 +202,4 @@ Feel free to create issues in this repository if you have any problems, ideas or
 
 The developers can be contacted for questions/ideas/suggestions via email:
 - Bartu Yaman, <yaman.bartu@metu.edu.tr>
-- Cagdas Kilic, <>
+- Cagdas Kilic, <kilic.cagdas@metu.edu.tr>
