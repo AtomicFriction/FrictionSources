@@ -73,10 +73,19 @@ def WriteLog(counter_i, counter_j):
 """
 -> 
 """
+proj_pref = globals.eig_proj[1]
+# create a list of same headers
+proj_col = ['proj '] * proj_pref
+# modify the headers to have sequential indices
+for idx, _ in enumerate(proj_col):
+    proj_col[idx] = proj_col[idx].replace(' ', str(idx))
+# unify the list of strings into one single string with commas as delimiters
+proj_col = ','.join(proj_col)
+
 def EigProjLogInit():
     with open('eig_proj_log.csv', 'w') as proj_log:
-        proj_log.write("Eigenvector Projection Log")
-        proj_log.write("\n")
+        proj_log.write("Eigenvector Projection Log\n")
+        proj_log.write('protocol,step,{}\n'.format(proj_col))
 
 
 """
@@ -84,6 +93,5 @@ def EigProjLogInit():
 """
 def EigProjLog(counter_i, counter_j, proj):
     with open('eig_proj_log.csv', 'a') as proj_log:
-        proj_log.write("Protocol: " + str(counter_i) + " step: " + str(counter_j) + "  ")
-        proj_log.write(str(list(proj)))
-        proj_log.write("\n")
+        counter = np.array([counter_i, counter_j])[np.newaxis]
+        np.savetxt(proj_log, np.hstack((counter, proj[:proj_pref][np.newaxis])), delimiter=',')
