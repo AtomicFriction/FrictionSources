@@ -17,7 +17,7 @@ def plot_anal_log():
 
 def plot_proj_log(Y):
     df = pd.read_csv('eig_proj_log.csv', skiprows=1) # skip the first row where the title of the file is written
-    df.plot(x='step', y=Y, xlabel='Step', ylabel='Projection(s)', title='Eigenvector Projection of {}'.format(', and '.join(Y)))
+    df.plot(x='step', y=Y, xlabel='Step', ylabel='Projection(s)', title='Eigenvector Projection')
     plt.show()
 
 plot_proj_log(['proj0', 'proj1'])
