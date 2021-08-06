@@ -7,8 +7,8 @@ from tqdm import tqdm
 import globals
 from agent import Agent
 from substrate import Subs
-from analysis import Analysis, Temp
-from logger import InitLog, ProtLog, WriteLog, EigProjLogInit, EigProjLog
+from analysis import Analyze, Temp
+from logger import InitLog, WriteLog, EigProjLogInit, EigProjLog
 from hessian import GetEigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
@@ -57,12 +57,11 @@ def main():
     fig = plt.figure()
 
     tot_step = 0
-    for i in range(len(globals.run)):
+    for i in range(len(globals.run)): 
         # Write the outline for the log file.
-        ProtLog(i)
         print("Executing protocol step " + str(i + 1) + " out of " + str(len(globals.run)))
         tot_step += int(globals.run[i][2])
-        #print(globals.temp)
+        #print(globals.param['temp'])
         for step in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.
             if (globals.animate != False and globals.animate != None):
@@ -89,9 +88,9 @@ def main():
                     plt.pause(0.1)
                     ax.cla() """
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
-            globals.temp = Temp()
-            #print(globals.temp)
-            temp_inc = (((globals.run[i][1]) - globals.temp) / (globals.run[i][2]))
+            globals.log_param['temp'] = Temp() # why isn't this done in analysis.py?
+            #print(globals.param['temp'])
+            temp_inc = (((globals.run[i][1]) - globals.log_param['temp']) / (globals.run[i][2]))
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs((globals.run[i][1]), ApplyThermo, Integrate, i, step)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], Integrate, i, step)
