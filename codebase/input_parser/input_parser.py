@@ -55,9 +55,11 @@ def parse(file):
             try: anal[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'data':
-            try: anal[key] = list(map(str, anal[key].split()))
+            try:
+                if 'ff' in anal[key]: anal[key] = anal[key].replace('ff', 'ff_x ff_y ff_z')
+                anal[key] = list(map(str, anal[key].split()))
             except ValueError: print('The input {} must consist of type {}'.format(key, typeof[key])); exit()
-
+ 
     for key, val in subs.items():
         try: subs[key] = typeof[key](val)
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()

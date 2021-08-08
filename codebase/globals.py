@@ -53,21 +53,10 @@ mode = thermo_param['mode']
 thickness = thermo_param['thickness']
 boltz = 8.617333262e-5
 
-
-# Switches for logging.
-pe_switch = 0
-pe = 0
-ke_switch = 0
-ke = 0
-ff_switch = 0
-ff = 0
-vf_switch = 0
-vf = 0
-temp_switch = 0
-temp = 0
-etot_switch = 0
-etot = 0
-vec_proj = 0
+for prot, step in enumerate(run):
+    print(prot, step)
+# Values for logging.
+log_param = {key: 0 for key in data}
 
 eigvec = 0
 eigval = 0
@@ -99,8 +88,8 @@ subs_pot = []
 # Initial substrate position for evctor projection calculations.
 initial_Subs_R = 0
 
-# Command line arguement switches.
-save_progress = False # This arguement needs an integer input form the user.
+# Command line argument switches.
+save_progress = False # This argument needs an integer input form the user.
 from_progress = False
 calc_hessian = False
 load_eigs = False

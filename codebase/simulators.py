@@ -6,15 +6,15 @@ from interactions import AgentForce, SubstrateForce
 from integrators import Integrate
 from thermostats import ApplyThermo
 from hessian import GetEigen
-from logger import InitLog, ProtLog, WriteLog, EigProjLogInit, EigProjLog
-from analysis import Analysis, Temp, ProjectEigen
+from logger import InitLog, WriteLog, EigProjLogInit, EigProjLog
+from analysis import Analyze, Temp, ProjectEigen
 
 
 """
 Simulates the agent and slider atoms for every time step.
 Performs a "status check" to see if the user wants to apply the agent on the substrate atoms.
 """
-def SimulateAgent(status, Integrate, i, step):
+def SimulateAgent(status, Integrate, prot, step):
     # "on" choice simulates the agent normally.
     if (status == 1):
         agent_force = AgentForce(Agent.R, Agent.slider_pos, Subs.R, None)
@@ -24,11 +24,11 @@ def SimulateAgent(status, Integrate, i, step):
         if (step % globals.eig_proj[1] == 0):
             proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
             #print("a")
-            EigProjLog(i, step, proj)
+            EigProjLog(prot, step, proj)
             # Run the necessary "analysis" functions.
-            Analysis()
+            Analyze()
             # Write the wanted quatities to the log file.
-            WriteLog(i, step)
+            WriteLog(prot, step)
         return Integrate(agent_force, Agent.R, Agent.V, Agent.A, Agent.mass)
 
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
