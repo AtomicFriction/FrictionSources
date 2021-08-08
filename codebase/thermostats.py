@@ -18,7 +18,7 @@ def VelRescale(F, T_target, frame):
     Indexes the velocity array with the array 'frame', and updates only that part of the velocity array
     Returns both velocity and force arrays
     """
-    L = (T_target / globals.temp) ** (1/2)
+    L = (T_target / globals.log_param['temp']) ** (1/2)
     Subs.V[frame] *= L
 
     F = F
@@ -33,7 +33,7 @@ def Berendsen(F, T_target, frame):
     -> Tau is taken as an input.
     -> Returns a constant L to multiply with velocity of the particles in the system.
     """
-    L = (1 + (globals.dt / globals.tau) * (T_target / globals.temp - 1)) ** (0.5)
+    L = (1 + (globals.dt / globals.tau) * (T_target / globals.log_param['temp'] - 1)) ** (0.5)
     Subs.V[frame] *= L
     F = F
     return Subs.V, F
