@@ -1,7 +1,6 @@
 import numpy as np
 import globals
 from substrate import Subs
-import math
 
 """
 Since the constants below will be used in the functions,
@@ -48,11 +47,11 @@ def NoseHoover(F, T_target, frame):
     return Subs.V, F
 
 
-
+np.random.seed(seed=None)
 def Langevin(F, T_target, frame):
-    wiener = sqrt(globals.dt) * np.random.rand(*Subs.V[frame].shape)
+    wiener = np.sqrt(globals.dt) * np.random.rand(*Subs.V[frame].shape)
     F[frame] += (-1) * Subs.mass * globals.gamma * Subs.V[frame] + \
-        sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
+        np.sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
     Subs.V = Subs.V
     return Subs.V, F
 
