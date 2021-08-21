@@ -28,7 +28,7 @@ data = analysis_param['data']
 _, _, _, subs_param, _, _ = parse('./input_parser/input.txt') # Parse the parameters.
 
 num = subs_param['num']
-subs_k = subs_param['k']
+subs_k = np.array([subs_param['k1'], subs_param['k2'], subs_param['k3']])
 latt_const = subs_param['latt_const']
 
 
@@ -53,8 +53,6 @@ mode = thermo_param['mode']
 thickness = thermo_param['thickness']
 boltz = 8.617333262e-5
 
-for prot, step in enumerate(run):
-    print(prot, step)
 # Values for logging.
 log_param = {key: 0 for key in data}
 
