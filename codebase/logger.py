@@ -25,7 +25,7 @@ def WriteLog(prot, step):
 """
 -> 
 """
-proj_pref = globals.eig_proj[1]
+proj_pref = globals.eig_proj[0]
 # create a list of same headers
 proj_col = ['proj_'] * proj_pref
 # modify the headers to have sequential indices
@@ -38,7 +38,7 @@ def EigProjLogInit():
     with open('eig_proj_log.csv', 'w') as proj_log:
         proj_log.write("Eigenvector Projection Log\n")
         proj_log.write('protocol,step,{}\n'.format(proj_col))
-
+ 
 
 """
 -> 
