@@ -73,7 +73,7 @@ class Substrate():
 
         # initialize velocity and acceleration
         self.V = np.zeros(self.R.shape)
-        #self.V[self.bound] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound].shape)
+        np.random.seed(seed=None)
         self.V[self.bound, 0] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 0].shape)
         self.V[self.bound, 1] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 1].shape)
         self.V[self.bound, 2] = np.random.normal(0, np.sqrt(globals.boltz*globals.run[0, 0]/self.mass), size=self.V[self.bound, 2].shape)
