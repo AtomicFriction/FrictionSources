@@ -8,7 +8,7 @@ _, _, _, subs_param, _, _ = parse('./input_parser/input.txt')
 class Substrate():
     def __init__(self):
         # define parameters
-        self.k = float(subs_param['k'])
+        self.k = np.array([subs_param['k1'], subs_param['k2'], subs_param['k3']])
         self.dim = int(subs_param['dim'])
         self.num = int(subs_param['num'])
         self.mass = float(subs_param['mass'])
