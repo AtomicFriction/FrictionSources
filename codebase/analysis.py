@@ -32,6 +32,8 @@ def PE():
     # Spring potential calculation between substrate-substrate.
     subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
     globals.log_param['pe'] = lj_pot + ag_pot + subs_pot
+    globals.rr_6.clear()
+    globals.rr_12.clear()
     
 
 """
