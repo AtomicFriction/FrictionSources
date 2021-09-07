@@ -59,7 +59,7 @@ if __name__ == "__main__":
             },
             {
                 'type': 'confirm',
-                'message': 'Do you want to animate the system? (The progress will slow down significantly!)',
+                'message': 'Do you want to animate the system?',
                 'name': 'Animate',
             },
             {
