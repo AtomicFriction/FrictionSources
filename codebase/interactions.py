@@ -125,8 +125,8 @@ def SubstrateForce(subs_pos, subs_bound, subs_N, latt_const, subs_k, subs_L):
 
     # Define an array for the distance from equilibrium
     dR = (norm - latt_const) / norm @ dist
-    # Update the force array for free atoms in terms of Hooke's Law
-    subs_force[subs_bound] = np.squeeze(subs_k * dR, axis=1)
+    # Update the force array for free atoms in terms of the Hooke's Law
+    subs_force[subs_bound] = np.squeeze(subs_k[0] * dR + subs_k[1] * dR**2 + subs_k[2] * dR**3, axis=1)
 
     # Adds the contribution of Lennard-Jones to the force
     subs_force_fin = subs_force - globals.lj_force
