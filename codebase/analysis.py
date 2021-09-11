@@ -26,14 +26,13 @@ def VF():
 """
 def PE():
     # Lennard-Jones potential calculation between agent-substrate.
-    lj_pot = (np.sum((4 * globals.epsilon) * ((globals.sig_12 / np.array(globals.rr_12)) - (globals.sig_6 / np.array(globals.rr_6)))))
+    lj_pot = (np.sum((4 * globals.epsilon) * ((globals.sig_12 / np.array(globals.rr_12[0])) - (globals.sig_6 / np.array(globals.rr_6[0])))))
     # Spring potential calculation between agent-slider.
     ag_pot = ((globals.agent_k * (globals.disp ** 2)) / 2)
     # Spring potential calculation between substrate-substrate.
     subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
+
     globals.log_param['pe'] = lj_pot + ag_pot + subs_pot
-    globals.rr_6.clear()
-    globals.rr_12.clear()
     
 
 """
