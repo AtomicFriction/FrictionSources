@@ -30,54 +30,43 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     """
     
     trie = KDTree(substrate_pos, boxsize = box)
-    #print("This is trie: " + str(trie))
     N = (trie.query_ball_point(agent_pos, globals.cutoff))
-    #print("First N " + str(N))
     N = np.array([N[0]])
-    #print("This is N: " + str(N))
-    # Added custom exception when the distance between the agent and the substrate atom is larger than the cutoff distance.
     try:
         dist = distance.cdist(agent_pos, substrate_pos[N[0]], 'euclidean')
-        #print("This is dist: " + str(dist))
+    # Custom exception when the distance between the agent and the substrate atom is larger than the cutoff distance.
     except IndexError:
         print("Agent out of bounds.")
         sys.exit()
 
+    # Create empty arrays to store these values.
+    globals.rr_6 = np.zeros(shape = (1, len(N[0])))
+    globals.rr_12 = np.zeros(shape = (1, len(N[0])))
+    
+    rr = dist[0][:len(N[0])]
+    """
+    -> "rr" is the distance between the agent and the substrate atom that lies inside the cutoff region.
+    -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /analysis.py/PE()).
+    """
+    # The following two variables are calculated for later use for the Lennard-Jones potential in analysis.
+    globals.rr_6[0] = rr ** 6
+    globals.rr_12[0] = rr ** 12
+    rr = np.reshape(rr, (len(N[0]), 1))
+    # Evaluation of the direction of the Lennard-Jones force.
+    dir = (agent_pos - substrate_pos[N[0][:len(N[0])]]) / rr
+    rr = dist[0][:len(N[0])]
+    # Evaluation of the Lennard-Jones force.
+    lj = np.multiply(np.reshape(((48 * globals.epsilon) * ((globals.sig_12) / (globals.rr_12[0] * rr))) - ((24 * globals.epsilon) * ((globals.sig_6) / (globals.rr_6[0] * rr))), (len(N[0]), 1)), dir)
+    """
+    -> The Lennard-Jones force on each substrate atom with their index is calculated here and needed for the substrate force calculation.
+    -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /interactions.py/SubstrateForce()).
+    """
+    #print(np.sum(lj, axis = 0))
+    globals.lj_force[N[0][:len(N[0])]] = lj
 
-    for i in range(len(N[0])):
-        #print(i)
-        rr = dist[0][i]
-        #print("This is rr: " + str(rr))
-        """
-        -> "rr" is the distance between the agent and the substrate atom that lies inside the cutoff region.
-        -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /analysis.py/PE()).
-        """
-        # The following two variables are calculated for later use for the Lennard-Jones potential in analysis.
-        globals.rr_6.append(rr ** 6)
-        globals.rr_12.append(rr ** 12) # This is faster than (globals.rr_6[i] ** 2).
-        # Evaluation of the direction of the Lennard-Jones force.
-        dir = (agent_pos - substrate_pos[N[0][i]]) / rr
-        #print("This is dir: " + str(dir))
-        # Evaluation of the Lennard-Jones force.
-        lj_force_whole = (((48 * globals.epsilon) * ((globals.sig_12) / (globals.rr_12[i] * rr))) - ((24 * globals.epsilon) * ((globals.sig_6) / (globals.rr_6[i] * rr)))) * dir
-        """
-        if (-0.00001< lj_force_whole[0][2] < 0.00001):
-            print("Force is zero now!\n")
-            print(rr)
-            sys.exit()
-        """
-        #print("This is lj_force_whole " + str(lj_force_whole))
-        # Append the calculated force to the "lj" array to sum it all up later.
-        lj.append(lj_force_whole)
-        """
-        -> The Lennard-Jones force on each substrate atom with their index is calculated here and needed for the substrate force calculation.
-        -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for substrate force calculation at /interactions.py/SubstrateForce()).
-        """
-        globals.lj_force[N[0][i]] = lj[i][0]
-        #print("This is globals.lj_force: " + str(globals.lj_force))
     # Sum the Lennard-Jones forces for every agent-susbtrate pair.
-    lj_agent = np.sum(lj[0], axis = 0)
-    #print("This is lj_agent " + str(lj_agent))
+    lj_agent = np.sum(lj, axis = 0)
+
 
     """
     Hooke's Law implementation in 3D.
