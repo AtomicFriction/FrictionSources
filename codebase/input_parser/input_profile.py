@@ -1,4 +1,5 @@
 typeof = {'cutoff': float,
+          'eta': float,
           'interact': str,
           'numba': str,
           'dt': float,
