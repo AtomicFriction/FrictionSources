@@ -14,14 +14,9 @@ from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
 from integrators import Integrate
 
-"""
-import mplcyberpunk
-plt.style.use("cyberpunk")
-"""
-
 
 def main():
-    # Initialize the log file.
+    # Initialize the log files.
     InitLog()
     EigProjLogInit()
     
@@ -31,23 +26,12 @@ def main():
         with np.load("system_state.npz") as system_state:
             Subs.R, Subs.V, Subs.A, Agent.R, Agent.V, Agent.A, Agent.slider_pos, Agent.slider_vel, i, step = system_state["Subs_R"], system_state["Subs_V"], system_state["Subs_A"], system_state["Agent_R"], system_state["Agent_V"], system_state["Agent_A"], system_state["Agent_slider_pos"], system_state["Agent_slider_vel"], system_state["prot_i"], system_state["prot_j"]
         # Load the eigenvalues and eigenvectors of the Hessian matrix from the previously saved files.
-        globals.eigval, globals.eigvec = np.load('eigtest_eigval.npy'), np.load('eigtest_eigvec.npy')
+        globals.eigvec = np.load("./eigvecs/eigvecs.npy")
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     elif (globals.from_progress == False and globals.calc_hessian == True and globals.load_eigs == False):
-        # Initialize the hessian matrix.
-        print('Hessian matrix calculations started...')
-        hess_start = time.perf_counter()
-        globals.eigval, globals.eigvec = GetEigen()
-        hess_end = time.perf_counter()
-        print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
-    
-        # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
-        np.save('eigtest_eigvec', globals.eigvec)
-        np.save('eigtest_eigval', globals.eigval)
-        print("Hessian matrix eigenvalues and eigenfunctions are saved.")
+        GetEigen()
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
-        globals.eigvec = np.load("eigtest_eigvec.npy")
-        globals.eigval = np.load("eigtest_eigval.npy")
+        globals.eigvec = np.load("./eigvecs/eigvecs.npy")
     else:
         print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
         sys.exit()
@@ -73,23 +57,9 @@ def main():
                         # Save the positions of agent and slider atoms at the end of the time step
                         np.savetxt(coord, Agent.R)
                         np.savetxt(coord, Agent.slider_pos)
-                        
-                        
-                    """ plt.ion()
-                    ax = fig.add_subplot(111, projection='3d')
-                    ax.plot(Subs.R[:, 0], Subs.R[:, 1], Subs.R[:, 2], "o", markerfacecolor = "b", markersize = 5)
-                    ax.plot(Agent.R[0][0], Agent.R[0][1], Agent.R[0][2], "8", markerfacecolor = "red", markersize = 16)
-                    ax.plot(Agent.slider_pos[0][0], Agent.slider_pos[0][1], Agent.slider_pos[0][2], "s", markerfacecolor = "k", markersize = 8)
-                    ax.axis("tight")
-                    ax.set(zlim = (0, 7))
-                    ax.set(xlim = (0, Subs.L))
-                    ax.set(ylim = (0, Subs.L))
-                    plt.draw()
-                    plt.pause(0.1)
-                    ax.cla() """
+
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.log_param['temp'] = Temp() # why isn't this done in analysis.py?
-            #print(globals.param['temp'])
             temp_inc = (((globals.run[i][1]) - globals.log_param['temp']) / (globals.run[i][2]))
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs((globals.run[i][1]), ApplyThermo, Integrate, i, step)
