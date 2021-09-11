@@ -6,7 +6,7 @@ import numpy as np
 gen_param, _, _, _, _, _ = parse('./input_parser/input.txt') # Parse the parameters.
 
 cutoff = gen_param['cutoff']
-
+eta = gen_param['eta']
 
 # "protocol" parameters from the input file.
 _, prot_param, _, _, _, _ = parse('./input_parser/input.txt') # Parse the parameters.
@@ -53,6 +53,8 @@ mode = thermo_param['mode']
 thickness = thermo_param['thickness']
 boltz = 8.617333262e-5
 
+for prot, step in enumerate(run):
+    print(prot, step)
 # Values for logging.
 log_param = {key: 0 for key in data}
 
