@@ -2,6 +2,9 @@ import numpy as np
 import numpy.linalg as LA
 from tqdm import tqdm
 from math import sqrt
+import time
+import os
+import shutil
 
 import globals
 from substrate import Subs
@@ -57,6 +60,9 @@ def check_diagonal(M):
 """
 
 def GetEigen():
+    # Initialize the hessian matrix.
+    print('Hessian matrix calculations started...')
+    hess_start = time.perf_counter()
     h = 1e-3
     # Create an empty array of proper size.
     hessian = np.zeros([3 * Subs.bound.shape[0], 3 * Subs.bound.shape[0]])
@@ -108,4 +114,16 @@ def GetEigen():
     eigvaln = eigval[idx]
     eigvecn = eigvec[:,idx]
 
-    return eigvaln, eigvecn
+    eigvecn = globals.eigvec
+
+    hess_end = time.perf_counter()
+    print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
+
+    # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
+    try:
+        np.save('./eigvecs/eigvecs', globals.eigvec)
+    except FileNotFoundError:
+        os.makedirs("./eigvecs")
+        np.save('./eigvecs/eigvecs', globals.eigvec)
+    shutil.copyfile("./input_parser/input.txt", "./eigvecs/input.txt")
+    print("Hessian eigenvectors are saved.")
