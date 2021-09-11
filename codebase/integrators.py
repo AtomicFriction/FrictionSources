@@ -51,7 +51,7 @@ def VelocityVerlet(force, pos, vel, acc, mass):
     ## Updates of the target.
     vel += (0.5 * acc * globals.dt)
     pos += ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2)))
-    acc = (force / mass)
+    acc = (force - (globals.eta * vel) / mass)
     vel += (0.5 * acc * globals.dt)
     ## Operation to constrain the target, depends on the user input.
     #(vel, acc) = constrain(globals.constrain, vel, acc)
