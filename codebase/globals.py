@@ -53,8 +53,7 @@ mode = thermo_param['mode']
 thickness = thermo_param['thickness']
 boltz = 8.617333262e-5
 
-for prot, step in enumerate(run):
-    print(prot, step)
+
 # Values for logging.
 log_param = {key: 0 for key in data}
 
