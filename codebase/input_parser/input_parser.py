@@ -23,7 +23,7 @@ def parse(file):
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
 
     for key, val in prot.items():
-        if key != 'run' and key != 'integ' and key != 'apply_agent' and key != 'apply_thermo' and key != 'eig_proj':
+        if key != 'run' and key != 'integ' and key != 'apply_agent' and key != 'apply_thermo' and key != 'apply_damping' and key != 'eig_proj':
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
@@ -44,6 +44,10 @@ def parse(file):
             try:
                 prot[key] = list(map(int, prot[key].split()))
             except: print('Thermostat application combination must consist of integer.')
+        elif key == 'apply_damping':
+            try:
+                prot[key] = list(map(int, prot[key].split()))
+            except: print('Damping application combination must consist of "0" and "1" values.')
         elif key == 'eig_proj':
             try:
                 prot[key] = list(map(int, prot[key].split()))
