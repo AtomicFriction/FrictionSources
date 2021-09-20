@@ -1,4 +1,8 @@
+# Library imports.
 import numpy as np
+
+
+# File imports.
 import globals
 
 
@@ -10,18 +14,9 @@ Input y: Constrains the motion on the z-axis. Nullifies the components of other 
 Else: Does nothing.
 """
 def constrain(direction, vel, acc):
-    if (direction == "x"):
-        vel *= np.array([1, 0, 0])
-        acc *= np.array([1, 0, 0])
-        return (vel, acc)
-
-    elif (direction == "y"):
-        vel *= np.array([0, 1, 0])
-        acc *= np.array([0, 1, 0])
-        return (vel, acc)
-    elif (direction == "z"):
-        vel *= np.array([0, 0, 1])
-        acc *= np.array([0, 0, 1])
+    if (direction == "z"):
+        vel *= np.array([1, 1, 0])
+        acc *= np.array([1, 1, 0])
         return (vel, acc)
     else:
         return (vel, acc)
@@ -32,13 +27,13 @@ Euler-Cromer integration scheme implementation.
 Uses the unified GetForces() function for the force/acceleration calculations.
 JIT compilation makes the function slower.
 """
-def EulerCromer(force, pos, vel, acc, mass):
+def EulerCromer(force, pos, vel, acc, mass, eta):
     ## Updates of the target.
     vel += (acc * globals.dt)
     pos += (vel * globals.dt)
-    acc = (force / mass)
+    acc = (force - (eta * vel) / mass)
     ## Operation to constrain the target, depends on the user input.
-    #(vel, acc) = constrain(globals.constrain, vel, acc)
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return pos, vel, acc
 
@@ -47,14 +42,14 @@ def EulerCromer(force, pos, vel, acc, mass):
 Velocity-Verlet integration scheme implementation.
 Uses the unified GetForces() function for the force/acceleration calculations.
 """
-def VelocityVerlet(force, pos, vel, acc, mass):
+def VelocityVerlet(force, pos, vel, acc, mass, eta):
     ## Updates of the target.
     vel += (0.5 * acc * globals.dt)
     pos += ((vel * globals.dt) + (0.5 * acc * (globals.dt ** 2)))
-    acc = (force - (globals.eta * vel) / mass)
+    acc = (force - (eta * vel) / mass)
     vel += (0.5 * acc * globals.dt)
     ## Operation to constrain the target, depends on the user input.
-    #(vel, acc) = constrain(globals.constrain, vel, acc)
+    (vel, acc) = constrain(globals.constrain, vel, acc)
 
     return pos, vel, acc
 
