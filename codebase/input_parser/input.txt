@@ -1,20 +1,20 @@
 &general
-cutoff = 8
+cutoff = 11
 interact = LJ
-eta = 0.5
 /
 &protocol
 numba = False
 dt = 0.001
-run = 60 200 125000 100 100 875000
+run = 1 1 100000 1 1 100000 1 1 100000
 eig_proj = 10 100
-integ = ec
-apply_agent = 0 1
-apply_thermo = 1 1000
+integ = vv
+apply_agent = 1 1 1
+apply_thermo = 1 1 1
+apply_damping = 1 0 1
 /
 &analysis
 N_dump = 100000
-data = ff vf temp
+data = ff vf temp pe
 /
 &substrate
 dim = 3
@@ -25,22 +25,24 @@ bound_cond = fixed
 latt_const = 5
 cuto_const = 8
 displace_type = random
-k1 = 51.8
+k1 = 20
 k2 = 0
 k3 = 0
 mass = 40
+eta = 50
 /
 &slider
-mass = 40
-k = 51.8
+mass = 4000
+k = 10
 shape = single
-sigma = 3.3
-epsilon = 0.01077166
-agent_pos = 15 15 10
-slider_pos = 10 10 10
-slider_vel = 0.0001 0.0001 0
-eq_len = 3.8
-constrain = none
+sigma = 5
+epsilon = 0.01
+agent_pos = 15 15 11
+slider_pos = 10 10 11
+slider_vel = 0.03 0.03 0
+eq_len = 5
+constrain = z
+eta = 50
 /
 &thermostat
 thermo = velrescale
