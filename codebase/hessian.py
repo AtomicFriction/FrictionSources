@@ -1,17 +1,14 @@
-# Library imports.
 import numpy as np
 import numpy.linalg as LA
 from tqdm import tqdm
 from math import sqrt
 import time
 import os
-import shutil
 
-
-# File imports.
 import globals
 from substrate import Subs
 from interactions import SubstrateForce
+from input_parser.input_parser import parse
 
 """
 # These functions are here to make the analysis process easier. They will be removed later on.
@@ -61,6 +58,16 @@ def check_diagonal(M):
     i, j = np.nonzero(M)
     return np.all(i == j)
 """
+
+def name_eigen():
+    # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
+    _, prot_param, _, subs_param, _, _ = parse('./input_parser/input.txt') # Parse the input file to save eigenvectors with the related parameters
+    subs_param['bound_cond'] = subs_param['bound_cond'][0] # For naming convention of the file, take only the first letter of the boundary condition, 'fixed' -> 'f'
+    del subs_param['displace_type'] # Since the displace type does not affect eigenvectors, remove it from the dictionary
+    param = [prot_param['dt']] + list(subs_param.values()) # Make a list of the parameters to name the file
+    eigvec_dir = './eigvecs/{}.npy'.format('-'.join(map(str, param)).replace('.', '-')) # Separate all the parameters by hyphen and replace the punctuation marks with it
+
+    return eigvec_dir
 
 def GetEigen():
     # Initialize the hessian matrix.
@@ -114,19 +121,15 @@ def GetEigen():
 
     # Ascending sort.
     idx = np.argsort(eigval)
-    eigvaln = eigval[idx]
     eigvecn = eigvec[:,idx]
 
     globals.eigvec = eigvecn
 
     hess_end = time.perf_counter()
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
-
-    # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
-    try:
-        np.save('./eigvecs/eigvecs', globals.eigvec)
-    except FileNotFoundError:
-        os.makedirs("./eigvecs")
-        np.save('./eigvecs/eigvecs', globals.eigvec)
-    shutil.copyfile("./input_parser/input.txt", "./eigvecs/input.txt")
+    
+    eigvec_dir = name_eigen()
+    os.makedirs(os.path.dirname(eigvec_dir), exist_ok=True)
+    np.save(eigvec_dir, globals.eigvec)
+    
     print("Hessian eigenvectors are saved.")
