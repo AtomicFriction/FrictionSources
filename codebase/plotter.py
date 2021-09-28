@@ -24,4 +24,4 @@ def plot_proj_log(proj):
     plt.show()
     #print(df.get(df['protocol']==2))
 
-plot_proj_log(['proj5', 'proj6', 'proj97', 'proj89'])
+plot_proj_log(['mod5', 'mod6', 'mod97', 'mod89'])
