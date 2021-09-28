@@ -6,6 +6,7 @@ from pyfiglet import Figlet
 from PyInquirer import prompt
 from examples import custom_style_2, custom_style_1, custom_style_3
 import argparse
+from results import fold_results
 
 # Start of the maximum memory allocation calculation process.
 tic = time.perf_counter()
@@ -13,7 +14,7 @@ tracemalloc.start()
 
 if __name__ == "__main__":
     print("\n")
-    f = Figlet(font='basic')
+    f = Figlet(font='basic') 
     print(f.renderText('Friction Sources'))
 
 
@@ -90,8 +91,10 @@ if __name__ == "__main__":
             globals.animate_step = answers["AnimationInterval"]
 
     print('Code execution started.')
+    # Define the results' directory.
+    xyz_dir, log_dir, eig_dir = fold_results()
     # Run the code.
-    main()
+    main(xyz_dir, log_dir, eig_dir)
     peak = tracemalloc.get_traced_memory()[1]
     print(f"Peak memory usage was {peak / 10**6}MB.")
 
