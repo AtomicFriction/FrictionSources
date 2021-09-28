@@ -1,37 +1,32 @@
-# Library imports
 import numpy as np
-
-# File imports
 import globals
 from agent import Agent
 from substrate import Subs
 from interactions import AgentForce, SubstrateForce
-from integrators import Integrate
-from thermostats import ApplyThermo
-from logger import InitLog, WriteLog, EigProjLogInit, EigProjLog
-from analysis import Analyze, Temp, ProjectEigen
+from logger import WriteLog, EigProjLog
+from analysis import Analyze, ProjectEigen
 
 
 """
 Simulates the agent and slider atoms for every time step.
 Performs a "status check" to see if the user wants to apply the agent on the substrate atoms.
 """
-def SimulateAgent(status, Integrate, prot, step, damp):
+def SimulateAgent(status, Integrate, prot, step, eig_dir, log_dir):
     # "on" choice simulates the agent normally.
     if (status == 1):
-        AgentForce(Agent.R, Agent.slider_pos, Subs.R, None)
+        agent_force = AgentForce(Agent.R, Agent.slider_pos, Subs.R, Subs.bound, None)
         Agent.AgentPeriodicity(Subs.L)
         Agent.slider_pos += Agent.slider_vel * globals.dt
         # Calculate eigenvector projections.
         if (step % globals.eig_proj[1] == 0):
-            #proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
-            #EigProjLog(prot, step, proj)
+            proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+            #print("a")
+            EigProjLog(eig_dir, prot, step, proj)
             # Run the necessary "analysis" functions.
             Analyze()
             # Write the wanted quatities to the log file.
-            WriteLog(prot, step)
-
-        return Integrate(globals.agent_force[0], Agent.R, Agent.V, Agent.A, Agent.mass, damp)
+            WriteLog(log_dir, prot, step)
+        return Integrate(agent_force, Agent.R, Agent.V, Agent.A, Agent.mass)
 
     # "off" choice virtually "lifts up" the agent from the substrate atoms, removing it from the system.
     elif (status == 0):
@@ -49,8 +44,9 @@ def SimulateSubs(T_target, ApplyThermo, Integrate, i, step):
     """
 
     if (step % globals.apply_thermo[i] == 0):
-        Subs.V, subs_force = ApplyThermo(SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
+        Subs.V, subs_force = ApplyThermo(\
+            SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L), T_target, Subs.frame)
     else:
         subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
 
-    return Integrate(subs_force, Subs.R, Subs.V, Subs.A, Subs.mass, globals.subs_eta)
+    return Integrate(subs_force, Subs.R, Subs.V, Subs.A, Subs.mass)
