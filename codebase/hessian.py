@@ -1,3 +1,4 @@
+# Library imports.
 import numpy as np
 import numpy.linalg as LA
 from tqdm import tqdm
@@ -6,6 +7,8 @@ import time
 import os
 import shutil
 
+
+# File imports.
 import globals
 from substrate import Subs
 from interactions import SubstrateForce
@@ -114,7 +117,7 @@ def GetEigen():
     eigvaln = eigval[idx]
     eigvecn = eigvec[:,idx]
 
-    eigvecn = globals.eigvec
+    globals.eigvec = eigvecn
 
     hess_end = time.perf_counter()
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
