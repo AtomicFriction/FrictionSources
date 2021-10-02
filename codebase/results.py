@@ -5,7 +5,8 @@ import os
 # Create a folder for results (log and xyz files)
 def fold_results():
     # To name the results folder, define a string consisting of the current date and time
-    timestr = time.strftime('(%m-%d-%Y)-(%H-%M-%S)')
+    # In the fashion 'month, day, year, hour, minute, and second'
+    timestr = time.strftime('%m-%d-%Y-%H-%M-%S')
     # Create directory name for coord.xyz file
     xyz_dir = './results/{}/coord.xyz'.format(timestr)
     # Create directory name for log.csv file
