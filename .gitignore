@@ -1,0 +1,8 @@
+# Ignore the folder containing the meeting notes.
+MeetingNotes
+
+# Ignore the folder containing research papers.
+Sources
+
+# Ignore all Jupyter Notebook files.
+*.ipynb
