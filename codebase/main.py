@@ -1,6 +1,5 @@
+# Library imports.
 import time
-from run import main
-import globals
 import tracemalloc
 from pyfiglet import Figlet
 from PyInquirer import prompt
@@ -8,13 +7,18 @@ from examples import custom_style_2, custom_style_1, custom_style_3
 import argparse
 from results import fold_results
 
+
+# File imports.
+from run import main
+import globals
+
 # Start of the maximum memory allocation calculation process.
 tic = time.perf_counter()
 tracemalloc.start()
 
 if __name__ == "__main__":
     print("\n")
-    f = Figlet(font='basic') 
+    f = Figlet(font='basic')
     print(f.renderText('Friction Sources'))
 
 
@@ -32,6 +36,7 @@ if __name__ == "__main__":
     globals.from_progress = args.from_progress
     globals.calc_hessian = args.calc_hessian
     globals.load_eigs = args.load_eigs
+    globals.animate_step = args.animate
     globals.animate = args.animate
 
     if (args.save_progress == None and args.from_progress == False and args.calc_hessian == False and args.load_eigs == False and args.animate == None):
@@ -91,10 +96,14 @@ if __name__ == "__main__":
             globals.animate_step = answers["AnimationInterval"]
 
     print('Code execution started.')
+    
+    
     # Define the results' directory.
     xyz_dir, log_dir, eig_dir = fold_results()
     # Run the code.
     main(xyz_dir, log_dir, eig_dir)
+    
+    
     peak = tracemalloc.get_traced_memory()[1]
     print(f"Peak memory usage was {peak / 10**6}MB.")
 
