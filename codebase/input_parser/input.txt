@@ -4,17 +4,18 @@ interact = LJ
 /
 &protocol
 numba = False
-dt = 0.001
-run = 1 1 100000 1 1 100000 1 1 100000
+dt = 0.01
+run = 1 200 1000000 200 200 1000000 200 200 1000000
 eig_proj = 10 100
-integ = vv
-apply_agent = 1 1 1
+integ_agent = vv
+integ_subs = vv
+apply_agent = 0 1 1
 apply_thermo = 1 1 1
-apply_damping = 1 0 1
+apply_damping = 1 1 1
 /
 &analysis
 N_dump = 100000
-data = ff vf temp pe
+data = ff ke pe 
 /
 &substrate
 dim = 3
@@ -32,17 +33,17 @@ mass = 40
 eta = 50
 /
 &slider
-mass = 4000
-k = 10
+mass = 400
+k = 80
 shape = single
-sigma = 5
-epsilon = 0.01
-agent_pos = 15 15 11
-slider_pos = 10 10 11
-slider_vel = 0.03 0.03 0
+sigma = 4
+epsilon = 0.04
+agent_pos = 17 17 10
+slider_pos = 12 12 10
+slider_vel = 0.005 0.005 0
 eq_len = 5
-constrain = z
-eta = 50
+constrain = None
+eta = 0
 /
 &thermostat
 thermo = velrescale
