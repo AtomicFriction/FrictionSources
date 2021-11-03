@@ -9,14 +9,14 @@ from logger import InitLog, EigProjLogInit
 from hessian import GetEigen, name_eigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
-from integrators import Integrate
+#from integrators import Integrate
 
 
 def main(xyz_dir, log_dir, eig_dir):
     # Initialize the log files.
     InitLog(log_dir)
     EigProjLogInit(eig_dir)
-    
+
     # System state configurations checks.
     if (globals.from_progress == True and globals.calc_hessian == False and globals.load_eigs == False):
         # Load the previous state of the system.
@@ -28,24 +28,28 @@ def main(xyz_dir, log_dir, eig_dir):
         # Load the eigenvalues and eigenvectors of the Hessian matrix from the previously saved files.
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
-
+        
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     elif (globals.from_progress == False and globals.calc_hessian == True and globals.load_eigs == False):
         GetEigen()
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
+        
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
+        
     else:
         print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
         sys.exit()
 
 
     tot_step = 0
-    for i in range(len(globals.run)): 
+    for i in range(len(globals.run)):
         # Write the outline for the log file.
         print("Executing protocol step " + str(i + 1) + " out of " + str(len(globals.run)))
         tot_step += int(globals.run[i][2])
         #print(globals.param['temp'])
+        target_temp = globals.run[i][0]
+        temp_inc = (((globals.run[i][1]) - (globals.run[i][0])) / (globals.run[i][2]))
         for step in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.
             if (globals.animate != False and globals.animate != None):
@@ -60,10 +64,10 @@ def main(xyz_dir, log_dir, eig_dir):
 
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.log_param['temp'] = Temp() # why isn't this done in analysis.py?
-            #temp_inc = (((globals.run[i][1]) - globals.log_param['temp']) / (globals.run[i][2]))
+            target_temp += temp_inc
             # Integration of the entire system here.
-            (Subs.R, Subs.V, Subs.A) = SimulateSubs((globals.run[i][1]), ApplyThermo, Integrate, i, step)
-            (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], Integrate, i, step, eig_dir, log_dir)
+            (Subs.R, Subs.V, Subs.A) = SimulateSubs(target_temp, ApplyThermo, i, step)
+            (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], i, step, eig_dir, log_dir)
             # Triggers if the user wants to save the system state.
             if (globals.save_progress != False and globals.save_progress != None):
                 if (step % int(globals.save_progress_step) == 0):
