@@ -23,7 +23,7 @@ def parse(file):
         except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
 
     for key, val in prot.items():
-        if key != 'run' and key != 'integ' and key != 'apply_agent' and key != 'apply_thermo' and key != 'apply_damping' and key != 'eig_proj':
+        if key != 'run' and key != 'integ_agent' and key != 'integ_subs' and key != 'apply_agent' and key != 'apply_thermo' and key != 'apply_damping' and key != 'eig_proj':
             try: prot[key] = typeof[key](val)
             except ValueError: print('The input {} must be of type {}'.format(key, typeof[key])); exit()
         elif key == 'run':
@@ -31,10 +31,15 @@ def parse(file):
                 prot[key] = list(map(float, prot[key].split())); prot[key][2::3] = map(int, prot[key][2::3])
                 prot[key] = np.array(prot[key]).reshape(int(len(prot[key])/3), 3)
             except ValueError: print('The input run must consist of types (float, float, int), respectively.'); exit()
-        elif key == 'integ':
-            for integrator in list(integtype.keys()):
+        elif key == 'integ_agent':
+            for integrator in list(integtype_agent.keys()):
                 if val in integrator:
-                    try: prot[key] = integtype.get(integrator)
+                    try: prot[key] = integtype_agent.get(integrator)
+                    except: print('Undefined integrator') # error type is to be specified
+        elif key == 'integ_subs':
+            for integrator in list(integtype_subs.keys()):
+                if val in integrator:
+                    try: prot[key] = integtype_subs.get(integrator)
                     except: print('Undefined integrator') # error type is to be specified
         elif key == 'apply_agent':
             try:
