@@ -1,4 +1,8 @@
+# Library imports.
 import numpy as np
+
+
+# File imports.
 from input_parser.input_parser import parse
 import globals
 
