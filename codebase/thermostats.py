@@ -1,6 +1,7 @@
 import numpy as np
 import globals
 from substrate import Subs
+import math
 
 """
 Since the constants below will be used in the functions,
@@ -19,7 +20,6 @@ def VelRescale(F, T_target, frame):
     """
     L = (T_target / globals.log_param['temp']) ** (1/2)
     Subs.V[frame] *= L
-
     F = F
     return Subs.V, F
 
@@ -47,11 +47,11 @@ def NoseHoover(F, T_target, frame):
     return Subs.V, F
 
 
-np.random.seed(seed=None)
+
 def Langevin(F, T_target, frame):
-    wiener = np.sqrt(globals.dt) * np.random.rand(*Subs.V[frame].shape)
+    wiener = sqrt(globals.dt) * np.random.rand(*Subs.V[frame].shape)
     F[frame] += (-1) * Subs.mass * globals.gamma * Subs.V[frame] + \
-        np.sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
+        sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
     Subs.V = Subs.V
     return Subs.V, F
 
