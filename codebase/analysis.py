@@ -1,9 +1,13 @@
-import globals
+# Library imports.
 import numpy as np
 import numpy.linalg as LA
+import sys
+
+
+# File imports.
 from agent import Agent
 from substrate import Subs
-import sys
+import globals
 
 """
 -> Projection of the spring force vector on the slider velocity vector calculated to obtain the friction force.
@@ -11,7 +15,8 @@ import sys
 """ 
 def FF():
     slid_vel_norm = np.sqrt(np.sum(Agent.slider_vel[0] ** 2))
-    globals.log_param['ff_x'], globals.log_param['ff_y'], globals.log_param['ff_z'] = (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
+    globals.log_param['ff_x'], globals.log_param['ff_y'], globals.log_param['ff_z'] = \
+        (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
 
 """
 -> Vertical force on the agent defined as the force on the "z-axis".
