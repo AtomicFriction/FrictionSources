@@ -42,8 +42,12 @@ typeof = {'cutoff': float,
           'gamma': float
 }
 
-integtype = {('ec', 'eulercromer'): 'EulerCromer',
-             ('vv', 'velocityverlet'): 'VelocityVerlet'
+integtype_agent = {('ec', 'eulercromer'): 'SimulateAgentEC',
+             ('vv', 'velocityverlet'): 'SimulateAgentVV'
+}
+
+integtype_subs = {('ec', 'eulercromer'): 'SimulateSubsEC',
+             ('vv', 'velocityverlet'): 'SimulateSubsVV'
 }
 
 thermotype = {('vs', 'velrescale'): 'VelRescale',
