@@ -1,3 +1,4 @@
+# Library imports.
 import numpy as np
 import numpy.linalg as LA
 from tqdm import tqdm
@@ -5,6 +6,8 @@ from math import sqrt
 import time
 import os
 
+
+# File imports.
 import globals
 from substrate import Subs
 from interactions import SubstrateForce
@@ -59,6 +62,7 @@ def check_diagonal(M):
     return np.all(i == j)
 """
 
+
 def name_eigen():
     # The eigenvectors of the hessian can be saved here in case you want to run tests on them.
     _, prot_param, _, subs_param, _, _ = parse('./input_parser/input.txt') # Parse the input file to save eigenvectors with the related parameters
@@ -68,6 +72,7 @@ def name_eigen():
     eigvec_dir = './eigvecs/{}.npy'.format('-'.join(map(str, param)).replace('.', '-')) # Separate all the parameters by hyphen and replace the punctuation marks with it
 
     return eigvec_dir
+
 
 def GetEigen():
     # Initialize the hessian matrix.
@@ -127,9 +132,7 @@ def GetEigen():
 
     hess_end = time.perf_counter()
     print(f"Hessian matrix calculations completed in {hess_end - hess_start:0.4f} seconds")
-    
+
     eigvec_dir = name_eigen()
     os.makedirs(os.path.dirname(eigvec_dir), exist_ok=True)
     np.save(eigvec_dir, globals.eigvec)
-    
-    print("Hessian eigenvectors are saved.")
