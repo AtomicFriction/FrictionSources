@@ -77,21 +77,17 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     -> The total displacement evaluated for the spring.
     -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for potential energy calculation at /analysis.py/PE()).
     """
-    globals.disp = np.linalg.norm(diff) - globals.eq_len
-    # Normalization of the distance vector.
-    normalized = diff / np.linalg.norm(diff)
+    norm = np.linalg.norm(diff)
+    dR = ((norm - globals.eq_len) / norm) * np.transpose(diff)
     """
     -> Evaluation of the spring force.
     -> This is chosen to be global so that it will only be calculated once and will be used outside this function as well (for potential energy calculation at /analysis.py/FF()).
     """
-    globals.spr_force = -1 * globals.agent_k * globals.disp * normalized
+    spr_force_whole = -1 * globals.agent_k * dR
+    globals.spr_force = np.reshape(spr_force_whole, (1, 3))
 
     # Evaluate the total force on the agent.
     globals.agent_force = lj_agent + globals.spr_force
-
-
-    # Return the total force on the agent.
-    return globals.agent_force
 
 
 def SubstrateForce(subs_pos, subs_bound, subs_N, latt_const, subs_k, subs_L):
