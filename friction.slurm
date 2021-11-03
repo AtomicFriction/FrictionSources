@@ -1,5 +1,5 @@
 #!/bin/bash                                                                     
-#SBATCH -p single                                                               
+#SBATCH -p mid1                                                               
 #SBATCH --account proj9                                                         
 #SBATCH -J is-ismi                                                              
 #SBATCH -N 1                                                                    
