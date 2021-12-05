@@ -61,6 +61,7 @@ def SimulateAgentEC(status, prot, step, eig_dir, log_dir):
 def SimulateAgentVV(status, prot, step, eig_dir, log_dir):
     # "on" choice simulates the agent normally.
     if (status == 1):
+        """
         ## Updates of the target.
         Agent.V += (0.5 * Agent.A * globals.dt)
         Agent.R += ((Agent.V * globals.dt) + (0.5 * Agent.A * (globals.dt ** 2)))
@@ -71,13 +72,14 @@ def SimulateAgentVV(status, prot, step, eig_dir, log_dir):
         (Agent.V, Agent.A) = constrain(globals.constrain, Agent.V, Agent.A)
         Agent.AgentPeriodicity(Subs.L)
         Agent.slider_pos += Agent.slider_vel * globals.dt
+        """
         
         # Calculate eigenvector projections.
         if (step % globals.eig_proj[1] == 0):
             proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
             EigProjLog(eig_dir, prot, step, proj)
             # Run the necessary "analysis" functions.
-            Analyze()
+            #Analyze()
             # Write the wanted quatities to the log file.
             WriteLog(log_dir, prot, step)
         
