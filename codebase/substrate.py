@@ -154,7 +154,6 @@ class Substrate():
             N[-self.numlayer:, :self.N_def[-1].size] = np.array(list(self.N_def[-self.numlayer:]))
             N[-self.numlayer:, -1] = np.arange(self.R.shape[0]-self.numlayer, self.R.shape[0])
             self.N_def = N.astype(np.int32, copy=False)
-        print(self.N_def)
 
     def neighbor_tree(self):
         if self.bound_cond == 'fixed':
@@ -219,6 +218,7 @@ class Substrate():
                 else:
                     print('You either made an invalid request or the property you requested must be written differently.\n')
                     choice = input("If you want to continue with the feault displacement 'random', press enter.\nIf not, write 'quit'.")
+
         else:
             print('You either made an invalid request or the property you requested must be written differently.\n')
             choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
@@ -229,6 +229,10 @@ class Substrate():
             else:
                 print('You either made an invalid request or the property you requested must be written differently.\n')
                 choice = input("If you want to continue with the default displacement 'random', press enter.\nIf not, write 'quit'.")
+
+    def pull_up(self):
+        self.centr_atom = self.R[3*int(Subs.num**2/2)+1]
+        self.centr_atom[2] += self.latt_const / 5
 
 Subs = Substrate()
 Subs.neighbor_tree()
