@@ -1,9 +1,6 @@
 # Library imports.
 import time
 import tracemalloc
-from pyfiglet import Figlet
-from PyInquirer import prompt
-from examples import custom_style_2, custom_style_1, custom_style_3
 import argparse
 from results import fold_results
 
@@ -17,11 +14,6 @@ tic = time.perf_counter()
 tracemalloc.start()
 
 if __name__ == "__main__":
-    print("\n")
-    f = Figlet(font='basic')
-    print(f.renderText('Friction Sources'))
-
-
     # This part is for the command line arguements.
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_progress", help = "Saves the state of the system every given step interval in case it gets interrupt somehow. For example, '-save_progress 10000' means that the state of the system will be saved every 10000 steps.")
@@ -39,71 +31,14 @@ if __name__ == "__main__":
     globals.animate_step = args.animate
     globals.animate = args.animate
 
-    if (args.save_progress == None and args.from_progress == False and args.calc_hessian == False and args.load_eigs == False and args.animate == None):
-        # This part is for the CLI menu.
-        questions = [
-            {
-                'type': 'list',
-                'name': 'ExecutionMode',
-                'message': 'Which execution mode do you want to use?',
-                'choices': [
-                    'Calculate hessian matrix eigenvectors first, then run protocols.',
-                    'Load pre-calculated eigenvectors, then run protocols.',
-                    'Load a saved system state and run the rest of the protocols.'
-                ]
-            },
-            {
-                'type': 'confirm',
-                'message': 'Do you want to save the state of your system?',
-                'name': 'Save',
-            },
-            {
-                'type': 'input',
-                'message': 'Enter the system save interval, in "per steps".',
-                'name': 'SaveInterval',
-                'when': lambda answers: answers['Save'] != False
-            },
-            {
-                'type': 'confirm',
-                'message': 'Do you want to animate the system?',
-                'name': 'Animate',
-            },
-            {
-                'type': 'input',
-                'message': 'Enter the animation interval, in "per steps".',
-                'name': 'AnimationInterval',
-                'when': lambda answers: answers['Animate'] != False
-            }
-        ]
-
-        answers = prompt(questions,  style=custom_style_3)
-
-        globals.save_progress = answers["Save"]
-
-        if (answers["Save"] == True):
-            globals.save_progress_step = answers["SaveInterval"]
-
-        if (answers["ExecutionMode"] == 'Calculate hessian matrix eigenvectors first, then run protocols.'):
-            globals.calc_hessian = True
-        elif (answers["ExecutionMode"] == 'Load pre-calculated eigenvectors, then run protocols.'):
-            globals.load_eigs = True
-        elif (answers["ExecutionMode"] == 'Load a saved system state and run the rest of the protocols.'):
-            globals.from_progress = True
-
-        globals.animate = answers["Animate"]
-
-        if (answers["Animate"] == True):
-            globals.animate_step = answers["AnimationInterval"]
-
     print('Code execution started.')
-    
-    
+
     # Define the results' directory.
     xyz_dir, log_dir, eig_dir = fold_results()
     # Run the code.
     main(xyz_dir, log_dir, eig_dir)
-    
-    
+
+
     peak = tracemalloc.get_traced_memory()[1]
     print(f"Peak memory usage was {peak / 10**6}MB.")
 
