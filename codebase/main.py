@@ -37,7 +37,7 @@ if __name__ == "__main__":
     xyz_dir, log_dir, eig_dir, timestr = fold_results()
     # Run the code.
     main(xyz_dir, log_dir, eig_dir)
-
+    # Compress the result files after execution.
     zip_results(timestr)
 
 
