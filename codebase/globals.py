@@ -104,4 +104,4 @@ load_eigs = False
 animate = False # This arguement needs an integer input form the user.
 save_progress_step = 0
 animate_step = 0
-
+pullup = False 

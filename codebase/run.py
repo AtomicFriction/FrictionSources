@@ -51,11 +51,11 @@ def main(xyz_dir, log_dir, eig_dir):
         target_temp = globals.run[i][0]
         temp_inc = (((globals.run[i][1]) - (globals.run[i][0])) / (globals.run[i][2]))
 
-        '''
+
         "Pull up the central atom on the surface"
-        if (i == 1):
+        if (i == 1 && globals.pullup == True):
             Subs.pull_up()
-        '''
+
 
         for step in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.

@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--animate", help = "Animates the system every given step interval. For example, '--animate 100' animates the system every 100 steps.")
     parser.add_argument("--calc_hessian", help = "First calculates the Hessian and then goes on with the protocols.", action="store_true")
     parser.add_argument("--load_eigs", help = "Skips the Hessian calculation and loads a pre-calculated set of eigenvectors and eigenvalues. This mode requires the Hessian to be calculated beforehand with the same input parameters.", action="store_true")
+    parser.add_argument("--pull_up", help = "Pulls the atom that is located in the middle of the first substrate layer, no agent.", action="store_true")
     # Parse the arguements from the command line.
     args = parser.parse_args()
     # Save the parsed arguements into global variables.
@@ -30,6 +31,7 @@ if __name__ == "__main__":
     globals.load_eigs = args.load_eigs
     globals.animate_step = args.animate
     globals.animate = args.animate
+    globals.pullup = args.pull_up
 
     print('Code execution started.')
 
