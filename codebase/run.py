@@ -28,15 +28,15 @@ def main(xyz_dir, log_dir, eig_dir):
         # Load the eigenvalues and eigenvectors of the Hessian matrix from the previously saved files.
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
-        
+
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     elif (globals.from_progress == False and globals.calc_hessian == True and globals.load_eigs == False):
         GetEigen()
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
-        
+
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
-        
+
     else:
         print("You need to use a command line arguement to run the code. See command line options with 'python main.py --help'")
         sys.exit()
@@ -50,11 +50,13 @@ def main(xyz_dir, log_dir, eig_dir):
         #print(globals.param['temp'])
         target_temp = globals.run[i][0]
         temp_inc = (((globals.run[i][1]) - (globals.run[i][0])) / (globals.run[i][2]))
-        
+
+        '''
         "Pull up the central atom on the surface"
         if (i == 1):
-            Subs.pull_up() 
-            
+            Subs.pull_up()
+        '''
+
         for step in tqdm(range(int(globals.run[i][2]))):
             # Triggers if the user wants to animate the system.
             if (globals.animate != False and globals.animate != None):
@@ -68,7 +70,7 @@ def main(xyz_dir, log_dir, eig_dir):
                         np.savetxt(coord, Agent.slider_pos)
 
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
-            globals.log_param['temp'] = Temp() # why isn't this done in analysis.py?
+            globals.log_param['temp'] = Temp()
             target_temp += temp_inc
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs(target_temp, ApplyThermo, i, step)

@@ -5,7 +5,7 @@ interact = LJ
 &protocol
 numba = False
 dt = 0.01
-run = 1 200 1000000 200 200 1000000 200 200 1000000
+run = 1 200 100 200 200 100 200 200 100
 eig_proj = 10 100
 integ_agent = vv
 integ_subs = vv
@@ -15,13 +15,13 @@ apply_damping = 1 1 1
 /
 &analysis
 N_dump = 100000
-data = ff ke pe 
+data = ff ke pe
 /
 &substrate
-dim = 3
-layers = 2
+dim = 2
+layers = 1
 fix_layers = 1
-num = 25
+num = 5
 bound_cond = fixed
 latt_const = 5
 cuto_const = 8

@@ -2,7 +2,7 @@
 import time
 import tracemalloc
 import argparse
-from results import fold_results
+from results import fold_results, zip_results
 
 
 # File imports.
@@ -34,9 +34,11 @@ if __name__ == "__main__":
     print('Code execution started.')
 
     # Define the results' directory.
-    xyz_dir, log_dir, eig_dir = fold_results()
+    xyz_dir, log_dir, eig_dir, timestr = fold_results()
     # Run the code.
     main(xyz_dir, log_dir, eig_dir)
+
+    zip_results(timestr)
 
 
     peak = tracemalloc.get_traced_memory()[1]

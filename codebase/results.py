@@ -1,8 +1,9 @@
-from shutil import copyfile
+from shutil import copyfile, make_archive
 import time
 import os
+from zipfile import ZipFile
 
-# Create a folder for results (log and xyz files)
+# Create a folder for results (log and xyz files).
 def fold_results():
     # To name the results folder, define a string consisting of the current date and time
     # In the fashion 'month, day, year, hour, minute, and second'
@@ -19,4 +20,13 @@ def fold_results():
     # Copy the input.txt file into the related result folder.
     copyfile('./input_parser/input.txt', './results/{}/input.txt'.format(timestr))
 
-    return xyz_dir, log_dir, eig_dir
+    return xyz_dir, log_dir, eig_dir, timestr
+
+
+# Compress the results folder for easier relocation.
+def zip_results(timestr):
+    res_dir ='./results/{}/'.format(timestr)
+    zip_dir = res_dir + timestr
+    make_archive(zip_dir, 'zip', res_dir)
+
+    print('Results are compressed.')
