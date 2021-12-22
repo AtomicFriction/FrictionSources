@@ -67,8 +67,7 @@ def main(xyz_dir, log_dir, eig_dir):
                         # Save the positions of agent and slider atoms at the end of the time step
                         np.savetxt(coord, Agent.R)
                         np.savetxt(coord, Agent.slider_pos)
-            if (i == 2):
-                sys.exit()
+
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.log_param['temp'] = Temp()
             target_temp += temp_inc
