@@ -12,7 +12,7 @@ import globals
 """
 -> Projection of the spring force vector on the slider velocity vector calculated to obtain the friction force.
 -> Not evaluated if (globals.ff_switch == 0).
-""" 
+"""
 def FF():
     slid_vel_norm = np.sqrt(np.sum(Agent.slider_vel[0] ** 2))
     globals.log_param['ff_x'], globals.log_param['ff_y'], globals.log_param['ff_z'] = \
@@ -38,7 +38,7 @@ def PE():
     subs_pot = np.sum(1/2 * Subs.k * globals.subs_dR**2)
 
     globals.log_param['pe'] = lj_pot + ag_pot + subs_pot
-    
+
 
 """
 -> Kinetic energy calculation of agent and susbtrate atoms.
@@ -82,8 +82,6 @@ def Temp():
 def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
     eigvec_select = eigvec[:, 0:(eigvec_num)]
     vec_proj = abs(np.dot((subs_pos[subs_bound] - initial_pos[subs_bound]).ravel(), eigvec_select)) / (LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))
-    #print(LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))
-    #print(vec_proj)
     if(np.isnan(vec_proj[0]) == True):
         print("NaN at eigenvector projections.")
         sys.exit()

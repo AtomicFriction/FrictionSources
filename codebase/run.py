@@ -53,7 +53,7 @@ def main(xyz_dir, log_dir, eig_dir):
 
 
         "Pull up the central atom on the surface"
-        if (i == 1 && globals.pullup == True):
+        if (i == 1 and globals.pullup == True):
             Subs.pull_up()
 
 
