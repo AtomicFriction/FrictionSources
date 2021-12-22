@@ -96,6 +96,7 @@ def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
 log_funcs = {'pe': PE, 'ke': KE, 'ff': FF, 'vf': VF, 'etot': Etot}
 data_funcs = [func for func in globals.data if func != 'ff_x' and func != 'ff_y' and func != 'ff_z']
 if 'ff_x' in globals.data: data_funcs.append('ff')
+data_funcs.remove('temp')
 
 
 def Analyze(prot):
