@@ -5,6 +5,7 @@ from tqdm import tqdm
 from math import sqrt
 import time
 import os
+import sys
 
 
 # File imports.
@@ -82,7 +83,7 @@ def GetEigen():
     # Create an empty array of proper size.
     hessian = np.zeros([3 * Subs.bound.shape[0], 3 * Subs.bound.shape[0]])
     # Nested loop used for indexing.
-    for i in tqdm(range(3 * Subs.bound.shape[0])):
+    for i in tqdm(range(3 * Subs.bound.shape[0]), file=sys.stdout):
         for j in range(3 * Subs.bound.shape[0]):
             """
             Divider()

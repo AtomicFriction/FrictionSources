@@ -93,10 +93,16 @@ def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
 """
 
 # Switches for logging.
-log_funcs = {'pe': PE, 'ke': KE, 'ff': FF, 'vf': VF, 'temp': Temp, 'etot': Etot}
+log_funcs = {'pe': PE, 'ke': KE, 'ff': FF, 'vf': VF, 'etot': Etot}
 data_funcs = [func for func in globals.data if func != 'ff_x' and func != 'ff_y' and func != 'ff_z']
 if 'ff_x' in globals.data: data_funcs.append('ff')
 
-def Analyze():
-    for anal in data_funcs:
-        log_funcs[anal]()
+
+def Analyze(prot):
+    # If the agent is present, the analysis functions are called.
+    if (globals.apply_agent[prot] == 1):
+        for anal in data_funcs:
+            log_funcs[anal]()
+    else:
+        # If the agent is not present in the protocol, this function does nothing.
+        pass

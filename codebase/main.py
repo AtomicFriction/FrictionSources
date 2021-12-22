@@ -3,17 +3,24 @@ import time
 import tracemalloc
 import argparse
 from results import fold_results, zip_results
-
+import sys
 
 # File imports.
 from run import main
 import globals
 
-# Start of the maximum memory allocation calculation process.
-tic = time.perf_counter()
-tracemalloc.start()
-
 if __name__ == "__main__":
+    # Define the results' directory.
+    xyz_dir, log_dir, eig_dir, timestr = fold_results()
+
+    outfile_dir = './results/{}/'.format(timestr)
+    outfile = outfile_dir + '/monitor_out.txt'
+    sys.stdout = open(outfile, "w")
+
+    # Start of the maximum memory allocation calculation process.
+    tic = time.perf_counter()
+    tracemalloc.start()
+
     # This part is for the command line arguements.
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_progress", help = "Saves the state of the system every given step interval in case it gets interrupt somehow. For example, '-save_progress 10000' means that the state of the system will be saved every 10000 steps.")
@@ -35,20 +42,20 @@ if __name__ == "__main__":
 
     print('Code execution started.')
 
-    # Define the results' directory.
-    xyz_dir, log_dir, eig_dir, timestr = fold_results()
     # Run the code.
     main(xyz_dir, log_dir, eig_dir)
-    # Compress the result files after execution.
-    zip_results(timestr)
-
 
     peak = tracemalloc.get_traced_memory()[1]
     print(f"Peak memory usage was {peak / 10**6}MB.")
 
-# End of the maximum memory allocation calculation process.
-tracemalloc.stop()
-toc = time.perf_counter()
+    # End of the maximum memory allocation calculation process.
+    tracemalloc.stop()
+    toc = time.perf_counter()
 
-print('Done!')
-print(f"Code executed in {toc - tic:0.4f} seconds")
+    print('Done!')
+    print(f"Code executed in {toc - tic:0.4f} seconds")
+
+    sys.stdout.close()
+
+    # Compress the result files after execution.
+    zip_results(timestr)

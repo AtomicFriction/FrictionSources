@@ -4,12 +4,11 @@ from tqdm import tqdm
 import globals
 from agent import Agent
 from substrate import Subs
-from analysis import Temp
-from logger import InitLog, EigProjLogInit
+from analysis import Temp, ProjectEigen, Analyze
+from logger import InitLog, EigProjLogInit, WriteLog, EigProjLog
 from hessian import GetEigen, name_eigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
-#from integrators import Integrate
 
 
 def main(xyz_dir, log_dir, eig_dir):
@@ -57,7 +56,7 @@ def main(xyz_dir, log_dir, eig_dir):
             Subs.pull_up()
 
 
-        for step in tqdm(range(int(globals.run[i][2]))):
+        for step in tqdm(range(int(globals.run[i][2])), file=sys.stdout):
             # Triggers if the user wants to animate the system.
             if (globals.animate != False and globals.animate != None):
                 if (step % int(globals.animate_step) == 0):
@@ -68,13 +67,22 @@ def main(xyz_dir, log_dir, eig_dir):
                         # Save the positions of agent and slider atoms at the end of the time step
                         np.savetxt(coord, Agent.R)
                         np.savetxt(coord, Agent.slider_pos)
-
+            if (i == 2):
+                sys.exit()
             # Temprature is always calculated because it is needed for the thermostats. Calculate the system temperature separately before the system updates.
             globals.log_param['temp'] = Temp()
             target_temp += temp_inc
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs(target_temp, ApplyThermo, i, step)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], i, step, eig_dir, log_dir)
+            # Calculate eigenvector projections and run analysis functions.
+            if (step % globals.eig_proj[1] == 0):
+                proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+                EigProjLog(eig_dir, i, step, proj)
+                # Run the necessary analysis functions.
+                Analyze(i)
+                # Write the wanted quatities to the log file.
+                WriteLog(log_dir, i, step)
             # Triggers if the user wants to save the system state.
             if (globals.save_progress != False and globals.save_progress != None):
                 if (step % int(globals.save_progress_step) == 0):

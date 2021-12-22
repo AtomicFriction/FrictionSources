@@ -25,8 +25,6 @@ def fold_results():
 
 # Compress the results folder for easier relocation.
 def zip_results(timestr):
-    res_dir ='./results/{}/'.format(timestr)
+    res_dir = './results/{}/'.format(timestr)
     zip_dir = res_dir + timestr
     make_archive(zip_dir, 'zip', res_dir)
-
-    print('Results are compressed.')
