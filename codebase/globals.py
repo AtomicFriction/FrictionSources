@@ -104,4 +104,7 @@ load_eigs = False
 animate = False # This arguement needs an integer input form the user.
 save_progress_step = 0
 animate_step = 0
-pullup = False 
+pullup = False
+
+# Switch variable for the "delete_files" function, triggers if the files are compressed succesfully.
+compression_control = 0

@@ -5,7 +5,7 @@ interact = LJ
 &protocol
 numba = False
 dt = 0.01
-run = 1 200 100000 200 200 10000 200 200 100000
+run = 1 200 10000 200 200 10000 200 200 10000
 eig_proj = 10 100
 integ_agent = vv
 integ_subs = vv
@@ -21,7 +21,7 @@ data = ff ke pe temp
 dim = 2
 layers = 1
 fix_layers = 1
-num = 15
+num = 5
 bound_cond = fixed
 latt_const = 5
 cuto_const = 8

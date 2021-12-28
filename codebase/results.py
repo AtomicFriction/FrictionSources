@@ -1,7 +1,8 @@
-from shutil import copyfile, make_archive
+from shutil import copyfile
 import time
 import os
 from zipfile import ZipFile
+import globals
 
 # Create a folder for results (log and xyz files).
 def fold_results():
@@ -27,4 +28,28 @@ def fold_results():
 def zip_results(timestr):
     res_dir = './results/{}/'.format(timestr)
     zip_dir = res_dir + timestr
-    make_archive(zip_dir, 'zip', res_dir)
+    with ZipFile(res_dir + timestr + '.zip', 'w') as zipObj:
+        os.chdir(res_dir)
+        zipObj.write('coord.xyz')
+        zipObj.write('log.csv')
+        zipObj.write('eig_proj.csv')
+        os.chdir("..")
+        os.chdir("..")
+    #make_archive(zip_dir, 'zip', res_dir)
+    globals.compression_control = 1
+    print("Files are compressed.")
+    
+
+# Delete the files if the compression is succesfull to save space.
+def delete_files(xyz_dir, log_dir, eig_dir):
+    if (globals.compression_control == 1):
+        try:
+            os.remove(xyz_dir)
+            os.remove(log_dir)
+            os.remove(eig_dir)
+        except:
+            print("Compression succesfull, file deletion failed.")
+    elif (globals.compression_control == 0):
+        print("Compression function failed, files are not deleted.")
+    else:
+        print("Compression switch can only take 0 or 1.")

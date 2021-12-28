@@ -2,7 +2,7 @@
 import time
 import tracemalloc
 import argparse
-from results import fold_results, zip_results
+from results import fold_results, zip_results, delete_files
 import sys
 
 # File imports.
@@ -52,10 +52,14 @@ if __name__ == "__main__":
     tracemalloc.stop()
     toc = time.perf_counter()
 
-    print('Done!')
-    print(f"Code executed in {toc - tic:0.4f} seconds")
-
-    sys.stdout.close()
+    print('Protocols completed.')
 
     # Compress the result files after execution.
     zip_results(timestr)
+
+    # Delete the analysis files if the compression is succesfull.
+    delete_files(xyz_dir, log_dir, eig_dir)
+
+    print(f"Code executed in {toc - tic:0.4f} seconds")
+
+    sys.stdout.close()
