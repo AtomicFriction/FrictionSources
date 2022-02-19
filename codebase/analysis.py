@@ -79,6 +79,7 @@ def Temp():
     return t_bound
 
 
+# Calculation of the eigenvector projections.
 def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
     eigvec_select = eigvec[:, 0:(eigvec_num)]
     vec_proj = abs(np.dot((subs_pos[subs_bound] - initial_pos[subs_bound]).ravel(), eigvec_select)) / (LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))

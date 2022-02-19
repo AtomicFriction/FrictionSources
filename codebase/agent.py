@@ -1,16 +1,14 @@
 # Library imports.
 import numpy as np
 
-
 # File imports.
 from input_parser.input_parser import parse
 import globals
 
-"""
-Uses the input data given by the user to initialize an agent and a slider. Both the agent and the slider are single atoms for now.
-"""
-
+# Get the input parameters from the parser to initialize the agent atom.
 _, _, _, _, agent_param, _ = parse('./input_parser/input.txt')
+
+# Define the "Agent" class for the initialization of the system.
 class AgentSlider:
 
     def __init__(self):
@@ -37,7 +35,7 @@ class AgentSlider:
             ## Not in use right now.
             pass
 
-
+    # Periodicity function for the Agent that prevents it from going outside of the system.
     def AgentPeriodicity(self, box_len):
         if (self.R[0][0] > box_len):
             self.R[0][0] -= box_len
@@ -55,4 +53,5 @@ class AgentSlider:
             self.R[0][1] += box_len
             self.slider_pos[0][1] += box_len
 
+# Call the class to initialize the Agent. The Agent is initalized when the file is read by the interpreter.
 Agent = AgentSlider()

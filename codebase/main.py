@@ -13,6 +13,7 @@ if __name__ == "__main__":
     # Define the results' directory.
     xyz_dir, log_dir, eig_dir, timestr = fold_results()
 
+    # Create the output file.
     outfile_dir = './results/{}/'.format(timestr)
     outfile = outfile_dir + '/monitor_out.txt'
     sys.stdout = open(outfile, "w")
