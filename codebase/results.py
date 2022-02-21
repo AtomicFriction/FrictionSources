@@ -30,15 +30,17 @@ def zip_results(timestr):
     zip_dir = res_dir + timestr
     with ZipFile(res_dir + timestr + '.zip', 'w') as zipObj:
         os.chdir(res_dir)
-        zipObj.write('coord.xyz')
-        zipObj.write('log.csv')
-        zipObj.write('eig_proj.csv')
+        if (os.path.exists("./coord.xyz") == True):
+            zipObj.write('coord.xyz')
+        if (os.path.exists("log.csv") == True):
+            zipObj.write('log.csv')
+        if (os.path.exists("eig_proj.csv") == True):
+            zipObj.write('eig_proj.csv')
         os.chdir("..")
         os.chdir("..")
-    #make_archive(zip_dir, 'zip', res_dir)
     globals.compression_control = 1
     print("Files are compressed.")
-    
+
 
 # Delete the files if the compression is succesfull to save space.
 def delete_files(xyz_dir, log_dir, eig_dir):

@@ -74,6 +74,8 @@ def main(xyz_dir, log_dir, eig_dir):
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs(target_temp, ApplyThermo, i, step)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], i, step, eig_dir, log_dir)
+            globals.steps = step
+            print(globals.steps)
             # Calculate eigenvector projections and run analysis functions.
             if (step % globals.eig_proj[1] == 0):
                 proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])

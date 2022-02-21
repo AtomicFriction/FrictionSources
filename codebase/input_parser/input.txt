@@ -5,7 +5,7 @@ interact = LJ
 &protocol
 numba = False
 dt = 0.01
-run = 1 200 10000 200 200 10000 200 200 10000
+run = 1 200 1000 200 200 1000 200 200 1000
 eig_proj = 10 100
 integ_agent = vv
 integ_subs = vv

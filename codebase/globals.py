@@ -69,6 +69,8 @@ log_param = {key: 0 for key in data}
 eigvec = 0
 eigval = 0
 
+steps = 0
+
 
 # Potential energy calculation variables.
 rr_12 = []
