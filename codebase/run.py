@@ -74,16 +74,16 @@ def main(xyz_dir, log_dir, eig_dir):
             # Integration of the entire system here.
             (Subs.R, Subs.V, Subs.A) = SimulateSubs(target_temp, ApplyThermo, i, step)
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], i, step, eig_dir, log_dir)
-            globals.steps = step
-            print(globals.steps)
+            # Real time step counter for the plotter, implemented as a global variable now, may change it later on.
+            globals.steps += 1
             # Calculate eigenvector projections and run analysis functions.
             if (step % globals.eig_proj[1] == 0):
                 proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
-                EigProjLog(eig_dir, i, step, proj)
+                EigProjLog(eig_dir, i, globals.steps, proj)
                 # Run the necessary analysis functions.
                 Analyze(i)
                 # Write the wanted quatities to the log file.
-                WriteLog(log_dir, i, step)
+                WriteLog(log_dir, i, globals.steps)
             # Triggers if the user wants to save the system state.
             if (globals.save_progress != False and globals.save_progress != None):
                 if (step % int(globals.save_progress_step) == 0):
