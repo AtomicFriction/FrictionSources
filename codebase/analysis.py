@@ -14,9 +14,9 @@ import globals
 -> Not evaluated if (globals.ff_switch == 0).
 """
 def FF():
-    slid_vel_norm = np.sqrt(np.sum(Agent.slider_vel[0] ** 2))
+    agent_vel_norm = np.sqrt(np.sum(Agent.V[0] ** 2))
     globals.log_param['ff_x'], globals.log_param['ff_y'], globals.log_param['ff_z'] = \
-        (np.dot(globals.spr_force[0], Agent.slider_vel[0]) / slid_vel_norm ** 2) * Agent.slider_vel[0]
+        (np.dot(globals.spr_force[0], Agent.V[0]) / agent_vel_norm ** 2) * Agent.V[0]
 
 """
 -> Vertical force on the agent defined as the force on the "z-axis".
