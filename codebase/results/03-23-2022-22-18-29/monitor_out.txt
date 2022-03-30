@@ -1,0 +1,2 @@
+Code execution started.
+You need to use a command line arguement to run the code. See command line options with 'python main.py --help'

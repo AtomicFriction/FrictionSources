@@ -76,13 +76,23 @@ def main(xyz_dir, log_dir, eig_dir):
             (Agent.R, Agent.V, Agent.A) = SimulateAgent(globals.apply_agent[i], i, step, eig_dir, log_dir)
             # Real time step counter for the plotter, implemented as a global variable now, may change it later on.
             globals.steps += 1
+
+            # Hard coded eigenvector projection calculations for a baseline.
+            project_last_steps = 10000 # Steps to calculate eigenvector projections before the protocols with the "Agent" starts.
+            per_last_step = 1000
+            if (step > project_last_steps + 1 and step % per_last_step):
+                proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
+                EigProjLog(eig_dir, i, globals.steps, proj)
+                # Write the calculated quatities to the log file.
+                WriteLog(log_dir, i, globals.steps)
+
             # Calculate eigenvector projections and run analysis functions.
             if (step % globals.eig_proj[1] == 0):
                 proj = ProjectEigen(globals.eigvec, Subs.R, Subs.bound, globals.initial_Subs_R, globals.eig_proj[0])
                 EigProjLog(eig_dir, i, globals.steps, proj)
                 # Run the necessary analysis functions.
                 Analyze(i)
-                # Write the wanted quatities to the log file.
+                # Write the calculated quantities to the log file.
                 WriteLog(log_dir, i, globals.steps)
             # Triggers if the user wants to save the system state.
             if (globals.save_progress != False and globals.save_progress != None):
