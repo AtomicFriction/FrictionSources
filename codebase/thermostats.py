@@ -49,9 +49,9 @@ def NoseHoover(F, T_target, frame):
 
 
 def Langevin(F, T_target, frame):
-    wiener = np.sqrt(globals.dt) * np.random.rand(*Subs.V[frame].shape)
-    F[frame] += (-1) * Subs.mass * globals.gamma * Subs.V[frame] + \
-        np.sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target) * wiener
+    sigma = np.sqrt(2 * Subs.mass * globals.gamma * globals.boltz * T_target / globals.dt)
+    wiener = np.random.normal(0, sigma**2, size=(Subs.frame.shape[0], 3)) # should we call it wiener?
+    F[frame] += (-1) * Subs.mass * globals.gamma * Subs.V[frame] + wiener
     Subs.V = Subs.V
     return Subs.V, F
 
