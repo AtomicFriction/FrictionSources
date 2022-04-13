@@ -1,4 +1,5 @@
 from input_parser.input_profile import *
+from warnings import warn
 import numpy as np
 
 def parse(file):
@@ -105,4 +106,11 @@ def parse(file):
     if thermo['mode'] == 'partial' and not thermo['thickness'] > 0:
         raise ValueError('Thickness must be a positive integer')
 
+    # If thermostat is Langevin or Berendsen, overwrite the protocol to apply the thermostat at each step
+    if thermo['thermo'] == ('Langevin' or 'Berendsen') and not set(prot['apply_thermo']) == {1}:
+        warn('Since the thermostat being used is {}, the thermostat will be applied at each step.'.format(thermo['thermo']), stacklevel=3)
+        prot['apply_thermo'] = [1 for i in range(len(prot['apply_thermo']))]
+
     return gen, prot, anal, subs, slid, thermo
+
+parse('input.txt')
