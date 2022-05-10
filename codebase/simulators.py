@@ -31,10 +31,10 @@ def SimulateAgentEC(status, prot, step, eig_dir, log_dir):
     # "on" choice simulates the agent normally.
     if (status == 1):
         ## Updates of the target.
-        Agent.V += (Agent.A * globals.dt)
-        Agent.R += (Agent.R * globals.dt)
         AgentForce(Agent.R, Agent.slider_pos, Subs.R, None)
-        Agent.A = (globals.agent_force - (globals.agent_eta * Agent.V) / Agent.mass)
+        Agent.A = ((globals.agent_force - (globals.agent_eta * Agent.V)) / Agent.mass)
+        Agent.V += (Agent.A * globals.dt)
+        Agent.R += (Agent.V * globals.dt)
         ## Operation to constrain the target, depends on the user input.
         (Agent.V, Agent.A) = constrain(globals.constrain, Agent.V, Agent.A)
         Agent.AgentPeriodicity(Subs.L)
@@ -55,9 +55,9 @@ def SimulateAgentVV(status, prot, step, eig_dir, log_dir):
 
         ## Updates of the target.
         Agent.V += (0.5 * Agent.A * globals.dt)
-        Agent.R += ((Agent.V * globals.dt) + (0.5 * Agent.A * (globals.dt ** 2)))
+        Agent.R += (Agent.V * globals.dt)
         AgentForce(Agent.R, Agent.slider_pos, Subs.R, None)
-        Agent.A = (globals.agent_force - (globals.agent_eta * Agent.V) / Agent.mass)
+        Agent.A = ((globals.agent_force - (globals.agent_eta * Agent.V)) / Agent.mass)
         Agent.V += (0.5 * Agent.A * globals.dt)
         ## Operation to constrain the target, depends on the user input.
         (Agent.V, Agent.A) = constrain(globals.constrain, Agent.V, Agent.A)
@@ -100,8 +100,6 @@ so that no requirement to define a variable for force
 Returns the result of the function 'Integrate'
 """
 def SimulateSubsEC(T_target, ApplyThermo, i, step):
-    Subs.V += (Subs.A * globals.dt)
-    Subs.R += (Subs.R * globals.dt)
 
     if (step % globals.apply_thermo[i] == 0):
         Subs.V, subs_force = ApplyThermo(\
@@ -109,7 +107,11 @@ def SimulateSubsEC(T_target, ApplyThermo, i, step):
     else:
         subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
 
+
     Subs.A = (subs_force - (globals.subs_eta * Subs.V) / Subs.mass)
+
+    Subs.V += (Subs.A * globals.dt)
+    Subs.R += (Subs.R * globals.dt)
     ## Operation to constrain the target, depends on the user input.
     (Subs.V, Subs.A) = constrain(globals.constrain, Subs.V, Subs.A)
 
@@ -118,7 +120,7 @@ def SimulateSubsEC(T_target, ApplyThermo, i, step):
 
 def SimulateSubsVV(T_target, ApplyThermo, i, step):
     Subs.V += (0.5 * Subs.A * globals.dt)
-    Subs.R += ((Subs.V * globals.dt) + (0.5 * Subs.A * (globals.dt ** 2)))
+    Subs.R += (Subs.V * globals.dt)
 
     if (step % globals.apply_thermo[i] == 0):
         Subs.V, subs_force = ApplyThermo(\
@@ -126,7 +128,7 @@ def SimulateSubsVV(T_target, ApplyThermo, i, step):
     else:
         subs_force = SubstrateForce(Subs.R, Subs.bound, Subs.N, Subs.latt_const, Subs.k, Subs.L)
 
-    Subs.A = (subs_force - (globals.subs_eta * Subs.V) / Subs.mass)
+    Subs.A = ((subs_force - (globals.subs_eta * Subs.V)) / Subs.mass)
     Subs.V += (0.5 * Subs.A * globals.dt)
     ## Operation to constrain the target, depends on the user input.
     (Subs.V, Subs.A) = constrain(globals.constrain, Subs.V, Subs.A)
