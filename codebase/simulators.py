@@ -111,7 +111,7 @@ def SimulateSubsEC(T_target, ApplyThermo, i, step):
     Subs.A = (subs_force - (globals.subs_eta * Subs.V) / Subs.mass)
 
     Subs.V += (Subs.A * globals.dt)
-    Subs.R += (Subs.R * globals.dt)
+    Subs.R += (Subs.V * globals.dt)
     ## Operation to constrain the target, depends on the user input.
     (Subs.V, Subs.A) = constrain(globals.constrain, Subs.V, Subs.A)
 
