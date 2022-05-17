@@ -112,5 +112,3 @@ def parse(file):
         prot['apply_thermo'] = [1 for i in range(len(prot['apply_thermo']))]
 
     return gen, prot, anal, subs, slid, thermo
-
-parse('input.txt')
