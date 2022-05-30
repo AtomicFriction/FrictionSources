@@ -157,7 +157,8 @@ This mode can be used by the following command, does not require additional argu
 ```
 python main.py --from_progress
 ```
-Finds the saved ".npz" file and resumes the interrupted run. Keep in mind that this mode requires the same "input.txt" file that you used to save the previous state, changing the "input.txt" file may result in unwanted consequences.
+Finds the saved ".npz" file and resumes the interrupted run. Keep in mind that this mode requires the same system variables in the "input.txt" file that you used to save the previous state, changing the variables in the "input.txt" file may result in unwanted consequences.
+##### While using the "--from_progress" argument, the user must enter the remaining protocols, i.e. if the original run had completed the first two protocols and the third protocol must run from the system_state file, the user needs to enter only the third protocol to the input.txt file.
 
 ##### The ```--animate``` Mode
 ```
