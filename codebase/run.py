@@ -7,6 +7,7 @@ from substrate import Subs
 from analysis import Temp, ProjectEigen, Analyze
 from logger import InitLog, EigProjLogInit, WriteLog, EigProjLog
 from hessian import GetEigen, name_eigen
+#from optimized_hessian import GetEigen, name_eigen
 from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
 
@@ -15,15 +16,17 @@ def main(xyz_dir, log_dir, eig_dir):
     # Initialize the log files.
     InitLog(log_dir)
     EigProjLogInit(eig_dir)
+    # Toggle for thermalization saving proccess.
+    toggle = False
 
     # System state configurations checks.
-    if (globals.from_progress == True and globals.calc_hessian == False and globals.load_eigs == False):
+    if (globals.from_progress == True and globals.calc_hessian == False and globals.load_eigs == True):
         # Load the previous state of the system.
         with np.load("system_state.npz") as system_state:
-            Subs.R, Subs.V, Subs.A, Agent.R, Agent.V, Agent.A, Agent.slider_pos, Agent.slider_vel, i, step = \
+            Subs.R, Subs.V, Subs.A, i, step = \
                 system_state["Subs_R"], system_state["Subs_V"], system_state["Subs_A"], \
-                    system_state["Agent_R"], system_state["Agent_V"], system_state["Agent_A"], \
-                        system_state["Agent_slider_pos"], system_state["Agent_slider_vel"], system_state["prot_i"], system_state["prot_j"]
+                system_state["prot_i"], system_state["prot_j"]
+            print("System state loaded.")
         # Load the eigenvalues and eigenvectors of the Hessian matrix from the previously saved files.
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
@@ -95,8 +98,18 @@ def main(xyz_dir, log_dir, eig_dir):
                 # Write the calculated quantities to the log file.
                 WriteLog(log_dir, i, globals.steps)
             # Triggers if the user wants to save the system state.
-            if (globals.save_progress != False and globals.save_progress != None):
-                if (step % int(globals.save_progress_step) == 0):
+            if (globals.save_progress != False):
+                '''
+                FOR DEV USE - SAVE THE THERMALISATION PROTOCOLS
+                '''
+                if (i == 2 and toggle == False):
+                    np.savez("system_state.npz", Subs_R = Subs.R, Subs_V = Subs.V, Subs_A = Subs.A, prot_i = i, prot_j = step)
+                    print("System state saved at step " + str(step) + " of protocol run " + str(i + 1) + " out of " + str(len(globals.run)))
+                    # toggle to run the thermalization saving process only once.
+                    toggle = True
+                """
+                if (step % int(globals.save_progress) == 0):
                     # Save the whole state of the system.
                     np.savez("system_state.npz", Subs_R = Subs.R, Subs_V = Subs.V, Subs_A = Subs.A, Agent_R = Agent.R, Agent_V = Agent.V, Agent_A = Agent.A, Agent_slider_pos = Agent.slider_pos, Agent_slider_vel = Agent.slider_vel, prot_i = i, prot_j = step)
                     print("System state saved at step " + str(step) + " of protocol run " + str(i + 1) + " out of " + str(len(globals.run)))
+                """
