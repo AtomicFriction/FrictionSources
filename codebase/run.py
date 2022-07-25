@@ -6,10 +6,13 @@ from agent import Agent
 from substrate import Subs
 from analysis import Temp, ProjectEigen, Analyze
 from logger import InitLog, EigProjLogInit, WriteLog, EigProjLog
-from hessian import GetEigen, name_eigen
+from hessian2 import GetEigen, name_eigen
 #from optimized_hessian import GetEigen, name_eigen
-from simulators import SimulateAgent, SimulateSubs
 from thermostats import ApplyThermo
+if (globals.agent_select == 'single'):
+    from simulators_single import SimulateAgent, SimulateSubs
+elif (globals.agent_select == 'wghost'):
+    from simulators_ghost import SimulateAgent, SimulateSubs
 
 
 def main(xyz_dir, log_dir, eig_dir):
@@ -21,6 +24,7 @@ def main(xyz_dir, log_dir, eig_dir):
 
     # System state configurations checks.
     if (globals.from_progress == True and globals.calc_hessian == False and globals.load_eigs == True):
+        print("Loading existing eigenvalues and continuing saved simulation.")
         # Load the previous state of the system.
         with np.load("system_state.npz") as system_state:
             Subs.R, Subs.V, Subs.A, i, step = \
@@ -33,9 +37,10 @@ def main(xyz_dir, log_dir, eig_dir):
 
     # If the user wants a regular run, script goes on with the Hessian matrix calculation.
     elif (globals.from_progress == False and globals.calc_hessian == True and globals.load_eigs == False):
+        print("Calculating Hessian matrix and starting a clean simulation.")
         GetEigen()
     elif (globals.from_progress == False and globals.calc_hessian == False and globals.load_eigs == True):
-
+        print("Loading existing eigenvalues and starting a clean simulation.")
         try: globals.eigvec = np.load(name_eigen())
         except FileNotFoundError: exit('Cannot continue due to incongruity of the eigenvector file and input file.')
 
