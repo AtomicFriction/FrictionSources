@@ -4,24 +4,24 @@ interact = LJ
 /
 &protocol
 numba = False
-dt = 0.01
-run = 1 200 10000 200 200 10000 200 200 10000
+dt = 0.1
+run = 200 200 200000
 eig_proj = 10 100
 integ_agent = vv
 integ_subs = vv
-apply_agent = 0 1 1
-apply_thermo = 1 1 1
-apply_damping = 0 0 0
+apply_agent = 1
+apply_thermo = 1
+apply_damping = 0
 /
 &analysis
 N_dump = 100000
-data = ff ke pe temp
+data = vf ff ke pe temp
 /
 &substrate
 dim = 2
 layers = 1
-fix_layers = 1
-num = 5
+fix_layers = 0
+num = 50
 bound_cond = fixed
 latt_const = 5
 cuto_const = 8
@@ -30,27 +30,30 @@ k1 = 20
 k2 = 0
 k3 = 0
 mass = 40
-eta = 50
+eta = 0
 /
 &slider
-mass = 400
-k = 80
+agent_select = single
+mass = 40
+k = 5
 shape = single
 sigma = 4
 epsilon = 0.04
-agent_pos = 17 17 10
-slider_pos = 12 12 10
-slider_vel = 0.005 0.005 0
-eq_len = 5
+normal_force = 0.2
+agent_pos = 8 8 4.5
+ghost_pos = 13 13 4.5
+slider_pos = 18 18 4.5
+slider_vel = 0.1 0.1 0
+eq_len = 10
 constrain = None
 eta = 0
 /
 &thermostat
-thermo = velrescale
+thermo = langevin
 mode = partial
 thickness = 2
 tau = 0.1
 s = 0.1
 Q = 0.1
-gamma = 0.1
+gamma = 1
 /
