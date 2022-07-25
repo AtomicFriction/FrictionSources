@@ -1,7 +1,5 @@
 # Library imports.
 import numpy as np
-
-
 # File imports.
 from input_parser.input_parser import parse
 
@@ -42,12 +40,14 @@ subs_eta = subs_param['eta']
 # "agent" parameters from the input file.
 _, _, _, _, agent_param, _ = parse('./input_parser/input.txt') # Parse the parameters.
 
+agent_select = agent_param['agent_select']
 constrain = agent_param['constrain']
 eq_len = agent_param['eq_len']
 agent_k = agent_param['k'] #
 sigma = (agent_param['sigma']) # The constant sigma for The Lennard Jones interaction.
 epsilon = (agent_param['epsilon']) # The constant epsilon for The Lennard Jones interaction.
 agent_eta = agent_param['eta']
+normal_force = agent_param['normal_force']
 
 
 # "thermo" parameters from the input file.
@@ -82,7 +82,8 @@ agent_zcomp = 0
 # Agent force calculation variables.
 sig_12 = (sigma ** 12)
 sig_6 = (sigma ** 6)
-spr_force = np.zeros((1, 3))
+spr_force_ag = np.zeros((1, 3))
+spr_force_gs = np.zeros((1, 3))
 lj_force = 0
 agent_force = 0
 
