@@ -6,7 +6,7 @@ from agent import Agent
 from substrate import Subs
 from analysis import Temp, ProjectEigen, Analyze
 from logger import InitLog, EigProjLogInit, WriteLog, EigProjLog
-from hessian2 import GetEigen, name_eigen
+from hessian_vec import get_eigen, name_eigen
 #from optimized_hessian import GetEigen, name_eigen
 from thermostats import ApplyThermo
 if (globals.agent_select == 'single'):
