@@ -15,7 +15,7 @@ apply_damping = 0
 /
 &analysis
 N_dump = 100000
-data = vf ff ke pe temp
+data = vf ke pe temp ff
 /
 &substrate
 dim = 2
@@ -37,13 +37,13 @@ agent_select = single
 mass = 100
 k = 10
 shape = single
-sigma = 4
-epsilon = 0.04
-normal_force = 0.1
-agent_pos = 8 8 4
+sigma = 5
+epsilon = 0.5
+normal_force = 0.2
+agent_pos = 8 8 5
 ghost_pos = 13 13 5
 slider_pos = 18 18 5
-slider_vel = 0.2 0.2 0
+slider_vel = 0.02 0.02 0
 eq_len = 10
 constrain = None
 eta = 0
