@@ -6,7 +6,7 @@ import sys
 import os
 from tqdm import tqdm
 from substrate import Subs
-from interactions import SubstrateForce
+from interactions_single import SubstrateForce
 from input_parser.input_parser import parse
 
 def name_eigen():
@@ -52,5 +52,3 @@ def get_eigen():
     eigvec_dir = name_eigen()
     os.makedirs(os.path.dirname(eigvec_dir), exist_ok=True)
     np.save(eigvec_dir, globals.eigvec)
-    
-get_eigen()
