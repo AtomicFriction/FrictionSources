@@ -86,7 +86,7 @@ def AgentForce(agent_pos, slider_pos, substrate_pos, box):
     spr_force_whole = -1 * globals.agent_k * dR
     globals.spr_force = np.reshape(spr_force_whole, (1, 3))
 
-    normal = np.array([0, 0, -1 * globals.normal_force])
+    normal = np.array([0, 0, -1 * globals.normal_force * (agent_pos[0][2])])
     # Evaluate the total force on the agent. This is where we add the normal force as well.
     globals.agent_force = lj_agent + globals.spr_force + normal
 
