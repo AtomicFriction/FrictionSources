@@ -82,7 +82,7 @@ def Temp():
 # Calculation of the eigenvector projections.
 def ProjectEigen(eigvec, subs_pos, subs_bound, initial_pos, eigvec_num):
     eigvec_select = eigvec[:, 0:(eigvec_num)]
-    vec_proj = abs(np.dot((subs_pos[subs_bound] - initial_pos[subs_bound]).ravel(), eigvec_select)) / (LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]))
+    vec_proj = abs(np.dot((subs_pos[subs_bound] - initial_pos[subs_bound]).ravel(), eigvec_select)) / (LA.norm(subs_pos[subs_bound] - initial_pos[subs_bound]) + 0.00000000000001)
     if(np.isnan(vec_proj[0]) == True):
         print("NaN at eigenvector projections.")
         sys.exit()
