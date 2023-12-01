@@ -2,7 +2,7 @@
 [![Automated App Tests and Linter](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml/badge.svg)](https://github.com/AtomicFriction/FrictionSources/actions/workflows/python-app.yml)
 
 
-Friction Sources is ....
+Friction Sources is a molecular dynamics simulation for studying friction at nanoscale with variable built-in thermostats, integrators, substrate&agent structure, and boundary conditions.
 
 
 # System Explanation
